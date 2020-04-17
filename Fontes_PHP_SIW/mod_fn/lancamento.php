@@ -15,6 +15,7 @@ include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerSite.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicRubrica.php');
 include_once($w_dir_volta.'classes/sp/db_getBankData.php');
 include_once($w_dir_volta.'classes/sp/db_getTramiteList.php');
 include_once($w_dir_volta.'classes/sp/db_getUserMail.php');
@@ -23,6 +24,7 @@ include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoDoc.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoItem.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoValor.php');
+include_once($w_dir_volta.'classes/sp/db_getLancamentoPais.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicCotacao.php');
@@ -43,7 +45,7 @@ include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgResp.php');
 include_once($w_dir_volta.'classes/sp/db_getKindPersonList.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamentoRubrica.php');
-include_once($w_dir_volta.'classes/sp/db_getSolicApoioList.php');
+include_once($w_dir_volta.'classes/sp/db_getCronograma.php'); 
 include_once($w_dir_volta.'classes/sp/db_getAcordoNota.php');
 include_once($w_dir_volta.'classes/sp/dml_putFinanceiroGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoOutra.php');
@@ -55,6 +57,7 @@ include_once($w_dir_volta.'classes/sp/dml_putSolicCotacao.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoItem.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoValor.php');
+include_once($w_dir_volta.'classes/sp/dml_putLancamentoPais.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
@@ -83,8 +86,7 @@ include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoPessoaOrigem.php');
 include_once($w_dir_volta.'funcoes/selecaoSexo.php');
 include_once($w_dir_volta.'funcoes/selecaoRubrica.php');
-//include_once($w_dir_volta.'funcoes/selecaoRubricaApoio.php');
-include_once($w_dir_volta.'funcoes/selecaoSolicApoio.php');
+include_once($w_dir_volta.'funcoes/selecaoRubricaApoio.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoRubrica.php');
 include_once('visuallancamento.php');
 include_once('validalancamento.php');
@@ -1061,6 +1063,8 @@ function Geral() {
     $w_modulo_pai           = $_REQUEST['w_modulo_pai'];
     $w_cd_compra            = $_REQUEST['w_cd_compra'];
     $w_ds_compra            = $_REQUEST['w_ds_compra'];
+    $w_cc_debito            = $_REQUEST['w_cc_debito'];
+    $w_cc_credito           = $_REQUEST['w_cc_credito'];
     
     
     // Recarrega dados para pagamento/recebimento
@@ -1087,16 +1091,21 @@ function Geral() {
     $w_valor_doc            = $_REQUEST['w_valor_doc'];
     $w_patrimonio           = $_REQUEST['w_patrimonio'];
     $w_tipo                 = $_REQUEST['w_tipo'];
+    
+    // Carrega os valores por país
+    $w_valores_pais         = $_REQUEST['w_valores_pais'];
   
-    if ($w_chave_pai && !$w_solic_vinculo) {
+    if ($w_chave_pai) {
       // Garante que conseguirá recuperar as rubricas do projeto
       $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$w_chave_pai,null);
       
       $w_modulo_pai = piece(f($RS,'dados_solic'),null,'|@|',12);
       
       if ($w_modulo_pai==='AC' || $w_modulo_pai==='CO') {
-        // Se compras ou contratos, o vínculo é com seu projeto.
-        $w_solic_vinculo = piece(f($RS,'dados_solic'),null,'|@|',13);
+        if (!$w_solic_vinculo) {
+          // Se compras ou contratos, o vínculo é com seu projeto.
+          $w_solic_vinculo = piece(f($RS,'dados_solic'),null,'|@|',13);          
+        }
       } elseif ($w_modulo_pai==='PR') {
         $w_solic_vinculo = $w_chave_pai;
       }
@@ -1166,6 +1175,8 @@ function Geral() {
       $w_solic_apoio          = f($RS,'sq_solic_apoio');
       $w_data_autorizacao     = FormataDataEdicao(f($RS,'data_autorizacao'));
       $w_texto_autorizacao    = f($RS,'texto_autorizacao');
+      $w_cc_debito            = f($RS,'cc_debito');
+      $w_cc_credito           = f($RS,'cc_credito');
       
 
       // Recupera dados de pagamento/recebimento
@@ -1184,6 +1195,7 @@ function Geral() {
       $w_codigo_deposito      = f($RS,'codigo_deposito');
       $w_conta_debito         = f($RS,'sq_pessoa_conta');
     } 
+    
   }
   
   if ($O!='I') {
@@ -1266,7 +1278,7 @@ function Geral() {
         
         
         // Verificar fontes de financiamento possíveis. Se apenas uma, atribui direto.
-        $sql = new db_getSolicApoioList; $RS_Fonte = $sql->getInstanceOf($dbms, nvl($w_solic_vinculo,$w_chave_pai), null, null, null);
+        $sql = new db_getCronograma; $RS_Fonte = $sql->getInstanceOf($dbms,$w_sq_projeto_rubrica,$w_chave_aux,null,null,null,'RUBFONTES');
         if (count($RS_Fonte)==0) {
           $w_exibe_ff = false;
         } else {
@@ -1284,7 +1296,7 @@ function Geral() {
       }
     }
   }
-  
+
   if (nvl($w_troca,'')=='' && (nvl($w_copia,'')!='' || nvl($w_chave,'')!='')) {
     // Recupera dados do comprovante
     $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),null,null,null,null,null,null,'DOCS');
@@ -1315,7 +1327,7 @@ function Geral() {
   }
 
   // Recupera acréscimos e supressões possíveis para o lançamento financeiro
-  $sql = new db_getLancamentoValor; $RS_Valores = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,nvl($w_copia,$w_chave),$w_sq_lancamento_doc,null,'EDICAO');
+  $sql = new db_getLancamentoValor; $RS_Valores = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,nvl(nvl($w_copia,$w_chave),0),$w_sq_lancamento_doc,null,'EDICAO');
   $RS_Valores = SortArray($RS_Valores,'tp_valor','desc','ordenacao','asc');
   $i=0;
   unset($w_valores);
@@ -1325,6 +1337,21 @@ function Geral() {
     $w_valores[$i]['nome']  = f($row,'nome');
     $w_valores[$i]['tipo']  = f($row,'tp_valor');
     $w_valores[$i]['valor'] = nvl($_POST['w_valores'][$i],formatNumber(nvl(f($row,'valor'),0)));
+  }
+  
+  if (substr($SG,0,3)!='FNR') {
+    // Recupera os valores por país
+    $sql = new db_getLancamentoPais; $RS_Pais = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,nvl(nvl($w_copia,$w_chave),0),null,'EDICAO');
+    $RS_Pais = SortArray($RS_Pais,'nome','asc');
+    $i = 0;
+    unset($w_valores_pais);
+    foreach ($RS_Pais as $row) {
+      $i++;
+      $w_valores_pais[$i]['chave']    = f($row,'sq_lancamento_valor');
+      $w_valores_pais[$i]['sq_pais']  = f($row,'sq_pais');
+      $w_valores_pais[$i]['nome']     = f($row,'nome');
+      $w_valores_pais[$i]['valor']    = nvl($_POST['w_valor_pais'][$i],formatNumber(nvl(f($row,'valor'),0)));
+    }
   }
 
   // Verifica as formas de pagamento possíveis. Se apenas uma, atribui direto
@@ -1391,6 +1418,22 @@ function Geral() {
   SaltaCampo();
   FormataDataHora();
   FormataValor();
+
+  if (is_array($w_valores_pais)) {
+    toMoney();
+    // Função para ratear o valor do lançamento entre os países
+    ShowHTML('function rateio() {');
+    ShowHTML('  var theForm = document.Form;');
+    ShowHTML('  var valor = theForm.w_valor.value;');
+    ShowHTML('  valor = valor.replace(".","");');
+    ShowHTML('  valor = valor.replace(",",".");');
+    ShowHTML('  var rateio = toMoney(parseFloat(valor)/'.count($w_valores_pais).',"BR");');
+    ShowHTML('  for (ind=1; ind < theForm["w_valor_pais[]"].length; ind++) {');
+    ShowHTML('    theForm["w_valor_pais[]"][ind].value = rateio;');
+    ShowHTML('  }');
+    ShowHTML('}');
+  }
+
   openBox('reload');
   ValidateOpen('Validacao');
   if ($O=='I' || $O=='A') {
@@ -1427,10 +1470,13 @@ function Geral() {
     }
     if ($w_exibe_fp) Validate('w_sq_forma_pagamento','Forma de '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento' : 'pagamento'),'SELECT',1,1,18,'','0123456789');       
     Validate('w_vencimento','Data prevista para '.((substr(f($RS_Menu,'sigla'),2,1)=='R') ? 'recebimento': 'pagamento'),'DATA',1,10,10,'','0123456789/');
+    /* 
+     * Código abaixo foi comentado para permitir que lançamentos de receita tenham documento e itens
     if (substr(f($RS_Menu,'sigla'),2,1)=='R' && $w_qtd_nota==0) {
       if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') Validate('w_moeda','Moeda','SELECT',1,1,18,'','0123456789');
       Validate('w_valor','Valor do documento','VALOR','1',4,18,'','0123456789.,-');
     }
+    */
     if (substr($SG,3)=='CONT') {
       Validate('w_per_ini','Início do período de realização','DATA','1','10','10','','0123456789/');
       CompData('w_per_ini','Início do período de realização','>=','w_inicio','Data de início de vigência do contrato');
@@ -1442,6 +1488,16 @@ function Geral() {
     } elseif (substr($SG,3)!='REEMB' && substr(f($RS_Menu,'sigla'),2,1)!='R') {
       Validate('w_texto_pagamento','Condições de pagamento','1','','2','4000','1','0123456789');
     }
+    
+    Validate('w_cc_debito','Conta Débito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    Validate('w_cc_credito','Conta Crédito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    
+    ShowHTML('  if ((theForm.w_cc_debito.value != "" && theForm.w_cc_credito.value == "") || (theForm.w_cc_debito.value == "" && theForm.w_cc_credito.value != "")) {');
+    ShowHTML('     alert ("Informe ambas as contas contábeis ou nenhuma delas!");');
+    ShowHTML('     theForm.w_cc_debito.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    
     if (nvl($w_forma_pagamento,'')!='') {
       if ($w_forma_pagamento=='CREDITO') {
         if (substr(f($RS_Menu,'sigla'),2,1)=='R') {
@@ -1477,7 +1533,10 @@ function Geral() {
         Validate('w_informacoes','Informações adicionais','1','',5,200,1,1);
       }
     }
-    if (substr(f($RS_Menu,'sigla'),2,1)=='D') {
+    /* 
+     * Código abaixo passa a valor também para lançamentos de receita
+     */
+    //if (substr(f($RS_Menu,'sigla'),2,1)=='D') {
       Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
       Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
       Validate('w_data','Data de emissão do documento', 'DATA', '1', '10', '10', '', '0123456789/');
@@ -1492,6 +1551,7 @@ function Geral() {
         ShowHTML('  var w_erro = 1;');
         ShowHTML('  for (ind=1; ind < theForm["w_quantidade[]"].length; ind++) {');
         Validate('["w_quantidade[]"][ind]','!','VALOR','1','1','18','','0123456789.');
+        Validate('["w_vl_unitario[]"][ind]','!','VALOR','1','4','18','','0123456789.,-');
         Validate('["w_rubrica[]"][ind]','!','SELECT','1','1','18','','0123456789');
         ShowHTML('  if (theForm["w_quantidade[]"][ind].value>0) w_erro = 0;');
         ShowHTML('  }');
@@ -1501,6 +1561,13 @@ function Geral() {
         ShowHTML('    return false;');
         ShowHTML('  }');
       }
+    //}
+    
+    // Valida valores por país
+    if (is_array($w_valores_pais)) {
+      ShowHTML('  for (ind=1; ind < theForm["w_valor_pais[]"].length; ind++) {');
+      Validate('["w_valor_pais[]"][ind]','!','VALOR','1','4','18','','0123456789.,-');
+      ShowHTML('  }');
     }
   } 
   ShowHTML('  disAll();');
@@ -1609,9 +1676,10 @@ function Geral() {
       }
       if (nvl(f($RS_Relac,'sigla'),'')!='') { $sql = new db_getSolicData; $RS_Pai = $sql->getInstanceOf($dbms,$w_chave_pai,f($RS_Relac,'sigla')); }
     } elseif(nvl($w_projeto,'---') == 'PR' || count($RS_Itens)) {
-      if (count($RS_Itens)) {
-        ShowHTML('          <tr><td colspan="2">Projeto para débito:<br><b>'.piece(f($RS_Solic,'dados_pai'),null,'|@|',2).' - '.piece(f($RS_Solic,'dados_pai'),null,'|@|',3).'</b>');
-        ShowHTML('          <INPUT type="hidden" name="w_solic_vinculo" value="'.$w_solic_vinculo.'">');
+      if (substr($SG,3)=='CONT' || count($RS_Itens)) {
+        $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
+        ShowHTML('      <tr>');
+        SelecaoSolic('Projeto para débito:',null,null,$w_cliente,$w_solic_vinculo,f($RS,'sq_menu'),f($RS_Solic,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null);
       } else {
         $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
         ShowHTML('      <tr>');
@@ -1627,8 +1695,7 @@ function Geral() {
       // Trata fonte de financiamento
       if ($w_exibe_ff) {
         ShowHTML('      <tr>');
-        //SelecaoRubricaApoio('<u>F</u>onte de financiamento:','F', 'Selecione a fonte de financiamento que dará suporte ao lançamento.', $w_solic_apoio,$w_sq_projeto_rubrica,'w_solic_apoio','RUBFONTE',null);
-        SelecaoSolicApoio('<u>F</u>onte de financiamento','F',null,$w_solic_apoio,nvl($w_solic_vinculo,$w_chave_pai),'w_solic_apoio',null,null,2);
+        SelecaoRubricaApoio('<u>F</u>onte de financiamento:','F', 'Selecione a fonte de financiamento que dará suporte ao lançamento.', $w_solic_apoio,$w_sq_projeto_rubrica,'w_solic_apoio','RUBFONTE',null);
         ShowHTML('      </tr>');
       } else {
         ShowHTML('          <INPUT type="hidden" name="w_solic_apoio" value="'.$w_solic_apoio.'">');
@@ -1695,6 +1762,9 @@ function Geral() {
       } else {
         ShowHTML('<INPUT type="hidden" name="w_vencimento" value="'.formataDataEdicao(addDays(time(),4)).'">');
       }
+      
+      /*
+       * Código abaixo foi comentado para permitir que lançamentos de receita também tenham documento e itens
       if (substr(f($RS_Menu,'sigla'),2,1)=='R') {
         if ($w_qtd_nota==0) {
           if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
@@ -1707,6 +1777,7 @@ function Geral() {
           ShowHTML('          <INPUT type="hidden" name="w_valor" value="'.$w_valor.'">');
         }
       }
+       */
     }
 
     ShowHTML('      <tr><td colspan="3"><table border=0 width="100%" cellspacing=0>');
@@ -1717,6 +1788,10 @@ function Geral() {
     ShowHTML('          </table>');
     if (substr(f($RS_Menu,'sigla'),2,1)!='R') ShowHTML('        <tr><td colspan=3><b><u>C</u>ondições de pagamento:</b><br><textarea '.$w_Disabled.'accesskey="T" name="w_texto_pagamento" class="sti" ROWS="3" COLS="75" title="Relacione as condições para pagamento deste lançamento.">'.nvl($w_texto_pagamento,$w_padrao_pagamento).'</textarea></td>');
 
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>C</u>onta contábil de débito:</b></br><input type="text" name="w_cc_debito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_debito.'"></td>');
+    ShowHTML('        <td><b><u>C</u>onta contábil de crédito:</b></br><input type="text" name="w_cc_credito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_credito.'"></td>');
+    
     if (nvl($w_forma_pagamento,'')!='' && strpos('ESPECIE,DINHEIRO',nvl(upper($w_forma_pagamento),'-'))===false && (substr(f($RS_Menu,'sigla'),2,1)!='R' || (substr(f($RS_Menu,'sigla'),2,1)=='R' && ($w_forma_pagamento=='DEPOSITO' || $w_exige_conta)))) {
       ShowHTML('      <tr><td colspan="3" align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -1784,7 +1859,10 @@ function Geral() {
       } 
     }
 
-    if (substr(f($RS_Menu,'sigla'),2,1)=='D') {
+    /*
+     * Código abaixo passa a valer também para lançamentos de receita
+     */
+    //if (substr(f($RS_Menu,'sigla'),2,1)=='D') {
       ShowHTML('      <tr><td colspan="3"><table border=0 width="100%">');
 
       ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
@@ -1808,16 +1886,18 @@ function Geral() {
       
       if ($w_qtd_nota==0) {
         if ($w_cd_compra) {
-          ShowHTML('          <td><b><u>V</u>alor:</b><br><input style="background: #f0f0f0; text-align: center;" '.$w_Disabled.' READONLY tabindex="-1" accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" title="Calculado automaticamente a partir das quantidades a serem pagas."></td>');
+          ShowHTML('          <td nowrap><b><u>V</u>alor:</b><br><input style="background: #f0f0f0; text-align: center;" '.$w_Disabled.' READONLY tabindex="-1" accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" title="Calculado automaticamente a partir das quantidades a serem pagas.">');
         } else {
-          ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
+          ShowHTML('          <td nowrap><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento.">');
         }
       } else {
-        ShowHTML('          <td>Valor:<br><b>'.$w_valor.'</b></td>');
+        ShowHTML('          <td nowrap>Valor:<br><b>'.$w_valor.'</b>');
         ShowHTML('          <INPUT type="hidden" name="w_valor" value="'.$w_valor.'">');
       }
-      //ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
-      //ShowHTML('          <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_doc" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_doc.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
+      if (is_array($w_valores_pais)) {
+        // Exibe opção para ratear o valor pelos países
+        ShowHTML('          <img src="images/icone/coins.png" alt="img" border=0 align=top height=16 width=16 /><span onClick="rateio()" style="cursor: pointer; color:blue;"> <b>Ratear entre países</b></span>');
+      }
       ShowHTML('<INPUT type="hidden" name="w_valor_doc" value="'.$w_valor_doc.'">');
       if (is_array($w_valores)){
         ShowHTML('<INPUT type="hidden" name="w_sq_valores[]" value="">');
@@ -1844,25 +1924,22 @@ function Geral() {
         foreach($RS_Itens as $row) {
           $qtd   = (($w_herda) ? f($row,'quantidade_autorizada')-f($row,'qtd_paga') : f($row,'qtd_fn'));
           $qtd   = nvl($_POST['w_quantidade'][$i],$qtd);
-          // Ajusta o número de linhas de cada item
-          $rowspan=0;
-          if (count($RS_Rub))     $rowspan++;
-          if (count($w_exibe_ff)) $rowspan++;
-          
+          $unit   = (($w_herda) ? f($row,'valor_unidade') : f($row,'vl_unit_fn'));
+          $unit   = nvl($_POST['w_vl_unitario'][$i],$unit);
           if (f($row,'quantidade_autorizada')-f($row,'qtd_paga')>0 || f($row,'qtd_fn')) {
-            $val   = $qtd*f($row,'valor_unidade');
-            $texto = f($row,'nm_material').' '.f($row,'detalhamento').
+            $val   = $qtd*$unit;
+            $texto = f($row,'nm_material').' '.substr(f($row,'detalhamento'),0,270).
                     ((f($row,'fabricante')) ? ' FABRICANTE '.f($row,'fabricante') : '').
                     ((f($row,'marca_modelo')) ? ' MODELO '.f($row,'marca_modelo') : '');
             ShowHTML('      <tr valign="center">');
-            ShowHTML('          <td align="center"'.(($rowspan) ? ' rowspan="'.$rowspan.'"' : '').'>'.nvl(f($row,'ordem'),$i).'</td>');
+            ShowHTML('          <td align="center"'.((count($RS_Rub)) ? ' rowspan="2"' : '').'>'.nvl(f($row,'ordem'),$i).'</td>');
             ShowHTML('          <td>'.$texto);
             ShowHTML('              <INPUT type="hidden" name="w_sq_itens[]" value="'.f($row,'sq_solicitacao_item').'">');
             ShowHTML('              <INPUT type="hidden" name="w_chave_item[]" value="'.f($row,'sq_documento_item').'">');
             ShowHTML('              <INPUT type="hidden" name="w_ordem[]" value="'.nvl(f($row,'ordem'),$i).'">');
             ShowHTML('              <INPUT type="hidden" name="w_detalhamento[]" value="'.$texto.'">');
             ShowHTML('          <td align="center"><input '.$w_Disabled.' type="text" name="w_quantidade[]" class="sti" SIZE="6" MAXLENGTH="18" VALUE="'.formatNumber($qtd,0).'" style="text-align:right;" title="Informe a quantidade a ser paga deste item." onBlur="atualizaValor();"></td>');
-            ShowHTML('          <td align="center"><input '.$w_Disabled.' READONLY tabindex="-1" type="text" name="w_vl_unitario[]" SIZE="10" VALUE="'.formatNumber(f($row,'valor_unidade')).'" class="sti" style="background: #f0f0f0; text-align:right;"></td>');
+            ShowHTML('          <td align="center"><input '.$w_Disabled.' type="text" name="w_vl_unitario[]" SIZE="18" MAXLENGTH="18" VALUE="'.formatNumber($unit).'" class="sti" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" onBlur="atualizaValor();"></td>');
             ShowHTML('          <td align="center"><input '.$w_Disabled.' READONLY tabindex="-1" type="text" name="w_vl_item[]" SIZE="10" VALUE="'.formatNumber($val).'" class="sti" style="background: #f0f0f0; text-align:right;"></td>');
 
             if(count($RS_Rub)>0) {
@@ -1870,15 +1947,14 @@ function Geral() {
               SelecaoRubrica('<u>R</u>ubrica:','R', 'Selecione a rubrica do projeto.', nvl($_POST['w_rubrica'][$i],f($row,'sq_projeto_rubrica')),nvl($w_solic_vinculo,$w_chave_pai),null,'w_rubrica[]','SELECAO',null,4);
               ShowHTML('      </tr>');
 
-              // Trata fonte de financiamento
-              if ($w_exibe_ff) {
-                ShowHTML('      <tr>');
-                //SelecaoRubricaApoio('<u>F</u>onte de financiamento:','F', 'Selecione a fonte de financiamento que dará suporte ao lançamento.', $w_solic_apoio,$w_sq_projeto_rubrica,'w_solic_apoio','RUBFONTE',null);
-                SelecaoSolicApoio('<u>F</u>onte de financiamento','F',null,nvl($_POST['w_solic_apoio'][$i],f($row,'sq_solic_apoio')),nvl($w_solic_vinculo,$w_chave_pai),'w_solic_apoio[]',null,null,4);
-                ShowHTML('      </tr>');
-              } else {
-                ShowHTML('          <INPUT type="hidden" name="w_solic_apoio" value="'.$w_solic_apoio.'">');
-              }
+  //            // Trata fonte de financiamento
+  //            if ($w_exibe_ff) {
+  //              ShowHTML('      <tr>');
+  //              SelecaoRubricaApoio('<u>F</u>onte de financiamento:','F', 'Selecione a fonte de financiamento que dará suporte ao lançamento.', $w_solic_apoio,$w_sq_projeto_rubrica,'w_solic_apoio','RUBFONTE',null);
+  //              ShowHTML('      </tr>');
+  //            } else {
+  //              ShowHTML('          <INPUT type="hidden" name="w_solic_apoio" value="'.$w_solic_apoio.'">');
+  //            }
 
   //            // Trata autorização da despesa
   //            if ($w_exige_autorizacao=='S') {
@@ -1893,7 +1969,36 @@ function Geral() {
         
         ShowHTML('      </tr></table>');
       }
+
       ShowHTML('          </table>');
+    //}
+    
+    // Valores por país
+    if (is_array($w_valores_pais)){
+      ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td colspan="5" align="center" bgcolor="#D0D0D0"><b>Valores por País</td></td></tr>');
+      ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
+      ShowHTML('      <tr><td colspan="5" align="center"><TABLE class="tudo" BORDER="1" CELLSPACING="1" CELLPADDING="3" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      ShowHTML('      <tr align="center">');
+      ShowHTML('          <td><b>País</b></td>');
+      ShowHTML('          <td><b>Valor'.(($w_nm_moeda) ? ' ('.$w_nm_moeda.')' : '').'</b></td>');
+      ShowHTML('      </tr>');
+      ShowHTML('<INPUT type="hidden" name="w_sq_pais[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_valor_pais[]" value="">');
+      $w_vl_total     = 0.00;
+      foreach($w_valores_pais as $row) {
+        ShowHTML('      <tr valign="top">');
+        ShowHTML('          <INPUT type="hidden" name="w_sq_pais[]" value="'.f($row,'sq_pais').'">');
+        ShowHTML('          <td><b>'.f($row,'nome').'</b></td>');
+        ShowHTML('          <td align="right"><input '.$w_Disabled.' type="text" name="w_valor_pais[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.f($row,'valor').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+        ShowHTML('      </tr>');
+        $w_vl_total += toNumberPHP(f($row,'valor'));
+      }
+      ShowHTML('      <tr><td align="right"><b>Total</b><td align="right"><b>'.FormatNumber($w_vl_total).'</b></td></tr>');
+      if (FormatNumber($w_vl_total)!=$w_valor) {
+        ShowHTML('      <tr><td colspan="2" bgcolor="red" align="center"><b>ATENÇÃO: Soma dos valores difere do valor do lançamento!</b></td></tr>');
+      }
+      ShowHTML('      </table>');
     }
     
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
@@ -1936,8 +2041,12 @@ function Geral() {
       ShowHTML('      w_qtd = parseFloat(w_quantidade);');
       
       ShowHTML('      var w_unitario = new String(theForm["w_vl_unitario[]"][ind].value);');
-      ShowHTML('      w_unitario = w_unitario.replace(".", "");');
-      ShowHTML('      w_unitario = w_unitario.replace(",", ".");');
+      ShowHTML('      if (w_unitario.length==0) {');
+      ShowHTML('        w_unitario = 0;');
+      ShowHTML('      } else {');
+      ShowHTML('        w_unitario = w_unitario.replace(".", "");');
+      ShowHTML('        w_unitario = w_unitario.replace(",", ".");');
+      ShowHTML('      }');
       ShowHTML('      w_unit = parseFloat(w_unitario);');
       
       ShowHTML('      w_item = w_qtd * w_unit;');
@@ -2811,20 +2920,23 @@ function Documentos() {
       // Itens
       $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,$w_sq_lancamento_doc,null,null,null);
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
-      ShowHTML('    <tr><td colspan=2 bgcolor="'.$conTrAlternateBgColor.'"><b>Itens&nbsp;&nbsp;'.((substr(f($RS_Menu,'sigla'),3)!='VIA') ? '[<a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Itens&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_sq_lancamento_doc='.$w_sq_lancamento_doc.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ITEM"><u>I</u>ncluir</a>]' : '' ).'</b></td>');
+      ShowHTML('    <tr><td colspan=2 bgcolor="'.$conTrAlternateBgColor.'" nowrap><b>Itens&nbsp;&nbsp;');
+      ShowHTML('        '.((substr(f($RS_Menu,'sigla'),3)!='VIA') ? '[<a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.'Itens&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_sq_lancamento_doc='.$w_sq_lancamento_doc.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=ITEM"><u>I</u>ncluir</a>]' : '' ).'</b>');
+      ShowHTML('        '.((substr(f($RS_Menu,'sigla'),3)!='VIA') ? '[<a accesskey="T" class="ss" href="'.$w_dir.'importacao_itens.php?par=inicial&R='.$w_pagina.$par.'&O=I&w_menu='.$w_menu.'&w_chave='.$w_chave.'&w_sq_lancamento_doc='.$w_sq_lancamento_doc.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=IMPORTITEM">Impor<u>t</u>ar</a>]' : '' ).'</b>');
+      ShowHTML('        </td>');
       ShowHTML('        <td align="right" bgcolor="'.$conTrAlternateBgColor.'">'.exportaOffice().'<b>Registros: '.count($RS));
       ShowHTML('    <tr><td colspan=3 align="center" height="1" bgcolor="'.$conTrAlternateBgColor.'"></td></tr>');
       ShowHTML('    <tr><td colspan="3"><table border=0 width="100%">');
       // Recupera todos os registros para a listagem
       if (count($RS)>0) {
-        $RS = SortArray($RS,'ordem','asc');
+        $RS = SortArray($RS,'ordem','asc','sq_documento_item','asc');
         // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
         ShowHTML('<tr><td colspan=3>');
         ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
         ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
         ShowHTML('          <td><b>Ordem</td>');
-        if(nvl(f($RS1,'qtd_rubrica'),0)>0) ShowHTML('          <td><b>Rubrica</td>');
         ShowHTML('          <td><b>Descrição</td>');
+        if(nvl(f($RS1,'qtd_rubrica'),0)>0) ShowHTML('          <td><b>Rubrica</td>');
         ShowHTML('          <td><b>Qtd.</td>');
         if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
           ShowHTML('          <td><b>Data cotação</td>');
@@ -2844,8 +2956,8 @@ function Documentos() {
             $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
             ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
             ShowHTML('        <td align="center">'.f($row,'ordem').'</td>');
-            if(nvl(f($RS1,'qtd_rubrica'),0)>0) ShowHTML('        <td align="left">'.f($row,'codigo_rubrica').' - '.f($row,'nm_rubrica').'</td>');
             ShowHTML('        <td align="left">'.f($row,'descricao').'</td>');
+            if(nvl(f($RS1,'qtd_rubrica'),0)>0) ShowHTML('        <td align="center">'.f($row,'codigo_rubrica').'</td>');
             ShowHTML('        <td align="right">'.formatNumber(f($row,'quantidade'),0).'</td>');
             if (strpos(f($RS_Menu,'sigla'),'VIA')!==false) {
               ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'data_cotacao')).'</td>');
@@ -3237,7 +3349,7 @@ function Itens() {
   } elseif ($O=='L') {
     // Recupera todos os registros para a listagem
     $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,$w_sq_lancamento_doc,null,null,null);
-    $RS = SortArray($RS,'ordem','asc');
+    $RS = SortArray($RS,'ordem','asc','sq_documento_item','asc');
   } elseif (strpos('AEV',$O)!==false) {
     // Recupera os dados do endereço informado
     $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,$w_sq_documento_item,$w_sq_lancamento_doc,null,null,null);
@@ -4467,10 +4579,13 @@ function Concluir() {
   $w_tramite            = f($RS_Solic,'sq_siw_tramite');
   $w_conta_debito       = f($RS_Solic,'sq_pessoa_conta');
   $w_valor_real         = formatNumber(f($RS_Solic,'valor_doc')-f($RS_Solic,'vl_abatimento')+f($RS_Solic,'vl_outros'));
+  If ($w_valor_real=='0,00') $w_valor_real = formatNumber(f($RS_Solic,'valor'));
   $w_sg_forma_pagamento = f($RS_Solic,'sg_forma_pagamento');
   $w_sq_tipo_lancamento = f($RS_Solic,'sq_tipo_lancamento');
   $w_inicio             = FormataDataEdicao(time());
   $w_moeda_solic        = f($RS_Solic,'sq_moeda');
+  $w_cc_debito          = f($RS_Solic,'cc_debito');
+  $w_cc_credito         = f($RS_Solic,'cc_credito');
 
   if (nvl(f($RS_Solic,'dados_pai'),'')!='') {
     // Recupera dados da solicitação
@@ -4488,6 +4603,21 @@ function Concluir() {
   if (f($RS_Pai,'sg_modulo')=='PR')         $w_projeto = $RS_Pai;
   elseif (f($RS_Vinculo,'sg_modulo')=='PR') $w_projeto = $RS_Vinculo;
   else                                      $w_projeto = array();
+
+  if (substr($SG,0,3)!='FNR') {
+    // Recupera os valores por país
+    $sql = new db_getLancamentoPais; $RS_Pais = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,nvl($w_copia,$w_chave),null,'EDICAO');
+    $RS_Pais = SortArray($RS_Pais,'nome','asc');
+    $i = 0;
+    unset($w_valores_pais);
+    foreach ($RS_Pais as $row) {
+      $i++;
+      $w_valores_pais[$i]['chave']    = f($row,'sq_lancamento_valor');
+      $w_valores_pais[$i]['sq_pais']  = f($row,'sq_pais');
+      $w_valores_pais[$i]['nome']     = f($row,'nome');
+      $w_valores_pais[$i]['valor']    = nvl($_POST['w_valor_pais'][$i],formatNumber(nvl(f($row,'valor'),0)));
+    }
+  }
 
   // Se for recarga da página
   if (nvl($w_troca,'')!='') extract($_POST);
@@ -4528,7 +4658,6 @@ function Concluir() {
     if ($w_moeda_solic!=$w_moeda_pai && nvl($w_moeda_pai,'')!='')     $w_moedas[nvl(f($w_projeto,'sq_moeda'),f($RS_Pai,'sq_moeda'))]   = nvl(f($w_projeto,'sb_moeda'),f($RS_Pai,'sb_moeda'));
     if ($w_moeda_solic!=$w_moeda_conta && nvl($w_moeda_conta,'')!='') $w_moedas[f($RS_Conta,'sq_moeda')] = f($RS_Conta,'sb_moeda');
     if (is_array($w_moedas)) asort($w_moedas);
-//ExibeVariaveis();
     
     $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $w_chave,null,null,null,null);
     foreach($RS_Moeda_Cot as $row) {
@@ -4575,6 +4704,23 @@ function Concluir() {
     }
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
     if ($w_exige_conta) Validate('w_conta_debito','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
+
+    // Valida valores por país
+    if (is_array($w_valores_pais)) {
+      ShowHTML('  for (ind=1; ind < theForm["w_valor_pais[]"].length; ind++) {');
+      Validate('["w_valor_pais[]"][ind]','!','VALOR','1','4','18','','0123456789.,-');
+      ShowHTML('  }');
+    }
+    
+    Validate('w_cc_debito','Conta Débito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    Validate('w_cc_credito','Conta Crédito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    
+    ShowHTML('  if ((theForm.w_cc_debito.value != "" && theForm.w_cc_credito.value == "") || (theForm.w_cc_debito.value == "" && theForm.w_cc_credito.value != "")) {');
+    ShowHTML('     alert ("Informe ambas as contas contábeis ou nenhuma delas!");');
+    ShowHTML('     theForm.w_cc_debito.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
     Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1!=1) {
@@ -4694,11 +4840,31 @@ function Concluir() {
       }
     }
 
+    // Valores por país
+    if (is_array($w_valores_pais)){
+      ShowHTML('      <tr><td colspan="3"><br><b>VALORES POR PAÍS</b></td></tr>');  
+      ShowHTML('      <tr><td colspan="3"><blockquote><TABLE class="tudo" BORDER="1" CELLSPACING="1" CELLPADDING="3" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+      ShowHTML('      <tr align="center">');
+      ShowHTML('          <td><b>País</b></td>');
+      ShowHTML('          <td><b>Valor ('.f($RS_Solic,'sb_moeda').')</b></td>');
+      ShowHTML('      </tr>');
+      ShowHTML('<INPUT type="hidden" name="w_sq_pais[]" value="">');
+      ShowHTML('<INPUT type="hidden" name="w_valor_pais[]" value="">');
+      foreach($w_valores_pais as $row) {
+        ShowHTML('      <tr valign="top">');
+        ShowHTML('          <INPUT type="hidden" name="w_sq_pais[]" value="'.f($row,'sq_pais').'">');
+        ShowHTML('          <td><b>'.f($row,'nome').'</b></td>');
+        ShowHTML('          <td align="right"><input '.$w_Disabled.' type="text" name="w_valor_pais[]" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.f($row,'valor').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);"></td>');
+        ShowHTML('      </tr>');
+      }
+      ShowHTML('      </table><blockquote></td></tr>');
+    }
+
     if (f($RS_Solic,'lancamento_vinculado')=='N') {
       // Pagamentos vinculados
       $sql = new db_getImpostoDoc; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,$w_SG);
       $RS1 = SortArray($RS1,'calculo','desc','nm_imposto','asc','sq_lancamento_doc','asc','phpdt_inclusao','asc','esfera','asc');
-      ShowHTML('      <tr><td colspan="2"><br><b>LANÇAMENTOS VINCULADOS</b>&nbsp;&nbsp;&nbsp;<A class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.'tesouraria.php?par=geral&R='.$w_pagina.$par.'&O=I&SG=FNDEVENT&w_chave_vinc='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Lançamento vinculado&SG=FNDEVENT').'\',\'SolicVinc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Incluir lançamento vinculado a este.">Incluir</A>&nbsp</td></tr>');  
+      ShowHTML('      <tr><td colspan="3"><br><b>LANÇAMENTOS VINCULADOS</b>&nbsp;&nbsp;&nbsp;<A class="ss" HREF="javascript:this.status.value;" onClick="window.open(\''.montaURL_JS(null,$conRootSIW.$w_dir.'tesouraria.php?par=geral&R='.$w_pagina.$par.'&O=I&SG=FNDEVENT&w_chave_vinc='.$w_chave.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.' - Lançamento vinculado&SG=FNDEVENT').'\',\'SolicVinc\',\'toolbar=no,width=780,height=530,top=30,left=10,scrollbars=yes,resizable=yes\');" title="Incluir lançamento vinculado a este.">Incluir</A>&nbsp</td></tr>');  
       ShowHTML('      <tr><td colspan="3" align="center"><table width=100%  border="1" bordercolor="#00000">');
       ShowHTML('          <tr bgcolor="'.$conTrBgColor.'" align="center">');
       ShowHTML('            <td><b>Tipo</td>');
@@ -4758,6 +4924,11 @@ function Concluir() {
     
     ShowHTML('      <tr><td colspan="4"><b>Obs<u>e</u>rvação:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_observacao" class="sti" ROWS=5 cols=75 title="Descreva o quanto a demanda atendeu aos resultados esperados.">'.$w_observacao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan="4"><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="sti" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
+
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>C</u>onta contábil de débito:</b></br><input type="text" name="w_cc_debito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_debito.'"></td>');
+    ShowHTML('        <td><b><u>C</u>onta contábil de crédito:</b></br><input type="text" name="w_cc_credito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_credito.'"></td>');
+
     ShowHTML('      <tr colspan="4"><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('    <tr><td align="center" colspan=4><hr>');
     ShowHTML('      <input class="stb" type="submit" name="Botao" value="Gravar">');
@@ -5106,7 +5277,7 @@ function Grava() {
               $_REQUEST['w_numero_processo']),$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],
               $_REQUEST['w_solic_vinculo'],$_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],
               $_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],
-              $w_chave_nova, $w_codigo);
+              $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
 
       if ($O!='E') {
 
@@ -5150,7 +5321,7 @@ function Grava() {
             } 
           }
         }
-
+        
         if (nvl($_REQUEST['w_copia'],'')!='' && nvl($_REQUEST['w_sq_tipo_documento'],'')!='') {
           // Copia os documentos e os itens do lançamento original
           $sql = new db_getLancamentoDoc; $RS_Docs = $sql->getInstanceOf($dbms,$_REQUEST['w_copia'],null,null,null,null,null,null,'DOCS');
@@ -5160,12 +5331,24 @@ function Grava() {
             $SQL = new db_getLancamentoItem; $RS = $SQL->getInstanceOf($dbms,null,f($row,'sq_lancamento_doc'),null,null,null);
             $RS = SortArray($RS,'ordem','asc','rubrica','asc');
             foreach ($RS as $row1) {
+              // Se o lançamento de origem tiver apenas um item, o novo item terá valor igual ao
+              // do novo lançamento.
+              // Se tiver mais de um item, os novos itens terão valores iguais aos de origem,
+              // mesmo que valor do novo lançamento seja diferente do original.
               $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,$O,$w_chave_doc,null,
-                f($row1,'sq_projeto_rubrica'),f($row1,'sq_solic_apoio'),f($row1,'descricao'),f($row1,'quantidade'),
-                formatNumber(f($row1,'valor_unitario')),nvl(f($row1,'ordem'),$i),f($row1,'data_cotacao'),
-                formatNumber(f($row1,'valor_cotacao')),f($row1,'sq_solicitacao_item'));
+                f($row1,'sq_projeto_rubrica'),f($row1,'descricao'),f($row1,'quantidade'),
+                ((count($RS)==1) ? $_REQUEST['w_valor'] : formatNumber(f($row1,'valor_unitario'))),
+                nvl(f($row1,'ordem'),$i),f($row1,'data_cotacao'),formatNumber(f($row1,'valor_cotacao')),f($row1,'sq_solicitacao_item'));
               $i++;
             }
+          }
+        }
+          
+        if (is_array($_REQUEST['w_valor_pais'])) {
+          // Grava valores do lançamento por país
+          $SQL = new dml_putLancamentoPais;  $SQL->getInstanceOf($dbms,'E',$w_chave_nova,null,null);
+          for ($i=1; $i<=count($_POST['w_valor_pais'])-1; $i=$i+1) {
+              $SQL->getInstanceOf($dbms,'I',$w_chave_nova,$_REQUEST['w_sq_pais'][$i],$_REQUEST['w_valor_pais'][$i]);
           }
         }
 
@@ -5178,9 +5361,9 @@ function Grava() {
               $operacao = 'E';
             }
             $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,$operacao,
-                $w_chave_doc,$_REQUEST['w_chave_item'][$i],$_REQUEST['w_rubrica'][$i],$_REQUEST['w_solic_apoio'][$i],
-                $_REQUEST['w_detalhamento'][$i],$_REQUEST['w_quantidade'][$i],$_REQUEST['w_vl_unitario'][$i],
-                $_REQUEST['w_ordem'][$i],null,null,$_REQUEST['w_sq_itens'][$i]);
+                $w_chave_doc,$_REQUEST['w_chave_item'][$i],$_REQUEST['w_rubrica'][$i],$_REQUEST['w_detalhamento'][$i],
+                $_REQUEST['w_quantidade'][$i],$_REQUEST['w_vl_unitario'][$i],$_REQUEST['w_ordem'][$i],null,null,
+                $_REQUEST['w_sq_itens'][$i]);
           }
         } 
 
@@ -5199,10 +5382,14 @@ function Grava() {
         $w_html = VisualLancamento($w_chave_nova,'L',$w_usuario,'2','1');
         CriaBaseLine($w_chave_nova,$w_html,f($RS_Menu,'nome'),$w_ee);
         
-        if (f($RS_Menu,'sigla')!='FNREVENT') {
+        // Conclusão automática de recebimento/devolução removida a pedido do Márcio e Maurício
+        // durante a reunião de 12.11.2018
+        
+        //if (f($RS_Menu,'sigla')!='FNREVENT') {
           // Envia a solicitação para execução   
           $SQL = new dml_putLancamentoEnvio; $SQL->getInstanceOf($dbms,$_REQUEST['w_menu'],$w_chave_nova,$w_usuario,$w_ci,
                   $w_ee,'N',null,$w_usuario,'Envio automático de lançamento financeiro.',null,null,null,null);
+        /*
         } else {
           // Recupera o trâmite de conclusão
           $sql = new db_getTramiteList; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_menu'],null,null,null);
@@ -5220,6 +5407,7 @@ function Grava() {
                   $_REQUEST['w_conta_debito'],$_REQUEST['w_sq_tipo_lancamento'],$_REQUEST['w_sq_projeto_rubrica'],
                   $_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
         }
+        */
 
         ScriptOpen('JavaScript');
         if ($P2==1) {
@@ -5364,10 +5552,9 @@ function Grava() {
   } elseif ($SG=='ITEM') {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
-      $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_lancamento_doc'],
-        $_REQUEST['w_sq_documento_item'],$_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],
-        $_REQUEST['w_descricao'],$_REQUEST['w_quantidade'],$_REQUEST['w_valor_unitario'],$_REQUEST['w_ordem'],
-        $_REQUEST['w_data_cotacao'],$_REQUEST['w_valor_cotacao'],$_REQUEST['w_sq_solicitacao_item']);
+      $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_sq_lancamento_doc'],$_REQUEST['w_sq_documento_item'],
+        $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_descricao'],$_REQUEST['w_quantidade'],$_REQUEST['w_valor_unitario'],
+        $_REQUEST['w_ordem'],$_REQUEST['w_data_cotacao'],$_REQUEST['w_valor_cotacao'],$_REQUEST['w_sq_solicitacao_item']);
       ScriptOpen('JavaScript');
       if ($P1==0) {
         if ($P2==1||$P2==3) {
@@ -5389,8 +5576,8 @@ function Grava() {
       ScriptClose();
       retornaFormulario('w_assinatura');
     }     
-    // Envio de lançamentos.
   } elseif (strpos($SG,'ENVIO')!==false) {
+    // Envio de lançamentos.
     // Verifica se a Assinatura Eletrônica é válida 
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
       // Trata o recebimento de upload ou dados 
@@ -5508,16 +5695,18 @@ function Grava() {
   } elseif (!(strpos($SG,'ENVAUT')===false)) {
     // Verifica se a Assinatura Eletrônica é válida
     if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
-      // Evita envio de documento com erro
-      $w_erro = ValidaLancamento($w_cliente,$_REQUEST['w_chave'],f($RS_Menu,'sigla'),null,null,null,$_REQUEST['w_tramite']);
-      if (substr(Nvl($w_erro,'-'),0,1)=='0') {
-        ShowHTML('<blockquote><div align="left"><font color="#BC3131"><b>ATENÇÃO:</b> Foram identificadas as pendências listadas abaixo, não sendo possível seu encaminhamento para fases posteriores à atual:</b></font><ul>'.
-                substr($w_erro,1).
-                '</ul></div>'
-              );
-        ShowHTML('<div align="center">Clique <a class="hl" HREF="javascript:this.status.value;" onClick="document.forms[\'RetornaDados\'].submit()">aqui</a> para voltar à tela anterior.</div></blockquote>');
-        RetornaFormulario(null,null,null,null,null,null,null,null,null,null,null,null,null,0);
-     }
+      If (w_envio=='N') {
+        // Evita envio de documento com erro. Não valida se for devolução.
+        $w_erro = ValidaLancamento($w_cliente,$_REQUEST['w_chave'],f($RS_Menu,'sigla'),null,null,null,$_REQUEST['w_tramite']);
+        if (substr(Nvl($w_erro,'-'),0,1)=='0') {
+          ShowHTML('<blockquote><div align="left"><font color="#BC3131"><b>ATENÇÃO:</b> Foram identificadas as pendências listadas abaixo, não sendo possível seu encaminhamento para fases posteriores à atual:</b></font><ul>'.
+                  substr($w_erro,1).
+                  '</ul></div>'
+                );
+          ShowHTML('<div align="center">Clique <a class="hl" HREF="javascript:this.status.value;" onClick="document.forms[\'RetornaDados\'].submit()">aqui</a> para voltar à tela anterior.</div></blockquote>');
+          RetornaFormulario(null,null,null,null,null,null,null,null,null,null,null,null,null,0);
+        }
+      }
      
       // Trata o recebimento de upload ou dados 
       $SQL = new dml_putSolicEnvio;
@@ -5674,21 +5863,29 @@ function Grava() {
               $SQL = new dml_putSolicCotacao; $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$v,$_REQUEST['w_valor'.'_'.$v]);
             }
           }
-          $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],$_REQUEST['w_quitacao'],
-            $_REQUEST['w_valor_real'],$_REQUEST['w_codigo_deposito'],$_REQUEST['w_conta_debito'],$_REQUEST['w_sq_tipo_lancamento'],
-            $_REQUEST['w_sq_projeto_rubrica'][1], // O índice é para pegar a rubrica do primeiro item, caso exista mais de um.
-            $_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+          $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
+                  $_REQUEST['w_quitacao'],$_REQUEST['w_valor_real'],$_REQUEST['w_codigo_deposito'],$_REQUEST['w_conta_debito'],
+                  $_REQUEST['w_sq_tipo_lancamento'],$_REQUEST['w_sq_projeto_rubrica'][1], // O índice é para pegar a rubrica do primeiro item, caso exista mais de um.
+                  $_REQUEST['w_observacao'],$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_file,$w_tamanho,$w_tipo,$w_nome);
           
           if (is_array($_REQUEST['w_sq_projeto_rubrica'])) {
             // Grava a rubrica de cada item do lançamento
             for ($i = 0; $i < count($_REQUEST['w_sq_projeto_rubrica']); $i++) {
               if (Nvl($_REQUEST['w_sq_projeto_rubrica'][$i], '')!='') {
-                $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,'J',$_REQUEST['w_sq_lancamento_doc'][$i],
-                $_REQUEST['w_sq_documento_item'][$i],$_REQUEST['w_sq_projeto_rubrica'][$i],$_REQUEST['w_solic_apoio'][$i],
-                null,null,null,null,null,null,null);
+                $SQL = new dml_putLancamentoItem; $SQL->getInstanceOf($dbms,'J',$_REQUEST['w_sq_lancamento_doc'][$i],$_REQUEST['w_sq_documento_item'][$i],
+                  $_REQUEST['w_sq_projeto_rubrica'][$i],null,null,null,null,null,null,null);
               }
             }
           }
+          
+          if (is_array($_REQUEST['w_valor_pais'])) {
+            // Grava valores do lançamento por país
+            $SQL = new dml_putLancamentoPais;  $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null,null);
+            for ($i=1; $i<=count($_POST['w_valor_pais'])-1; $i=$i+1) {
+                $SQL->getInstanceOf($dbms,'I',$_REQUEST['w_chave'],$_REQUEST['w_sq_pais'][$i],$_REQUEST['w_valor_pais'][$i]);
+            }
+          }
+          
           $w_html = VisualLancamento($_REQUEST['w_chave'],'L',$w_usuario,'2','1');
           CriaBaseLine($_REQUEST['w_chave'],$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
           // Envia e-mail comunicando a conclusão
@@ -5755,7 +5952,7 @@ function Grava() {
                 $w_tipo,f($RS1,'protocolo_completo'),$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
                 $_REQUEST['w_texto_pagamento'],f($RS1,'sq_solic_pai'),$_REQUEST['w_sq_projeto_rubrica'],
                 $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],f($RS1,'sq_moeda'),
-                $w_chave_nova, $w_codigo);
+                $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
 
             //Grava os dados da pessoa
             $SQL2->getInstanceOf($dbms,$O,$SG,$w_chave_nova,$w_cliente,$_REQUEST['w_outra_parte'][$i],f($RS,'cpf'),f($RS,'cnpj'),
@@ -5799,7 +5996,8 @@ function Grava() {
             $_REQUEST['w_cidade'],$_REQUEST['w_chave_pai'],$_REQUEST['w_sq_acordo_parcela'],$_REQUEST['w_observacao'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),Nvl($_REQUEST['w_sq_forma_pagamento'],''),
             $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],$_REQUEST['w_vencimento_atual'],null,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
             $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],$_REQUEST['w_sq_projeto_rubrica'],
-            $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],$w_chave_nova, $w_codigo);
+            $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],
+            $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
 
         if ($O!='E') {
 
@@ -5834,6 +6032,13 @@ function Grava() {
                 $SQL->getInstanceOf($dbms,'I',$w_chave_doc,$_REQUEST['w_sq_valores'][$i],$_REQUEST['w_valores'][$i]);
               } 
             }
+            
+            // Grava valores do lançamento por país
+            $SQL = new dml_putLancamentoPais;  $SQL->getInstanceOf($dbms,'E',$w_chave_nova,null,null);
+            for ($i=1; $i<=count($_POST['w_valor_pais'])-1; $i=$i+1) {
+                $SQL->getInstanceOf($dbms,'I',$w_chave_nova,$_REQUEST['w_sq_pais'][$i],$_REQUEST['w_valor_pais'][$i]);
+            }
+            
           }
         }
       } 
@@ -5870,7 +6075,8 @@ function Main() {
     case 'OUTRAPARTE':      OutraParte();       break;
     case 'DOCUMENTO':       Documentos();       break;
     case 'RUBRICADOC':      RubricaDoc();       break;    
-    case 'ITENS':           Itens();            break;
+    case 'ITENS':           Itens();            break;    
+    case 'IMPORTACAO':      Importacao();       break;
     case 'NOTAS':           Notas();            break;
     case 'BUSCAPARCELA':    BuscaParcela();     break;
     case 'FICHARUBRICA':    FichaRubrica();     break;

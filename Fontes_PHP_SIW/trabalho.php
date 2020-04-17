@@ -23,7 +23,9 @@ include_once($w_dir_volta.'classes/sp/db_getAfastamento.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkDataUser.php');
 include_once($w_dir_volta.'classes/sp/db_getUserResp.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicFN.php');
 include_once($w_dir_volta.'visualalerta.php');
+include_once($w_dir_volta.'mod_fn/visuallancamento.php');
 // =========================================================================
 //  trabalho.php
 // ------------------------------------------------------------------------
@@ -149,16 +151,31 @@ function Mesa() {
   Cabecalho();
   head();
   ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.';">');
+  if (nvl($w_financeiro,'')!='') {
+    ScriptOpen('Javascript');
+    ValidateOpen('Validacao');
+    Validate('w_codigo','Código lançamento','','1','8','90','1','1');
+    ValidateClose();
+    ScriptClose();
+  }
   ShowHTML('</HEAD>');
-  BodyOpen('onLoad="this.focus()";');
+  if (nvl($w_financeiro,'')!='') {
+    BodyOpen('onLoad="document.Form.w_codigo.focus()";');
+  } else {
+    BodyOpen('onLoad=\'this.focus()\';');   
+  }
+  AbreForm('Form',$w_pagina.'Consulta','POST','return(Validacao(this));',null,$P1,$P2,$P3,null,$TP,$SG,$R,'L');
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
-  ShowHTML('    <td align="right">');
+  ShowHTML('    <td align="right" valign="top" NOWRAP>');
   
   // Se o módulo financeiro estiver habilitado e o usuário for gestor desse módulo, exibe link para a tela de tesouraria
   if (nvl($w_financeiro,'')!='' && $_SESSION['DBMS']!=8) {
+    ShowHTML('Buscar pagamento: <INPUT CLASS="sti" TYPE="text" NAME="w_codigo" size="18" maxlength="18" VALUE="" title="Informe o código do pagamento ou recebimento desejado.">');
+    ShowHTML('<input type="image" name="submit" src="images/Folder/Explorer.gif" style="vertical-align:middle;width:15px;height:15px" border=0>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    
     if ($w_tesouraria) {
-      ShowHTML('      <A HREF="mod_fn/tesouraria.php?par=inicial&O=L&TP='.$TP.' - Tesouraria" title="Clique para acessar a tela da tesouraria."><img src="'.$conImgFin.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+      ShowHTML('      <A HREF="mod_fn/tesouraria.php?par=inicial&O=L&TP='.$TP.' - Tesouraria" title="Clique para acessar a tela da tesouraria."><img src="'.$conImgFin.'" style="vertical-align:middle;width:15px;height:15px" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
     }
   }
   
@@ -181,43 +198,24 @@ function Mesa() {
       }
       
       if ($w_erro) {
-        ShowHTML('      <a HREF="javascript:this.status.value;" onClick="alert(\'Jornada diária não informada no contrato. Entre em contato com os gestores de pessoal!\');" title="Pendente gestores de pessoal informarem jornada diária de trabalho no contrato."><img src="'.$conRootSIW.'images/relogio.gif" width=16 height=16 border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+        ShowHTML('      <a HREF="javascript:this.status.value;" onClick="alert(\'Jornada diária não informada no contrato. Entre em contato com os gestores de pessoal!\');" title="Pendente gestores de pessoal informarem jornada diária de trabalho no contrato."><img src="'.$conRootSIW.'images/relogio.gif" style="vertical-align:middle;width:15px;height:15px" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
       } else {
-        ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_rh/folha.php?par=inicial&O=L&SG=COINICIAL&TP='.$TP.' - Folha de ponto').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para acessar a folha de ponto."><img src="'.$conRootSIW.'images/relogio.gif" width=16 height=16 border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+        ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_rh/folha.php?par=inicial&O=L&SG=COINICIAL&TP='.$TP.' - Folha de ponto').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para acessar a folha de ponto."><img src="'.$conRootSIW.'images/relogio.gif" style="vertical-align:middle;width:15px;height:15px" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
       }
     }
   }
 
   // Se o georeferenciamento estiver habilitado para o cliente, exibe link para acesso à visualização
   if (f($RS_Cliente,'georeferencia')=='S') {
-    ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Georeferenciamento').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para visualizar os mapas georeferenciados."><img src="'.$conImgGeo.'" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+    ShowHTML('      <a HREF="javascript:this.status.value;" onClick="javascript:window.open(\''.montaURL_JS($w_dir,'mod_gr/exibe.php?par=inicial&O=L&TP='.$TP.' - Georeferenciamento').'\',\'Folha\',\'toolbar=no,resizable=yes,width=780,height=550,top=20,left=10,scrollbars=yes\');" title="Clique para visualizar os mapas georeferenciados."><img src="'.$conImgGeo.'" style="vertical-align:middle;width:15px;height:15px" border=0></a></font></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
   }
 
-  /* Bloco desabilitado para verificação de performance. 10/07/2014 - Alexandre */
-  if ($_SESSION['DBMS']!=8 && 1==0) {
-    // Exibe, se necessário, sinalizador para alerta
-    $sql = new db_getAlerta; $RS = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, 'SOLICGERAL', 'N', null);
-    if (count($RS)>0) {
-      $w_sinal = $conImgAlLow;
-      $w_msg   = 'Clique para ver alertas de atraso e proximidade da data de conclusão.';
-      foreach($RS as $row) {
-        if ($w_usuario==f($row,'solicitante')) {
-          $w_sinal = $conImgAlMed;
-          $w_msg   = 'Há alertas nos quais sua você é o responsável ou o solicitante. Clique para vê-los.';
-        }
-        if ($w_usuario==nvl(f($row,'sq_exec'),f($row,'solicitante')))  {
-          $w_sinal = $conImgAlHigh;
-          $w_msg   = 'Há alertas nos quais sua intervenção é necessária. Clique para vê-los.';
-          break;
-        }
-      }
-      ShowHTML('      <a href="'.$w_pagina.'alerta&O=L&TP='.$TP.' - Alertas" title="'.$w_msg.'"><img src="'.$w_sinal.'" border=0></a></font></b>');
-    }
-  }
+  // Link para a tela de alertas
+  //ShowHTML('      <a href="'.$w_pagina.'alerta&O=L&TP='.$TP.' - Alertas" title="Clique para ver alertas de atraso e proximidade da data de conclusão."><img src="'.$conImgAlLow.'" style="vertical-align:middle;width:15px;height:15px" border=0></a></font></b>');
 
   ShowHTML('<tr><td colspan=2><hr>');
   ShowHTML('</table>');
-  ShowHTML('<center>');
+  ShowHtml('</form>');
   ShowHTML('<table border="0" width="100%">');
   if ($O=="L") {
     ShowHTML('<tr><td align="center" colspan=3>');
@@ -304,7 +302,6 @@ function Mesa() {
       ShowHTML('    </tr>');
     }
 
-    ShowHTML('      </center>');
     ShowHTML('    </table>');
     ShowHTML('  </td>');
     ShowHTML('</tr>');
@@ -328,9 +325,8 @@ function Mesa() {
       if (nvl($w_compras,'')!='') {
         $sql = new db_getLinkData; $RSMenu_Compras = $sql->getInstanceOf($dbms,$w_cliente,'CLLCCAD');
         $sql = new db_getSolicCL; $RS_Compras = $sql->getInstanceOf($dbms,f($RSMenu_Compras,'sq_menu'),$w_usuario,'MESA',2,
-            formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null, null, null, 
-            null, null, null, null,null, null, null, null, null, null, null, null, null, null, null, null,null,null,null,null,
-            null, null, null, null);
+            formataDataEdicao($w_inicio),formataDataEdicao($w_fim),null,null,null,null,null,null,null,null,null, null, null, null, null, 
+            null, null,null, null, null, null, null, null, null, null, null, null, null, null,null,null,null,null,null,null,null,null);
         $RS_Compras = SortArray($RS_Compras,'codigo_interno', 'asc');
 
         // Cria arrays com cada dia do período, definindo o texto e a cor de fundo para exibição no calendário
@@ -674,7 +670,6 @@ function Mesa() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
 
@@ -692,10 +687,9 @@ function Alerta() {
   ShowHTML('<table border="0" width="100%">');
   ShowHTML('<tr><td><b><FONT COLOR="#000000"><font size=2>'.$w_TP.'</font></b>');
   $sql = new db_getLinkData; $RS_Volta = $sql->getInstanceOf($dbms,$w_cliente,'MESA');
-  ShowHTML('  <td align="right"><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').montaFiltro('GET').'" target="content">Voltar para '.f($RS_Volta,'nome').'</a>');
+  ShowHTML('  <td align="right"><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP='.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').montaFiltro('GET').'" target="content">Voltar para '.f($RS_Volta,'nome').'</a>');
   ShowHTML('<tr><td colspan=2><hr>');
   ShowHTML('</table>');
-  ShowHTML('<center>');
   ShowHTML('<table border="0" width="100%">');
   if ($O=='L') {
   // Recupera solicitações a serem listadas
@@ -709,7 +703,12 @@ function Alerta() {
     // Recupera banco de horas
     $sql = new db_getAlerta; $RS_Horas = $sql->getInstanceOf($dbms, $w_cliente, $w_usuario, 'HORAS', 'N', null);
     
-    ShowHTML(VisualAlerta($w_cliente, $w_usuario, 'TELA', $RS_Solic, $RS_Pacote, $RS_Horas));
+    $texto = VisualAlerta($w_cliente, $w_usuario, 'TELA', $RS_Solic, $RS_Pacote, $RS_Horas);
+    if (!$texto) {
+      ShowHtml('<div align="center"><font color="red"><b>Nenhum registro encontrado!</b></font></div>');
+    } else {
+      ShowHtml($texto);
+    }
   } else {
     ScriptOpen("JavaScript");
     ShowHTML(' alert("Opção não disponível");');
@@ -717,9 +716,92 @@ function Alerta() {
     ScriptClose();
   }
   ShowHTML('</table>');
-  ShowHTML('</center>');
   Rodape();
 }
+
+// =========================================================================
+// Rotina de consulta a lançamentos
+// -------------------------------------------------------------------------
+function Consulta() {
+  extract($GLOBALS);
+  global $SG, $w_TP;
+  
+  $w_TP = $TP.' - Consulta lançamento financeiro';
+  
+  $w_codigo = $_REQUEST['w_codigo'];
+  $sql = new db_getSolicFN; $RS = $sql->getInstanceOf($dbms,null,$w_usuario,null,5,
+        $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,
+        $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
+        $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
+        $p_uorg_resp, $w_codigo, $p_prazo, $p_fase, $p_sqcc, $p_projeto, null, $p_sq_acao_ppa, $p_sq_orprior, $p_empenho);
+  if ($p_ordena>'') {
+    $lista = explode(',',str_replace(' ',',',$p_ordena));
+    $RS = SortArray($RS,$lista[0],$lista[1],'dt_pagamento','asc','ord_codigo_interno','asc');
+  } else {
+    $RS = SortArray($RS,'dt_pagamento','asc','ord_codigo_interno','asc');
+  }
+
+  Cabecalho();
+  head();
+  Estrutura_CSS($w_cliente);
+  ShowHTML('<meta http-equiv="Refresh" content="'.$conRefreshSec.'; URL=tesouraria.php?par=inicial&P1=0&P2=1&P3='.$P3.'&P4='.$P4.'&TP='.$TP.montaFiltro('GET').'">');
+  ShowHTML('<TITLE>'.$conSgSistema.' - Listagem</TITLE>');
+  ScriptOpen('Javascript');
+  openBox('reload');
+  ValidateOpen('Validacao');
+  Validate('w_codigo','Código lançamento','','1','8','90','1','1');
+  ShowHTML('  disAll();');
+  ValidateClose();
+  ScriptClose();
+  ShowHTML('</HEAD>');
+
+  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
+  BodyOpen('onLoad="document.Form.w_codigo.focus();"');
+  Estrutura_Topo_Limpo();
+  Estrutura_Menu();
+  Estrutura_Corpo_Abre();
+  Estrutura_Texto_Abre();
+
+  AbreForm('Form',$w_pagina.'Consulta','POST','return(Validacao(this));',null,0,3,1,null,$TP,$SG,$R,'L');
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+
+  // Filtro
+  ShowHTML('<tr><td>');
+  ShowHTML('  <table border="0" cellpadding="5" cellspacing="0" width="100%">');
+  ShowHTML('  <tr valign="top">');
+  ShowHTML('    <td>');
+  ShowHTML('    Buscar pagamento: <INPUT CLASS="sti" TYPE="text" NAME="w_codigo" size="18" maxlength="18" VALUE="'.$w_codigo.'" title="Informe o código do pagamento ou recebimento desejado.">');
+  ShowHTML('    <input type="image" name="submit" src="images/Folder/Explorer.gif" style="vertical-align:middle;width:15px;height:15px" border=0>');
+  $sql = new db_getLinkData; $RS_Volta = $sql->getInstanceOf($dbms,$w_cliente,'MESA');
+  ShowHTML('    <td align="right"><a class="SS" href="'.$conRootSIW.f($RS_Volta,'link').'&P1='.f($RS_Volta,'p1').'&P2='.f($RS_Volta,'p2').'&P3='.f($RS_Volta,'p3').'&P4='.f($RS_Volta,'p4').'&TP=<img src='.f($RS_Volta,'imagem').' BORDER=0>'.f($RS_Volta,'nome').'&SG='.f($RS_Volta,'sigla').'">[Voltar para '.f($RS_Volta,'nome').']</a>');
+  ShowHTML('  </table>');
+
+  ShowHTML('<tr><td><hr>');
+
+  ShowHTML('<tr><td>');
+  ShowHTML('    <TABLE WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
+  if (count($RS)!=1) {
+    ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td align="center"><b>Não foi encontrado pagamento nem recebimento com o código <b>'.$w_codigo.'</b>.</td></tr>');
+  } else {
+    // Exibe a visualização do documento
+    foreach($RS as $row) {
+      $SG = f($row,'sigla');
+      ShowHTML(VisualLancamento(f($row,'sq_siw_solicitacao'),'L',$w_usuario,1,'HTML'));
+    }
+  }
+  ShowHTML('    </table>');
+  ShowHTML('  </td>');
+  ShowHTML('</tr>');
+  ShowHTML('</table>');
+
+  ShowHtml('    </form');
+  Estrutura_Texto_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Estrutura_Fecha();
+  Rodape();
+}
+
 
 // =========================================================================
 // Rotina principal
@@ -728,8 +810,9 @@ function Main() {
   extract($GLOBALS);
 
   switch ($par) {
-  case 'MESA':    Mesa();   break;
-  case 'ALERTA':  Alerta(); break;
+  case 'MESA':      Mesa();       break;
+  case 'ALERTA':    Alerta();     break;
+  case 'CONSULTA':  Consulta();   break;
   default:
     Cabecalho();
     BodyOpen('onLoad=this.focus();');

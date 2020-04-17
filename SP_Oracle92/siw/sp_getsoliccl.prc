@@ -405,6 +405,18 @@ begin
           where (p_menu      is null or (p_menu  is not null and a.sq_menu = p_menu))
             and b1.ativo     = 'S'
             and b1.sigla     <> 'CI'
+            and (p_ini_i     is null or (p_ini_i is not null and (trunc(d.data_abertura) between p_ini_i and p_ini_f or
+                                                                  trunc(d.envelope_1)    between p_ini_i and p_ini_f or
+                                                                  trunc(d.envelope_2)    between p_ini_i and p_ini_f or
+                                                                  trunc(d.envelope_3)    between p_ini_i and p_ini_f or
+                                                                  (instr(p_restricao,'CLCAPA') > 0 and -- Tratamento para consulta especial da UNESCO
+                                                                   (coalesce(d.data_homologacao, b.conclusao) between p_ini_i and p_ini_f or
+                                                                    (b1.sigla in ('EA','EE') and d.data_abertura < p_ini_f)
+                                                                   )
+                                                                  )
+                                                                 )
+                                        )
+                )
             and ((b.executor = p_pessoa and b.conclusao is null) or
                  b2.acesso   > 15
                 );
@@ -461,8 +473,9 @@ begin
                 codigo2numero(coalesce(b.numero_certame,a.codigo_interno)) as ord_cd_certame,
                 c.sq_solicitacao_item, c.ordem, c.detalhamento,
                 coalesce(c3.sq_projeto_rubrica,c.sq_projeto_rubrica) sq_projeto_rubrica,
-                c3.sq_solic_apoio,
-                c.quantidade_autorizada, coalesce(c2.qtd_paga,0) qtd_paga, coalesce(c3.qtd_fn,0) qtd_fn,
+                --c3.sq_solic_apoio,
+                c.quantidade_autorizada, coalesce(c2.qtd_paga,0) qtd_paga, 
+                coalesce(c3.qtd_fn,0) qtd_fn, coalesce(c3.vl_unit_fn,0) vl_unit_fn,
                 c3.sq_documento_item,
                 c1.codigo_interno as cd_material, c1.nome as nm_material,
                 codigo2numero(c1.codigo_interno) as ord_cd_material,
@@ -490,10 +503,13 @@ begin
                                       group by y.sq_siw_solicitacao, w.sq_solicitacao_item
                                      )                        c2 on (c.sq_solicitacao_item = c2.sq_solicitacao_item)
                     left        join (select x.sq_siw_solicitacao, w.sq_documento_item, w.sq_solicitacao_item, 
-                                             w.quantidade qtd_fn, w.sq_projeto_rubrica, w.sq_solic_apoio
+                                             w.quantidade qtd_fn, w.valor_unitario vl_unit_fn, w.sq_projeto_rubrica --, w.sq_solic_apoio
                                         from fn_documento_item            w
                                              inner join fn_lancamento_doc x on w.sq_lancamento_doc  = x.sq_lancamento_doc
-                                       where x.sq_siw_solicitacao = p_sq_acao_ppa
+                                             inner join siw_solicitacao   y on x.sq_siw_solicitacao = y.sq_siw_solicitacao
+                                             inner join siw_tramite       z on y.sq_siw_tramite     = z.sq_siw_tramite
+                                       where z.sigla <> 'CA'
+                                         and x.sq_siw_solicitacao = p_sq_acao_ppa
                                      )                        c3 on (c.sq_solicitacao_item = c3.sq_solicitacao_item)
                     inner       join cl_item_fornecedor       d  on (c.sq_solicitacao_item = d.sq_solicitacao_item and
                                                                      d.pesquisa            = 'N' and

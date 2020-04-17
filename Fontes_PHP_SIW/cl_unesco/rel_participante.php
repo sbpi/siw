@@ -92,31 +92,31 @@ if (strlen($p_fim_i)==7) {
   $p_fim_i = '01/'.substr($p_fim_i,5).'/'.substr($p_fim_i,0,4);
 }
 
-$p_atraso        = upper($_REQUEST['p_atraso']);
-$p_codigo        = upper($_REQUEST['p_codigo']);
-$p_acao_ppa      = upper($_REQUEST['p_acao_ppa']);
-$p_empenho       = upper($_REQUEST['p_empenho']);
-$p_chave         = upper($_REQUEST['p_chave']);
-$p_assunto       = upper($_REQUEST['p_assunto']);
-$p_tipo_material = upper($_REQUEST['p_tipo_material']);
-$p_seq_protocolo = upper($_REQUEST['p_seq_protocolo']);
-$p_situacao      = upper($_REQUEST['p_situacao']);
-$p_ano_protocolo = upper($_REQUEST['p_ano_protocolo']);
-$p_pais          = upper($_REQUEST['p_pais']);
-$p_regiao        = upper($_REQUEST['p_regiao']);
-$p_uf            = upper($_REQUEST['p_uf']);
-$p_cidade        = upper($_REQUEST['p_cidade']);
-$p_usu_resp      = upper($_REQUEST['p_usu_resp']);
-$p_uorg_resp     = upper($_REQUEST['p_uorg_resp']);
-$p_palavra       = upper($_REQUEST['p_palavra']);
-$p_prazo         = upper($_REQUEST['p_prazo']);
-$p_fase          = explodeArray($_REQUEST['p_fase']);
-$p_sqcc          = upper($_REQUEST['p_sqcc']);
-$p_moeda         = $_REQUEST['p_moeda'];
-$p_vencedor      = $_REQUEST['p_vencedor'];
-$p_externo       = $_REQUEST['p_externo'];
-$p_cnpj          = $_REQUEST['p_cnpj'];
-$p_fornecedor    = $_REQUEST['p_fornecedor']; 
+$p_atraso       = upper($_REQUEST['p_atraso']);
+$p_codigo       = upper($_REQUEST['p_codigo']);
+$p_acao_ppa     = upper($_REQUEST['p_acao_ppa']);
+$p_empenho      = upper($_REQUEST['p_empenho']);
+$p_chave        = upper($_REQUEST['p_chave']);
+$p_assunto      = upper($_REQUEST['p_assunto']);
+$p_tipo_material= upper($_REQUEST['p_tipo_material']);
+$p_seq_protocolo= upper($_REQUEST['p_seq_protocolo']);
+$p_ano_protocolo= upper($_REQUEST['p_ano_protocolo']);
+$p_situacao     = upper($_REQUEST['p_situacao']);
+$p_pais         = upper($_REQUEST['p_pais']);
+$p_regiao       = upper($_REQUEST['p_regiao']);
+$p_uf           = upper($_REQUEST['p_uf']);
+$p_cidade       = upper($_REQUEST['p_cidade']);
+$p_usu_resp     = upper($_REQUEST['p_usu_resp']);
+$p_uorg_resp    = upper($_REQUEST['p_uorg_resp']);
+$p_palavra      = upper($_REQUEST['p_palavra']);
+$p_prazo        = upper($_REQUEST['p_prazo']);
+$p_fase         = explodeArray($_REQUEST['p_fase']);
+$p_sqcc         = upper($_REQUEST['p_sqcc']);
+$p_moeda        = $_REQUEST['p_moeda'];
+$p_vencedor     = $_REQUEST['p_vencedor'];
+$p_externo      = $_REQUEST['p_externo'];
+$p_cnpj         = $_REQUEST['p_cnpj'];
+$p_fornecedor   = $_REQUEST['p_fornecedor'];
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -200,8 +200,9 @@ function Inicial() {
       if (nvl($p_solic_pai,'')!='') {
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
             $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-            $p_chave, $p_assunto, $p_tipo_material, $p_seq_protocolo, $p_situacao, $p_ano_protocolo, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
-            $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda,null,null,null,null,null,null,null,null);
+            $p_chave, $p_assunto, $p_tipo_material,$p_seq_protocolo,$p_situacao,$p_ano_protocolo, $p_usu_resp,$p_uorg_resp, 
+            $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda,
+            null,null,null,null,$p_pais, $p_regiao, $p_uf, $p_cidade);
           if($w_tipo=='WORD') $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S','S').'</b>]';
           else                $w_filtro.='<tr valign="top"><td align="right">Vinculação <td>[<b>'.exibeSolic($w_dir,$p_projeto,f($RS,'dados_solic'),'S').'</b>]';
       } elseif ($p_sqcc>'') {
@@ -231,8 +232,9 @@ function Inicial() {
       if (nvl($p_chave,'')!='') {
         $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,Nvl($_REQUEST['p_agrega'],$SG),3,
                   $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,$p_prioridade,$p_ativo,$p_proponente,
-                  $p_chave, $p_assunto, $p_tipo_material, $p_seq_protocolo, $p_situacao, $p_ano_protocolo, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
-                  $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, $p_moeda,null,null,null,null,null,null,null,null);
+                  $p_chave, $p_assunto, $p_tipo_material,$p_seq_protocolo,$p_situacao,$p_ano_protocolo, $p_usu_resp,$p_uorg_resp, 
+                  $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, $p_acao_ppa, null, $p_empenho, $p_servico, 
+                  $p_moeda,null,null,null,null, $p_pais, $p_regiao, $p_uf, $p_cidade);
         $w_filtro.='<tr valign="top"><td align="right">Pedido <td>[<b>'.f($RS,'codigo_interno').'</b>]';
       } 
       //if ($p_prazo>'') $w_filtro.=' <tr valign="top"><td align="right">Prazo para conclusão até<td>[<b>'.FormataDataEdicao(addDays(time(),$p_prazo)).'</b>]';
@@ -447,44 +449,41 @@ function Inicial() {
     }
     $SQL.= " where a.sq_menu              = ".$P2.$crlf.
            "   and b1.sigla               <> 'CA'";
-    if (nvl($p_vencedor,'')=='S')   $SQL.="   and d2.vencedor            = '".$p_vencedor."'".$crlf;
-    if (nvl($p_externo,'')!='')     $SQL.="   and b.codigo_externo       is not null and acentos(b.codigo_externo) like '%'||acentos('".$p_externo."')||'%'".$crlf;
-    if (nvl($p_fornecedor,'')!='')  $SQL.="   and (acentos(d3.nome,null) like '%'||acentos('".$p_fornecedor."',null)||'%' or acentos(s.nome,null) like '%'||acentos('".$p_fornecedor."',null)||'%')".$crlf;
-    if (nvl($p_cnpj,'')!='')        $SQL.="   and (nvl(d31.cnpj,d32.cpf) = '".$p_cnpj."' or s.cgccpf = '".$p_cnpj."')".$crlf;
-    if (nvl($p_moeda,'')!='')       $SQL.="   and b.sq_moeda             = ".$p_moeda.$crlf;
-    if (nvl($p_sq_acao_ppa,'')!='') $SQL.="   and d.sq_modalidade_artigo = ".$p_sq_acao_ppa.$crlf;
-    if (nvl($p_sq_orprior,'')!='')  $SQL.="   and b.sq_plano             = ".$p_sq_orprior.$crlf;
-    if (nvl($p_tipo_material,'')!='')        $SQL.="   and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.sq_tipo_material in (select sq_tipo_material from cl_tipo_material connect by prior sq_tipo_material = sq_tipo_pai start with sq_tipo_material=".$p_tipo_material."))".$crlf;
-    if (nvl($p_seq_protocolo,'')!='')      $SQL.="   and d.processo             like '%".$p_seq_protocolo."%'))".$crlf;
-    if (nvl($p_ano_protocolo,'')!='')      $SQL.="   and d.processo             like '%".$p_ano_protocolo."%'".$crlf;
-    if (nvl($p_usu_resp,'')!='')    $SQL.="   and d4.sq_lcmodalidade     = ".$p_usu_resp.$crlf;
-    if (nvl($p_uorg_resp,'')!='')   $SQL.="   and (b1.sigla <> 'AT' and e.sq_unidade = ".$p_uorg_resp.")".$crlf;
-    if (nvl($p_sqcc,'')!='')        $SQL.="   and b.sq_cc                = ".$p_sqcc.$crlf;
-    if (nvl($p_projeto,'')!='')     $SQL.="   and b.sq_solic_pai         = ".$p_projeto.$crlf;
-    if (nvl($p_servico,'')!='')    $SQL.="   and (('".$p_servico."'    = 'CLASSIF' and b.sq_cc is not null) or ('".$p_servico."' <> 'CLASSIF' and m.sq_menu = to_number(".$p_servico.")))".$crlf;
-    if (nvl($p_situacao,'')!='')          $SQL.="   and d6.sq_lcsituacao       = ".$p_situacao.$crlf;
-    if (nvl($p_proponente,'')!='')  $SQL.="   and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(y.nome,null) like '%'||acentos('".$p_proponente."',null)||'%')".$crlf;
-    if (nvl($p_assunto,'')!='')     $SQL.="   and acentos(b.codigo_externo,null) like '%'||acentos('".$p_assunto."',null)||'%'".$crlf;
-    if (nvl($p_palavra,'')!='')     $SQL.="   and acentos(d.numero_certame,null) like '%'||acentos('".$p_palavra."',null)||'%'".$crlf;
-    if (nvl($p_empenho,'')!='')     $SQL.="   and (acentos(b.codigo_interno,null) like '%'||acentos('".$p_empenho."',null)||'%' or acentos(d.numero_certame,null) like '%'||acentos('".$p_empenho."',null)||'%')".$crlf;
-    if (nvl($p_prioridade,'')!='')  $SQL.="   and b.executor             = ".$p_prioridade.$crlf;
-    if (nvl($p_ativo,'')!='')       $SQL.="   and d.decisao_judicial = '".$p_ativo."'".$crlf;
-    if (nvl($p_prazo,'')!='')       $SQL.="   and (d6.sq_lcsituacao is not null and upper(d6.nome) not like '%CANCELADA%')".$crlf;
-    if (nvl($p_ini_i,'')!='')       $SQL.="   ((trunc(d.data_abertura) between to_date(".$p_ini_i.",'dd/mm/yyyy') and to_date(".$p_ini_f.",'dd/mm/yyyy') or".$crlf.
-                                          "     trunc(d.envelope_1)    between to_date(".$p_ini_i.",'dd/mm/yyyy') and to_date(".$p_ini_f.",'dd/mm/yyyy') or".$crlf.
-                                          "     trunc(d.envelope_2)    between to_date(".$p_ini_i.",'dd/mm/yyyy') and to_date(".$p_ini_f.",'dd/mm/yyyy') or".$crlf.
-                                          "     trunc(d.envelope_3)    between to_date(".$p_ini_i.",'dd/mm/yyyy')_i and to_date(".$p_ini_f.",'dd/mm/yyyy') or".$crlf.
-                                          "     (instr($p_restricao,'CLCAPA') > 0 and -- Tratamento para consulta especial da UNESCO".$crlf.
-                                          "      (coalesce(d.data_homologacao, b.conclusao) between to_date(".$p_ini_i.",'dd/mm/yyyy') and to_date(".$p_ini_f.",'dd/mm/yyyy') or".$crlf.
-                                          "       (b1.sigla in ('EA','EE') and d.data_abertura < to_date(".$p_ini_f.",'dd/mm/yyyy'))".$crlf.
-                                          "      )".$crlf.
-                                          "     )".$crlf.
-                                          "    )".$crlf.
-                                          "   )".$crlf;
-    if (nvl($p_fim_i,'')!='')       $SQL.="   and coalesce(d.data_homologacao, b.conclusao) between to_date(".$p_fim_i.",'dd/mm/yyyy') and to_date(".$p_fim_f.",'dd/mm/yyyy')))".$crlf;
-    if (nvl($p_atraso,'')!='')      $SQL.="   and d6.sq_lcsituacao is not null and upper(d6.nome) like '%CANCELADA%'".$crlf;
-    if (nvl($p_unidade,'')!='')     $SQL.="   and b.sq_unidade           = ".$p_unidade.$crlf;
-    if (nvl($p_solicitante,'')!='') $SQL.="   and b.solicitante          = ".$p_solicitante;
+    if (nvl($p_vencedor,'')=='S')     $SQL.="   and d2.vencedor            = '".$p_vencedor."'".$crlf;
+    if (nvl($p_externo,'')!='')       $SQL.="   and b.codigo_externo       is not null and acentos(b.codigo_externo) like '%'||acentos('".$p_externo."')||'%'".$crlf;
+    if (nvl($p_fornecedor,'')!='')    $SQL.="   and (acentos(d3.nome,null) like '%'||acentos('".$p_fornecedor."',null)||'%' or acentos(s.nome,null) like '%'||acentos('".$p_fornecedor."',null)||'%')".$crlf;
+    if (nvl($p_cnpj,'')!='')          $SQL.="   and (nvl(d31.cnpj,d32.cpf) = '".$p_cnpj."' or s.cgccpf = '".$p_cnpj."')".$crlf;
+    if (nvl($p_moeda,'')!='')         $SQL.="   and b.sq_moeda             = ".$p_moeda.$crlf;
+    if (nvl($p_sq_acao_ppa,'')!='')   $SQL.="   and d.sq_modalidade_artigo = ".$p_sq_acao_ppa.$crlf;
+    if (nvl($p_sq_orprior,'')!='')    $SQL.="   and b.sq_plano             = ".$p_sq_orprior.$crlf;
+    if (nvl($p_tipo_material,'')!='') $SQL.="   and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and y.sq_tipo_material in (select sq_tipo_material from cl_tipo_material connect by prior sq_tipo_material = sq_tipo_pai start with sq_tipo_material=".$p_tipo_material."))".$crlf;
+    if (nvl($p_seq_protocolo,'')!='') $SQL.="   and d.processo             like '%".$p_seq_protocolo."%'))".$crlf;
+    if (nvl($p_ano_protocolo,'')!='') $SQL.="   and d.processo             like '%".$p_ano_protocolo."%'".$crlf;
+    if (nvl($p_usu_resp,'')!='')      $SQL.="   and d4.sq_lcmodalidade     = ".$p_usu_resp.$crlf;
+    if (nvl($p_uorg_resp,'')!='')     $SQL.="   and (b1.sigla <> 'AT' and e.sq_unidade = ".$p_uorg_resp.")".$crlf;
+    if (nvl($p_sqcc,'')!='')          $SQL.="   and b.sq_cc                = ".$p_sqcc.$crlf;
+    if (nvl($p_projeto,'')!='')       $SQL.="   and b.sq_solic_pai         = ".$p_projeto.$crlf;
+    if (nvl($p_processo,'')!='')      $SQL.="   and (('".$p_processo."'    = 'CLASSIF' and b.sq_cc is not null) or ('".$p_processo."' <> 'CLASSIF' and m.sq_menu = to_number(".$p_processo.")))".$crlf;
+    if (nvl($p_situacao,'')!='')      $SQL.="   and d6.sq_lcsituacao       = ".$p_situacao.$crlf;
+    if (nvl($p_proponente,'')!='')    $SQL.="   and 0 < (select count(*) from cl_solicitacao_item x inner join cl_material y on (x.sq_material = y.sq_material) where x.sq_siw_solicitacao = b.sq_siw_solicitacao and acentos(y.nome,null) like '%'||acentos('".$p_proponente."',null)||'%')".$crlf;
+    if (nvl($p_assunto,'')!='')       $SQL.="   and acentos(b.codigo_externo,null) like '%'||acentos('".$p_assunto."',null)||'%'".$crlf;
+    if (nvl($p_palavra,'')!='')       $SQL.="   and acentos(d.numero_certame,null) like '%'||acentos('".$p_palavra."',null)||'%'".$crlf;
+    if (nvl($p_empenho,'')!='')       $SQL.="   and (acentos(b.codigo_interno,null) like '%'||acentos('".$p_empenho."',null)||'%' or acentos(d.numero_certame,null) like '%'||acentos('".$p_empenho."',null)||'%')".$crlf;
+    if (nvl($p_prioridade,'')!='')    $SQL.="   and b.executor             = ".$p_prioridade.$crlf;
+    if (nvl($p_ativo,'')!='')         $SQL.="   and d.decisao_judicial = '".$p_ativo."'".$crlf;
+    if (nvl($p_prazo,'')!='')         $SQL.="   and (d6.sq_lcsituacao is not null and upper(d6.nome) not like '%CANCELADA%')".$crlf;
+    if (nvl($p_ini_i,'')!='')         $SQL.="   and ((trunc(d.data_abertura) between to_date('".$p_ini_i."','dd/mm/yyyy') and to_date('".$p_ini_f."','dd/mm/yyyy') or".$crlf.
+                                            "         trunc(d.envelope_1)    between to_date('".$p_ini_i."','dd/mm/yyyy') and to_date('".$p_ini_f."','dd/mm/yyyy') or".$crlf.
+                                            "         trunc(d.envelope_2)    between to_date('".$p_ini_i."','dd/mm/yyyy') and to_date('".$p_ini_f."','dd/mm/yyyy') or".$crlf.
+                                            "         trunc(d.envelope_3)    between to_date('".$p_ini_i."','dd/mm/yyyy') and to_date('".$p_ini_f."','dd/mm/yyyy') or".$crlf.
+                                            "         coalesce(d.data_homologacao, b.conclusao) between to_date('".$p_ini_i."','dd/mm/yyyy') and to_date('".$p_ini_f."','dd/mm/yyyy') or".$crlf.
+                                            "         (b1.sigla in ('EA','EE') and d.data_abertura < to_date('".$p_ini_f."','dd/mm/yyyy'))".$crlf.
+                                            "        )".$crlf.
+                                            "       )".$crlf;
+    if (nvl($p_fim_i,'')!='')         $SQL.="   and coalesce(d.data_homologacao, b.conclusao) between to_date(".$p_fim_i.",'dd/mm/yyyy') and to_date(".$p_fim_f.",'dd/mm/yyyy')))".$crlf;
+    if (nvl($p_atraso,'')!='')        $SQL.="   and d6.sq_lcsituacao is not null and upper(d6.nome) like '%CANCELADA%'".$crlf;
+    if (nvl($p_unidade,'')!='')       $SQL.="   and b.sq_unidade           = ".$p_unidade.$crlf;
+    if (nvl($p_solicitante,'')!='')   $SQL.="   and b.solicitante          = ".$p_solicitante;
     $sql = new db_exec; $RS = $sql->getInstanceOf($dbms,$SQL,$recordcount);
     if (nvl($p_ordena,'')>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
@@ -785,8 +784,8 @@ function Inicial() {
       ShowHTML('   <tr valign="top">');
       ShowHTML('     <td><b>C<U>P</U>F/CNPJ: (insira pontos, barras e traços)<br><INPUT ACCESSKEY="P" '.$w_Disabled.' class="STI" type="text" name="p_cnpj" size="20" maxlength="20" value="'.$p_cnpj.'"></td>');
       ShowHTML('     <td><b><U>F</U>ornecedor: (qualquer parte do nome)<br><INPUT ACCESSKEY="F" '.$w_Disabled.' class="STI" type="text" name="p_fornecedor" size="40" maxlength="60" value="'.$p_fornecedor.'"></td>');
-      //ShowHTML('   <tr valign="top">');
-      //ShowHTML('     <td><b><u>D</u>ata de recebimento e limite para atendimento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
+      ShowHTML('   <tr valign="top">');
+      ShowHTML('     <td><b><u>E</u>ventos do certame (abertura, entregas, conclusão, homologação):</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_i" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"> e <input '.$w_Disabled.' accesskey="D" type="text" name="p_ini_f" class="STI" SIZE="10" MAXLENGTH="10" VALUE="'.$p_ini_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Usar formato dd/mm/aaaa"></td>');
       ShowHTML('   <tr valign="top">');
       ShowHTML('     <td><input type="checkbox" class="stc" name="p_vencedor" value="S"'.((nvl($p_vencedor,'')!='') ? ' checked' : '').'> Recuperar apenas certames com vencedores indicados');
       ShowHTML('     <td><b>Có<u>d</u>igo '.(($w_cliente==6881) ? 'SA': 'externo').': (qualquer parte do código)<br><INPUT ACCESSKEY="O" '.$w_Disabled.' class="STI" type="text" name="p_externo" size="20" maxlength="60" value="'.$p_externo.'"></td>');

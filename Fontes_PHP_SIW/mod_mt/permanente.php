@@ -6,6 +6,7 @@ include_once($w_dir_volta.'constants.inc');
 include_once($w_dir_volta.'jscript.php');
 include_once($w_dir_volta.'funcoes.php');
 include_once($w_dir_volta.'classes/db/abreSessao.php');
+include_once($w_dir_volta.'classes/sp/db_getAddressData.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
@@ -226,6 +227,10 @@ function Inicial() {
       if ($p_rgp>'')     $w_filtro.='<tr><td align="right">RGP <td>[<b>'.$p_rgp.'</b>]';
       if ($p_material>'')     $w_filtro.='<tr><td align="right">Bem <td>[<b>'.$p_material.'</b>] em qualquer parte';
       if ($p_financeiro>'')     $w_filtro.='<tr><td align="right">Financeiro <td>[<b>'.$p_financeiro.'</b>]';
+      if ($p_endereco>'') {
+        $sql = new db_getAddressData; $RS = $sql->getInstanceOf($dbms, $p_endereco);
+        $w_filtro.='<tr><td align="right">Endereço <td>[<b>'.f($RS,'endereco_completo').'</b>]';
+      } 
       if ($p_almoxarifado>'') {
         $sql = new db_getAlmoxarifado; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_almoxarifado,null,null,null,null,'OUTROS');
         foreach ($RS as $row) { $RS = $row; break; }
@@ -249,6 +254,7 @@ function Inicial() {
       } 
       if ($p_descricao>'')    $w_filtro.='<tr><td align="right">Descrição <td>[<b>'.$p_descricao.'</b>] em qualquer parte';
       if ($p_observacao>'')     $w_filtro.='<tr><td align="right">Observação <td>[<b>'.$p_observacao.'</b>] em qualquer parte';
+      if ($p_fim>'')      $w_filtro .= '<tr valign="top"><td align="right">Tombamento <td>[<b>'.$p_inicio.'-'.$p_fim.'</b>]';
       if ($p_ativo=='S') {
         $w_filtro.='<tr><td align="right">Situação <td>[<b>Apenas itens ativos</b>]';
       } elseif ($p_ativo=='N') {
@@ -324,6 +330,7 @@ function Inicial() {
       CheckBranco();
       FormataData();
       FormataValor();
+      SaltaCampo();
       ValidateOpen('Validacao');
       if (strpos('CIA',$O)!==false) {
         Validate('w_rgp','RGP Atual','1','1','1','18','','0123456789');
@@ -383,6 +390,14 @@ function Inicial() {
         Validate('p_modelo','Modelo','','',1,50,'1','1');
         Validate('p_observacao','Observação','','',1,2000,'1','1');
         Validate('p_codigo_externo','Código externo','','',1,30,'1','1');
+        Validate('p_inicio','Tombamento inicial', 'DATA', '', '10', '10', '', '0123456789/');
+        Validate('p_fim','Tombamento final', 'DATA', '', '10', '10', '', '0123456789/');
+        ShowHTML('  if ((theForm.p_inicio.value != \'\' && theForm.p_fim.value == \'\') || (theForm.p_inicio.value == \'\' && theForm.p_fim.value != \'\')) {');
+        ShowHTML('     alert (\'Informe ambas as datas de tombamento ou nenhuma delas!\');');
+        ShowHTML('     theForm.p_inicio.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+        CompData('p_inicio','Tombamento inicial','<=','p_fim','Tombamento final');
       } elseif ($O=='E') {
         Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
         ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
@@ -635,6 +650,7 @@ function Inicial() {
     ShowHTML('        <td><b><U>D</U>escrição complementar:<br><input accesskey="M" type="text" name="p_descricao" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_descricao.'"></td>');
     ShowHTML('        <td><b><U>O</U>bservação:<br><input accesskey="M" type="text" name="p_observacao" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_observacao.'"></td>');
     ShowHTML('        <td><b><u>C</u>ódigo externo:</b><br><input accesskey="C" type="text" name="p_codigo_externo" class="sti" SIZE="25" MAXLENGTH="30" VALUE="'.$p_codigo_externo.'"></td>');
+    ShowHTML('      <tr><td valign="top"><b><u>T</u>ombamento entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
 
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Recuperar:</b><br>');
@@ -1304,6 +1320,11 @@ function visualPermanente($l_chave,$l_navega=true,$l_solic) {
           ((nvl(f($l_rs,'vl_aquisicao_usd'),'0,00')!='0,00') ? ' USD '.formatNumber(f($l_rs,'vl_aquisicao_usd')) : '').
           ((nvl(f($l_rs,'vl_aquisicao_eur'),'0,00')!='0,00') ? ' EUR '.formatNumber(f($l_rs,'vl_aquisicao_eur')) : '').
           '</b></td>';
+  $l_html.=chr(13).'          <td>Valor contábil em '.formataDataEdicao(time()).'<br><b>'.
+          ((nvl(f($l_rs,'vl_depreciado_brl'),'0,00')!='0,00') ? ' BRL '.formatNumber(f($l_rs,'vl_depreciado_brl')) : '').
+          ((nvl(f($l_rs,'vl_depreciado_usd'),'0,00')!='0,00') ? ' USD '.formatNumber(f($l_rs,'vl_depreciado_usd')) : '').
+          ((nvl(f($l_rs,'vl_depreciado_eur'),'0,00')!='0,00') ? ' EUR '.formatNumber(f($l_rs,'vl_depreciado_eur')) : '').
+          '</b></td>';
   if (nvl(f($l_rs,'vl_aquisicao_brl'),'0,00')!=nvl(f($l_rs,'vl_atual_brl'),'0,00') ||
       nvl(f($l_rs,'vl_aquisicao_usd'),'0,00')!=nvl(f($l_rs,'vl_atual_usd'),'0,00') ||
       nvl(f($l_rs,'vl_aquisicao_eur'),'0,00')!=nvl(f($l_rs,'vl_atual_eur'),'0,00')
@@ -1333,7 +1354,7 @@ function visualPermanente($l_chave,$l_navega=true,$l_solic) {
   $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Unidade:<b></td><td>'.f($l_rs,'nm_unidade').' </td></tr>';
   $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Localização:<b></td><td>'.f($l_rs,'nm_localizacao').' </td></tr>';
   $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Endereço:<b></td><td>'.f($l_rs,'logradouro').' </td></tr>';
-  $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Vida útil:<b></td><td>'.nvl(f($l_rs,'vida_util'),'---').' </td></tr>';
+  $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Vida útil:<b></td><td>'.nvl(f($l_rs,'vida_util'),'---').' Anos</td></tr>';
   $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'observacao'),'---')).' </td></tr>';
   
   /*

@@ -77,7 +77,8 @@ begin
                 d1.hospedagem,        d1.veiculo,                    d1.valor_previsto_bilhetes,
                 d1.cumprimento,       d1.relatorio,                  d1.sq_relatorio_viagem, 
                 d1.reembolso,         d1.reembolso_valor,            d1.reembolso_observacao,
-                d1.ressarcimento,     d1.ressarcimento_valor,        d1.ressarcimento_observacao,
+                d1.ressarcimento,     d1.ressarcimento_valor,        d1.ressarcimento_observacao, 
+                d1.sq_moeda_ressarcimento, d13.codigo cd_moeda_ressarcimento,  d13.sigla sg_moeda_ressarcimento, d13.simbolo sb_moeda_ressarcimento,
                 d1.ressarcimento_data,d1.sq_pdvinculo_ressarcimento, d1.sq_arquivo_comprovante,
                 d1.nacional,          d1.internacional,              d1.deposito_identificado,
                 d1.cotacao_valor,     d1.cotacao_observacao,         d1.diaria_fim_semana,
@@ -140,8 +141,9 @@ begin
                   inner              join gd_demanda                 d  on (b.sq_siw_solicitacao          = d.sq_siw_solicitacao)
                     inner            join pd_missao                  d1 on (d.sq_siw_solicitacao          = d1.sq_siw_solicitacao)
                       left           join co_moeda                  d10 on (d1.sq_moeda_cotacao           = d10.sq_moeda)
-                      left           join co_moeda                  d12 on (d1.sq_moeda_complemento       = d12.sq_moeda)
                       inner          join siw_solicitacao           d11 on (d1.sq_siw_solicitacao         = d11.sq_siw_solicitacao)
+                      left           join co_moeda                  d12 on (d1.sq_moeda_complemento       = d12.sq_moeda)
+                      left           join co_moeda                  d13 on (d1.sq_moeda_ressarcimento     = d13.sq_moeda)
                       inner          join co_pessoa                  d2 on (d1.sq_pessoa                  = d2.sq_pessoa)
                         left         join sg_autenticacao           d21 on (d2.sq_pessoa                  = d21.sq_pessoa)
                         inner        join co_tipo_vinculo            d3 on (d2.sq_tipo_vinculo            = d3.sq_tipo_vinculo)

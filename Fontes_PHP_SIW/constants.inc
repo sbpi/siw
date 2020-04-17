@@ -77,9 +77,6 @@ $conImgGeo      = 'images/icone/earth_16.png';
 $conImgFin      = 'images/icone/dollar-green.png';
 $conImgSheet     = 'images/Folder/SheetImg.gif';
 
-
-$conImgTurnRight = 'images/icone/turn-right.png';
-
 //---------------------------Definições de banco
 
 $strschema	= '';
@@ -94,17 +91,17 @@ $conEnviaMail   = false;
 
 $crlf           = chr(13).chr(10);
 $conSgSistema   = 'SIW';
-$conApacheStat  = 'http://www2.sbpi.com.br/server-status-sbpi';
+$conApacheStat  = 'http://galileu.sbpi1.com.br/server-status-sbpi';
 $conDefaultPath = 'http://galileu.sbpi1.com.br';
 $conNmSistema   = 'Solução Integrada Web';
-$conRootSIW     = 'http://galileu.sbpi1.com.br/siw/';
-$conDiretorio   = 'c:/www/siw/';
+$conRootSIW     = 'http://galileu.sbpi1.com.br/siw_otca/';
+$conDiretorio   = 'c:/www/siw_otca/';
 $conFontPath    = $conDiretorio.'fonts/linux/';
 $conFileVirtual = '/siw_files/';
-//$conFilePhysical= '/var/www/siw_files/'; // Formato Linux
+//$conFilePhysical= '/var/www/html/siw_files/'; // Formato Linux
 $conFilePhysical= 'c:/www/siw_files/'; // Formato Windows (IIS)
 
 // Define se deve ser gravado arquivo de log e o seu caminho
-$conLog         = false;
+$conLog         = true;
 $conLogPath     = $conFilePhysical.'log/';
 ?>

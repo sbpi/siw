@@ -736,6 +736,8 @@ function Geral() {
     $w_prot_ano             = $_REQUEST['w_prot_ano'];
     $w_vinc_numero          = $_REQUEST['w_vinc_numero'];
     $w_vinc_ano             = $_REQUEST['w_vinc_ano'];
+    $w_cc_debito            = $_REQUEST['w_cc_debito'];
+    $w_cc_credito           = $_REQUEST['w_cc_credito'];
 
     // Recarrega dados do comprovante
     $w_sq_tipo_documento    = $_REQUEST['w_sq_tipo_documento'];
@@ -811,6 +813,8 @@ function Geral() {
       $w_solic_vinculo        = f($RS,'sq_solic_vinculo');
       $w_uf                   = f($RS,'co_uf');
       $w_sq_prop              = f($RS,'sq_prop');
+      $w_cc_debito            = f($RS,'cc_debito');
+      $w_cc_credito           = f($RS,'cc_credito');
       $w_dados_pai            = explode('|@|',f($RS,'dados_pai'));
       $w_sq_menu_relac        = $w_dados_pai[3];
       if (nvl($w_sqcc,'')!='') $w_sq_menu_relac='CLASSIF';
@@ -891,7 +895,7 @@ function Geral() {
     }
 
     if (nvl($w_solic_vinculo,'')!='' || (nvl($w_vinc_numero,'')!=''&&nvl($w_vinc_ano,'')!='')) {
-      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
+      $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLLCCAD');
       $sql = new db_getSolicCL; $RS_Vinculo = $sql->getInstanceOf($dbms,null,$w_usuario,f($RS,'sigla'),5,
               null,null,null,null,null,null,null,null,null,null,$w_solic_vinculo,null,null,null,null,null,null,null,
               null,null,null,null,null,null,null,null,((nvl($w_vinc_numero,'')=='') ? null : '-'.$w_vinc_numero.'/'.$w_vinc_ano),null,null,
@@ -1015,6 +1019,15 @@ function Geral() {
     Validate('w_descricao','Finalidade','1',1,5,2000,'1','1');
     Validate('w_sq_forma_pagamento','Forma de recebimento','SELECT',1,1,18,'','0123456789');       
     Validate('w_vencimento','Data de pagamento','DATA',1,10,10,'','0123456789/');
+    
+    Validate('w_cc_debito','Conta Débito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    Validate('w_cc_credito','Conta Crédito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    
+    ShowHTML('  if ((theForm.w_cc_debito.value != "" && theForm.w_cc_credito.value == "") || (theForm.w_cc_debito.value == "" && theForm.w_cc_credito.value != "")) {');
+    ShowHTML('     alert ("Informe ambas as contas contábeis ou nenhuma delas!");');
+    ShowHTML('     theForm.w_cc_debito.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
 
     Validate('w_pessoa_nm', 'Beneficiário', 'HIDDEN', 1, 5, 100, '1', '1');
     Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
@@ -1178,9 +1191,9 @@ function Geral() {
           }
         }
       }
-      if ($w_mod_co=='S') { 
+      if ($w_mod_co=='S') {
         ShowHTML('      <tr>');
-        $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLPCCAD');
+        $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'CLLCCAD');
         SelecaoSolic('Solicitação de compra:',null,null,$w_cliente,$w_solic_vinculo,'COMPRA_FUNDO',f($RS,'sq_menu'),'w_solic_vinculo',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solic_vinculo\'; document.Form.submit();"',null,'<BR />',3);
         if (nvl($w_solic_vinculo,'')!='') {
           ShowHTML('      <tr valign="top">');
@@ -1205,6 +1218,10 @@ function Geral() {
     SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma de pagamento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
     ShowHTML('              <td><b><u>D</u>ata de pagamento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_vencimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_vencimento').'</td>');
 
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>C</u>onta contábil de débito:</b></br><input type="text" name="w_cc_debito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_debito.'"></td>');
+    ShowHTML('        <td><b><u>C</u>onta contábil de crédito:</b></br><input type="text" name="w_cc_credito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_credito.'"></td>');
+    
     ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" valign="top" align="center" bgcolor="#D0D0D0"><b>Dados do Beneficiário</td></td></tr>');
@@ -2499,7 +2516,7 @@ function Grava() {
           nvl($w_protocolo_nr,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo'])),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],$w_chave_nova, $w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
 
       
       if ($O!='E') {
@@ -2552,7 +2569,7 @@ function Grava() {
 
         $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$w_chave_nova,$w_usuario,$_REQUEST['w_tramite'],
           $_REQUEST['w_vencimento'],Nvl($_REQUEST['w_valor'],0),null,null,Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
-          null,'Conclusão automática de pagamento por fundo fixo.',null,null,null,null);
+          null,'Conclusão automática de pagamento por fundo fixo.',$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],null,null,null,null);
       }
     
       $w_html = VisualLancamento(nvl($_REQUEST['w_chave'],$w_chave_nova),'L',$w_usuario,1,'1');

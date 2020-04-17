@@ -10,7 +10,7 @@ extract($GLOBALS); include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.
 
 class dml_PutCoPesConBan {
    function getInstanceOf($dbms, $p_operacao, $p_chave, $p_pessoa, $p_moeda, $p_tipo_conta, $p_agencia, $p_oper, $p_numero, $p_devolucao, 
-          $p_saldo, $p_ativo, $p_padrao) {
+          $p_saldo, $p_ativo, $p_padrao, $p_codigo_externo) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putCoPesConBan';
      $params=array('p_operacao'         =>array($p_operacao,             B_VARCHAR,      1),
                    'p_chave'            =>array(tvl($p_chave),           B_NUMERIC,     32),
@@ -23,7 +23,8 @@ class dml_PutCoPesConBan {
                    'p_devolucao'        =>array(tvl($p_devolucao),       B_VARCHAR,      1),                   
                    'p_saldo'            =>array(toNumber(tvl($p_saldo)), B_NUMERIC,     18,2),
                    'p_ativo'            =>array(tvl($p_ativo),           B_VARCHAR,      1),
-                   'p_padrao'           =>array(tvl($p_padrao),          B_VARCHAR,      1)
+                   'p_padrao'           =>array(tvl($p_padrao),          B_VARCHAR,      1),
+                   'p_codigo_externo'   =>array(tvl($p_codigo_externo),  B_VARCHAR,     60)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); 

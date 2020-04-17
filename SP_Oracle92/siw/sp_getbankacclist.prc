@@ -14,6 +14,7 @@ begin
                 b.devolucao_valor,       b.sq_pais_estrang,                  b.aba_code,               b.swift_code,
                 b.endereco_estrang,      b.banco_estrang,                    b.agencia_estrang,        b.cidade_estrang,
                 b.informacoes,           case b.tipo_conta when '1' then 'Corrente' else 'Poupança' end as tipo_conta,
+                b.codigo_externo,
                 c.sq_moeda,              c.codigo cd_moeda,                  c.sigla sg_moeda,         c.simbolo sb_moeda,
                 c.ativo at_moeda
            from co_pessoa                      a
@@ -33,6 +34,7 @@ begin
                 b.devolucao_valor,       b.sq_pais_estrang,                  b.aba_code,               b.swift_code,
                 b.endereco_estrang,      b.banco_estrang,                    b.agencia_estrang,        b.cidade_estrang,
                 b.informacoes,           case b.tipo_conta when '1' then 'Corrente' else 'Poupança' end as tipo_conta,
+                b.codigo_externo,
                 c.sq_moeda,              c.codigo cd_moeda,                  c.sigla sg_moeda,         c.simbolo sb_moeda,
                 c.ativo at_moeda
            from co_pessoa                      a
@@ -55,6 +57,7 @@ begin
                 b.sq_pais_estrang,       b.aba_code,                         b.swift_code,             b.endereco_estrang,
                 b.banco_estrang,         b.agencia_estrang,                  b.cidade_estrang,         b.informacoes,
                 case b.tipo_conta when '1' then 'Corrente' else 'Poupança' end as tipo_conta,
+                b.codigo_externo,
                 c.sq_moeda,              c.codigo cd_moeda,                  c.sigla sg_moeda,         c.simbolo sb_moeda,
                 c.ativo at_moeda
            from co_pessoa                      a
@@ -76,6 +79,7 @@ begin
                 b.devolucao_valor,       b.sq_pais_estrang,                  b.aba_code,               b.swift_code,
                 b.endereco_estrang,      b.banco_estrang,                    b.agencia_estrang,        b.cidade_estrang,
                 b.informacoes,           case b.tipo_conta when '1' then 'Corrente' else 'Poupança' end as tipo_conta,
+                b.codigo_externo,
                 c.sq_moeda,              c.codigo cd_moeda,                  c.sigla sg_moeda,         c.simbolo sb_moeda,
                 c.ativo at_moeda
            from co_pessoa                      a

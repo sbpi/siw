@@ -9,10 +9,9 @@ function VisualARP($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   $w_erro='';
   // Recupera os dados da solicitacao
   $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,null,$l_usuario,$SG,5,
-          null,null,null,null,null,null,null,null,null,null,
-          $v_chave,null,null,null,null,null,null,
-          null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-          null,null,null,null);
+          null,null,null,null,null,null,null,null,null,null,$v_chave,
+          null,null,null,null,null,null,null,null,null,null,null,null,null,
+          null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
   $w_tramite        = f($RS,'sq_siw_tramite');
   $w_sigla          = f($RS,'sigla');

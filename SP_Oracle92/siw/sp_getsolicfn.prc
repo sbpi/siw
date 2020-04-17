@@ -178,13 +178,14 @@ begin
                 codigo2numero(b.codigo_interno) ord_codigo_interno,
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,
-                d.emissao,            d.vencimento,                  d.quitacao,
+                d.emissao,            d.vencimento,
+                case a.sigla when 'FNDFIXO' then d3.data else d.quitacao end quitacao,
                 b.codigo_externo,     d.observacao,                  d.valor_imposto,
                 d.valor_retencao,     d.valor_liquido,               d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_tipo_pessoa,              d.tipo as tipo_rubrica,
                 d.referencia_inicio,  d.referencia_fim,              d.sq_solic_vinculo,
-                d.numero_conta,       d.processo,
-                coalesce(d.quitacao, d.vencimento) as dt_pagamento,
+                d.numero_conta,       d.processo,                    d.cc_debito,               d.cc_credito,
+                case a.sigla when 'FNDFIXO' then d3.data else coalesce(d.quitacao, d.vencimento) end dt_pagamento,
                 d1.nome as nm_tipo_lancamento,
                 case d.tipo when 1 then 'Dotação inicial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' else 'Normal' end as nm_tipo_rubrica,
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
@@ -357,7 +358,11 @@ begin
             and (p_fase           is null or (p_fase        is not null and InStr(x_fase,''''||b.sq_siw_tramite||'''') > 0))
             and (p_prazo          is null or (p_prazo       is not null and b.conclusao          is null and trunc(d.vencimento)-cast(p_prazo as integer)<=trunc(sysdate)))
             and (p_ini_i          is null or (p_ini_i       is not null and d.vencimento         between p_ini_i and p_ini_f))
-            and (p_fim_i          is null or (p_fim_i       is not null and d.quitacao           between p_fim_i and p_fim_f))
+            and (p_fim_i          is null or (p_fim_i       is not null and ((a.sigla = 'FNDFIXO'  and d3.data between p_fim_i and p_fim_f) or
+                                                                             (a.sigla <> 'FNDFIXO' and d.quitacao           between p_fim_i and p_fim_f)
+                                                                            )
+                                             )
+                )
             and (p_unidade        is null or (p_unidade     is not null and b.sq_unidade         = p_unidade))
             and (p_solicitante    is null or (p_solicitante is not null and b.solicitante        = p_solicitante))
             and (p_sq_acao_ppa    is null or (p_sq_acao_ppa is not null and d21.cpf  is not null and d21.cpf  = p_sq_acao_ppa))
@@ -375,17 +380,26 @@ begin
                   --instr(p_restricao,'ETAPA')   = 0 and
                   instr(p_restricao,'PROP')    = 0 and
                   instr(p_restricao,'RESPATU') = 0 and
+                  instr(p_restricao,'SEMPAIS') = 0 and
+                  --p_restricao                  <> 'FNCONTAB' and
+                  instr(p_restricao,'SEMCONTA') = 0 and
                   substr(p_restricao,4,2)      <>'CC'
                  ) or 
                  (--(instr(p_restricao,'PROJ')    > 0    and ((substr(a.sigla,4) = 'CONT' and r.sq_siw_solicitacao is not null) or (substr(a.sigla,4) <> 'CONT'))) or
-                  --(instr(p_restricao,'ETAPA') > 0    and MontaOrdem(q.sq_projeto_etapa,null)  is not null) or                 
+                  --(instr(p_restricao,'ETAPA') > 0    and MontaOrdem(q.sq_projeto_etapa,null)  is not null) or
+                  (instr(p_restricao,'SEMPAIS') > 0    and 0 = (select nvl(sum(t.valor),0)
+                                                                  from fn_lancamento_pais t 
+                                                                 where t.sq_siw_solicitacao = b.sq_siw_solicitacao
+                                                               )
+                  ) or
+                  --(p_restricao = 'FNCONTAB' and a.sigla <> 'FNDFUNDO') or
+                  (instr(p_restricao,'SEMCONTA') > 0   and d.cc_debito    is null and a.sigla <> 'FNDFUNDO') or
                   (instr(p_restricao,'PROP')    > 0    and d.pessoa       is not null) or
                   (instr(p_restricao,'RESPATU') > 0    and b.executor     is not null) or
                   (substr(p_restricao,4,2)      ='CC'  and b.sq_cc        is not null)
                  )
                 );
    Elsif p_restricao = 'EXTRATO' Then
-      -- Recupera os acordos que o usuário pode ver
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
@@ -430,15 +444,13 @@ begin
                 codigo2numero(b.codigo_interno) ord_codigo_interno,
                 d.pessoa,             b.codigo_interno,              d.sq_acordo_parcela,
                 d.sq_forma_pagamento, d.sq_tipo_lancamento,          d.sq_tipo_pessoa,
-                d.emissao,            d.vencimento,                  d.quitacao,
+                d.emissao,            d.vencimento,                  g.quitacao,
                 b.codigo_externo,     d.observacao,                  d.aviso_prox_conc,
                 d.dias_aviso,         d.sq_tipo_pessoa,              d.tipo as tipo_rubrica,
                 d.referencia_inicio,  d.referencia_fim,              d.sq_solic_vinculo,
                 d.numero_conta,       d.processo,
-                case a.sigla
-                     when 'FNDFIXO' then g.quitacao
-                     else coalesce(d.quitacao, d.vencimento)
-                end as dt_pagamento,
+                d.cc_debito,          d.cc_credito,
+                case a.sigla when 'FNDFIXO' then g.quitacao else coalesce(d.quitacao, d.vencimento) end as dt_pagamento,
                 d1.nome as nm_tipo_lancamento,
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
                 d2.nome_indice as nm_pessoa_ind,                     d2.nome_resumido_ind as nm_pessoa_resumido_ind,
@@ -452,7 +464,8 @@ begin
                 g.bc_conta sq_banco_debito,        g.bc_cd_conta cd_banco_debito,   g.bc_nm_conta nm_banco_debito,
                 g.cb_sq_moeda,                     g.cb_sg_moeda,                   g.cb_sb_moeda,
                 g.valor cb_valor,                  g.tipo,
-                d7.sq_forma_pagamento,case substr(a.sigla,3,1) when 'R' then null else d7.nome end as nm_forma_pagamento, d7.sigla as sg_forma_pagamento, 
+                case substr(a.sigla,3,1) when 'R' then null else d7.nome end as nm_forma_pagamento, 
+                d7.sigla as sg_forma_pagamento, 
                 d7.ativo as st_forma_pagamento,
                 cast(b.fim as date)-cast(d.dias_aviso as integer) as aviso,
                 n.sq_cc,              n.nome as nm_cc,               n.sigla as sg_cc
@@ -465,7 +478,7 @@ begin
                       inner          join fn_lancamento        d  on (b.sq_siw_solicitacao       = d.sq_siw_solicitacao)
                         inner        join co_forma_pagamento   d7 on (d.sq_forma_pagamento       = d7.sq_forma_pagamento)
                         inner        join fn_tipo_lancamento   d1 on (d.sq_tipo_lancamento       = d1.sq_tipo_lancamento)
-                     inner          join vw_conta_bancaria_financeiro g on (b.sq_siw_solicitacao = g.sq_financeiro)
+                     inner           join vw_conta_bancaria_financeiro g on (b.sq_siw_solicitacao = g.sq_financeiro)
                       left           join pe_plano             b3 on (b.sq_plano                 = b3.sq_plano)
                       left           join siw_solicitacao      b4 on (b.sq_solic_pai             = b4.sq_siw_solicitacao)
                         left         join siw_menu            b41 on (b4.sq_menu                 = b41.sq_menu)
@@ -492,6 +505,63 @@ begin
                                                                             )
                                               )
                 );
+   Elsif p_restricao = 'CONTABIL' Then
+      open p_result for
+         select a.tipo,               a.qtd_itens,                a.sq_projeto,               a.cd_projeto, 
+                a.sg_tramite,         a.sq_projeto_rubrica,       a.sq_financeiro,            a.cd_financeiro, 
+                a.cc_debito,          a.cc_credito,               a.cd_financeiro_externo,    acentos(a.ds_financeiro) ds_financeiro, 
+                a.sg_menu,            a.vencimento,               a.quitacao,                 a.conclusao, 
+                a.ordem,              a.sq_documento_item,        a.fn_valor,                 a.fn_sq_moeda, 
+                a.fn_sg_moeda,        a.fn_sb_moeda,              a.exige_brl,                a.brl_taxa_compra_data, 
+                a.brl_taxa_compra,    a.brl_valor_compra,         a.brl_taxa_venda_data,      a.brl_taxa_venda, 
+                a.brl_valor_venda,    a.fator_conversao,
+                codigo2numero(a.cd_financeiro) as ord_codigo_interno
+           from vw_contabilidade a
+          where a.cliente    = p_pessoa
+            and -- Se pedido de petty cash, não pode estar cancelado. Caso contrário, deve estar concluído
+                ((a.sg_menu = 'FNDFIXO' and a.sg_tramite != 'CA') or 
+                 (a.sg_menu !='FNDFIXO' and a.sg_tramite = 'AT')
+                )
+            and a.quitacao   between p_fim_i and p_fim_f;
+   Elsif p_restricao = 'INFEXECLANC' Then
+      -- Informe executivo da OTCA - Detalhamento dos lançamentos
+      open p_result for 
+          select t.sq_pais, t.nm_pais, t.sg_menu, 
+                t.sq_projeto, t.cd_projeto, t.nm_projeto, t.sq_pj_moeda, t.sb_pj_moeda, t.valor vl_projeto,
+                t.sq_financeiro, t.cd_financeiro, t.ds_financeiro, t.quitacao, t.fn_sq_moeda, t.fn_sb_moeda, t.fn_valor, 
+                t.sq_tipo_lancamento, t.nm_tipo_lancamento, t.ds_tipo_lancamento, 
+                t.usd_valor_venda vl_unificado, 
+                t.quitacao-1 data_cotacao,
+                u.taxa_venda tx_brl_usd, 
+                v.taxa_venda tx_brl_eur,
+                trunc(v.taxa_venda / u.taxa_venda,4) tx_eur_usd
+           from VW_FINANCEIRO_PAISES        t
+                left  join co_moeda_cotacao u on u.data = t.quitacao - 1 and u.sq_moeda = 70
+                left  join co_moeda_cotacao v on v.data = t.quitacao - 1 and v.sq_moeda = 218
+          where t.quitacao    between p_fim_i and p_fim_f
+            and (p_projeto    is null or (p_projeto     is not null and t.sq_projeto         = p_projeto))
+            and (p_pais       is null or (p_pais        is not null and t.sq_pais            = p_pais))
+            and (p_sq_orprior is null or (p_sq_orprior  is not null and t.sq_tipo_lancamento = p_sq_orprior));
+   Elsif p_restricao = 'INFEXECPAIS' Then
+      -- Informe executivo da OTCA - Valores por país
+      open p_result for 
+         select sq_pais, nm_pais, sq_projeto, cd_projeto, nm_projeto, sq_tipo_lancamento, ds_tipo_lancamento, sg_pj_moeda, 
+                sum(valor) vl_projeto, 
+                sum(usd_valor_venda) vl_unificado
+           from VW_FINANCEIRO_PAISES t
+          where t.quitacao between p_fim_i and p_fim_f
+         group by sq_pais, nm_pais, sq_projeto, cd_projeto, nm_projeto, sq_tipo_lancamento, ds_tipo_lancamento, sg_pj_moeda
+         order by nm_pais, cd_projeto, nm_projeto, ds_tipo_lancamento;
+   Elsif p_restricao = 'INFEXECPROJ' Then
+      -- Informe executivo da OTCA - Valores por projeto
+      open p_result for 
+         select  sq_projeto, cd_projeto, nm_projeto, sq_pais, nm_pais, sq_tipo_lancamento, ds_tipo_lancamento, sg_pj_moeda, 
+                sum(valor) vl_pais, 
+                sum(usd_valor_venda) vl_unificado
+           from VW_FINANCEIRO_PAISES t
+          where t.quitacao between p_fim_i and p_fim_f
+         group by sq_projeto, cd_projeto, nm_projeto, sq_pais, nm_pais, sq_tipo_lancamento, ds_tipo_lancamento, sg_pj_moeda
+         order by cd_projeto, nm_projeto, nm_pais, ds_tipo_lancamento;
    End If;
 end SP_GetSolicFN;
 /

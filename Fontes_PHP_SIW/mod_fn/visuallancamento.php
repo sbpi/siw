@@ -1,5 +1,21 @@
 <?php
 include_once($w_dir_volta.'classes/sp/db_getSolicCotacao.php');
+include_once($w_dir_volta.'classes/sp/db_getBenef.php');
+include_once($w_dir_volta.'classes/sp/db_getLancamentoDoc.php');
+include_once($w_dir_volta.'classes/sp/db_getLancamentoItem.php');
+include_once($w_dir_volta.'classes/sp/db_getLancamentoRubrica.php');
+include_once($w_dir_volta.'classes/sp/db_getLancamentoValor.php');
+include_once($w_dir_volta.'classes/sp/db_getLancamentoPais.php');
+include_once($w_dir_volta.'classes/sp/db_getLancamentoProjeto.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicAcesso.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicLog.php');
+include_once($w_dir_volta.'classes/sp/db_getSolicRubrica.php');
+include_once($w_dir_volta.'classes/sp/db_getTramiteData.php');
+include_once($w_dir_volta.'classes/sp/db_getImpostoIncid.php');
+include_once($w_dir_volta.'classes/sp/db_getImpostoDoc.php');
+include_once($w_dir_volta.'mod_fn/validalancamento.php');
 // =========================================================================
 // Rotina de visualização dos dados do lançamento
 // -------------------------------------------------------------------------
@@ -200,6 +216,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'      <tr valign="top"><td><b>Condições de pagamento:</b></td><td>'.CRLF2BR(Nvl(f($RS,'condicoes_pagamento'),'---')).' </td></tr>';    
     }
     $l_html.=chr(13).'          <tr><td><b>Valor:</b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
+    $w_valor_solic = f($RS,'valor');
     $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $v_chave,null,null,null,null);
     $RS_Moeda_Cot = SortArray($RS_Moeda_Cot,'sb_moeda','asc');
     foreach($RS_Moeda_Cot as $row) {
@@ -272,13 +289,25 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         } elseif (substr($w_SG,0,3)=='FND') {
           $l_html.=chr(13).'      <tr><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Conta débito</td>';
         }
-        $l_html.=chr(13).'          <tr><td><b>Banco:</b></td>';
+        $l_html.=chr(13).'          <tr><td width="30%"><b>Banco:</b></td>';
         $l_html.=chr(13).'                <td>'.f($RS,'cd_ban_org').' - '.f($RS,'nm_ban_org').'</td></tr>';
         $l_html.=chr(13).'          <tr><td><b>Agência:</b></td>';
         $l_html.=chr(13).'              <td>'.f($RS,'cd_age_org').' - '.f($RS,'nm_age_org').'</td></tr>';
         if (f($RS,'exige_oper_org')=='S') $l_html.=chr(13).'          <tr><td><b>Operação:</b></td><td>'.Nvl(f($RS,'oper_org'),'---').'</td>';
         $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td>';
         $l_html.=chr(13).'              <td>'.Nvl(f($RS,'nr_conta_org'),'---').((nvl(f($RS,'sg_moeda_cc'),'')=='') ? '' : ' ('.f($RS,'sg_moeda_cc').')').'</td></tr>';
+      }
+      
+      $l_html.=chr(13).'      <tr bgColor="'.$conTrBgColor.'"><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Informações Contábeis</td>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Conta Contábil de Débito:</b></td><td>'.nvl(f($RS,'cc_debito'),'---').'</td></tr>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Conta Contábil de Crédito:</b></td><td>'.nvl(f($RS,'cc_credito'),'---').'</td></tr>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Última atualização:</b></td><td>'.nvl(FormataDataEdicao(f($RS,'phpdt_cc_data'),3),'---').'</td></tr>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Responsável pela atualização:</b></td>';
+      if (Nvl(f($RS,'cc_pessoa'),'nulo')!='nulo') {
+        if ($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($RS,'cc_pessoa'),$TP,f($RS,'cc_pessoa_nome_res')).'</td>';
+        else                 $l_html.=chr(13).'        <td>'.f($RS,'cc_pessoa_nome_res').'</td>';
+      } else {
+        $l_html.=chr(13).'        <td>---<td>';
       }
     }
 
@@ -463,7 +492,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     
     // Itens
     $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,null,$v_chave,null,null);
-    $RS = SortArray($RS,'ordem','asc','rubrica','asc');
+    $RS = SortArray($RS,'ordem','asc','sq_documento_item','asc');
     if (count($RS)>0) {
       $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>ITENS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
       $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
@@ -471,6 +500,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'          <tr align="center">';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Item</b></td>';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Descrição</b></td>';
+      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Rubrica</b></td>';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Qtd.</b></td>';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>$ Unitário'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
       $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>$ Total'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
@@ -481,6 +511,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td align="center">'.f($row,'ordem').'</td>';
         $l_html.=chr(13).'        <td>'.f($row,'descricao').'</td>';
+        $l_html.=chr(13).'        <td align="center">'.f($row,'codigo_rubrica').'</td>';
         $l_html.=chr(13).'        <td align="right">'.f($row,'quantidade').'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_unitario')).'</td>';
         $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor_total')).'</td>';
@@ -488,7 +519,7 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       } 
       if ($w_total>0) {
         $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td align="right" colspan="4"><b>Total</b></td>';
+        $l_html.=chr(13).'        <td align="right" colspan="5"><b>Total</b></td>';
         $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b></td>';
         $l_html.=chr(13).'      </tr>';
       }      
@@ -679,44 +710,13 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       if ($w_total>0) {
         $l_html.=chr(13).'      <tr valign="top">';
         $l_html.=chr(13).'        <td align="right"'.(($w_entidade!='') ? ' colspan=2' : '').'><b>Total</b></td>';
-        $l_html.=chr(13).'        <td align="right" width="20%"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
+        $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
         $l_html.=chr(13).'      </tr>';
       }      
       $l_html.=chr(13).'         </table></td></tr>';
     }
   }
   
-  // Fontes de financiamento
-  $sql = new db_getLancamentoItem; $RS = $sql->getInstanceOf($dbms,null,null,$v_chave,$w_sq_projeto,'FONTE');
-  if(count($RS)>0) {
-    $RS = SortArray($RS,'nm_fonte','asc');
-    if (count($RS)>0) {
-      $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>FONTES DE FINANCIAMENTO E VALORES<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
-      $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
-      $l_html.=chr(13).'        <table width=100% border="1" bordercolor="#00000">';
-      $l_html.=chr(13).'          <tr align="center">';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Fonte</b></td>';
-      $l_html.=chr(13).'          <td bgColor="#f0f0f0"><b>Valor total'.(($w_sb_moeda!='') ? ' ('.$w_sb_moeda.')' : '').'</b></td>';
-      $l_html.=chr(13).'          </tr>';
-      $w_cor=$w_TrBgColor;
-      $w_total = 0;
-      foreach($RS as $row) {
-        $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td align="left">'.f($row,'nm_fonte').'</td>';
-        $l_html.=chr(13).'        <td align="right">'.formatNumber(Nvl(f($row,'valor_total'),0)).'&nbsp;&nbsp;</td>';
-        $l_html.=chr(13).'      </tr>';
-        $w_total += nvl(f($row,'valor_total'),0);
-      } 
-      if ($w_total>0) {
-        $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td align="right"><b>Total</b></td>';
-        $l_html.=chr(13).'        <td align="right" width="20%"><b>'.formatNumber($w_total).'</b>&nbsp;&nbsp;</td>';
-        $l_html.=chr(13).'      </tr>';
-      }      
-      $l_html.=chr(13).'         </table></td></tr>';
-    }
-  }
-
   // Arquivos vinculados
   $sql = new db_getSolicAnexo; $RS = $sql->getInstanceOf($dbms,$v_chave,null,$w_cliente);
   $RS = SortArray($RS,'nome','asc');
@@ -744,6 +744,37 @@ function VisualLancamento($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     } 
     $l_html.=chr(13).'         </table></td></tr>';
   } 
+  
+  // Valores por país
+  $sql = new db_getLancamentoPais; $RS = $sql->getInstanceOf($dbms,$w_cliente, null, $v_chave,null,null);
+  $RS = SortArray($RS,'nome','asc');
+  if (count($RS)>0) {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VALORES POR PAÍS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+    $l_html.=chr(13).'        <table width=40%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'          <tr align="center">';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>País</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Valor</b></td>';
+    $l_html.=chr(13).'          </tr>';
+    $w_cor=$w_TrBgColor;
+    $w_vl_total     = 0;
+    foreach($RS as $row) {
+      $l_html.=chr(13).'      <tr valign="top">';
+      $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+      $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+      $l_html.=chr(13).'      </tr>';
+      $w_vl_total += f($row,'valor');
+    } 
+    $l_html.=chr(13).'      <tr valign="top">';
+    $l_html.=chr(13).'        <td align="right"><b>Total</b></td>';
+    $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_vl_total).'</b></td>';
+    $l_html.=chr(13).'      </tr>';
+    if ($w_vl_total!=$w_valor_solic) {
+      $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="red" align="center"><b>ATENÇÃO: Soma dos valores difere do valor do lançamento!</b></td></tr>';
+    }
+    $l_html.=chr(13).'         </table></td></tr>';
+  } 
+  
   // Se for envio, executa verificações nos dados da solicitação
   $w_erro=ValidaLancamento($w_cliente,$v_chave,substr($w_SG,0,3).'GERAL',null,null,null,Nvl($w_tramite,0));
   if ($w_erro>'') {

@@ -50,8 +50,11 @@ begin
                 g.nome nm_cc, g.sigla sg_cc,
                 h.titulo nm_projeto, h.codigo_interno cd_projeto,
                 brl.valor_aquisicao vl_aquisicao_brl, brl.valor_atual vl_atual_brl, brl.data_valor_atual dt_vl_atual_brl,
+                case when brl.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, brl.sq_moeda) else null end vl_depreciado_brl,
                 usd.valor_aquisicao vl_aquisicao_usd, usd.valor_atual vl_atual_usd, usd.data_valor_atual dt_vl_atual_usd,
-                eur.valor_aquisicao vl_aquisicao_eur, eur.valor_atual vl_atual_eur, eur.data_valor_atual dt_vl_atual_eur
+                case when usd.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, usd.sq_moeda) else null end vl_depreciado_usd,
+                eur.valor_aquisicao vl_aquisicao_eur, eur.valor_atual vl_atual_eur, eur.data_valor_atual dt_vl_atual_eur,
+                case when eur.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, eur.sq_moeda) else null end vl_depreciado_eur
            from mt_permanente                            p
                 inner           join cl_material         a  on (p.sq_material         = a.sq_material)
                   inner         join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)

@@ -10,14 +10,13 @@ $arrayIni = array();
 $arrayReq = array();
 $arrayMod = get_loaded_extensions();
 
-
 // Módulos PHP
 array_push($arrayReq,array(
            /*'apache2handler',*/    'curl',        'ctype',           'date',             'dom',
            'gettext',               'gd',          'hash',            'iconv',            /*'imap',*/
            'libxml',                'ldap',        'mbstring',        /*'mime_magic',       'mcrypt',*/
            'oci8',                  'pcre',        'session',         'SimpleXML',        'SPL',
-           'standard',              'xml',         'xmlreader',       'xmlwriter',               
+           'soap',                  'standard',    'xml',             'xmlreader',        'xmlwriter',
                           ) 
           );
       

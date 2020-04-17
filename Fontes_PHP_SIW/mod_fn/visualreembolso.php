@@ -1,4 +1,5 @@
 <?php
+include_once($w_dir_volta.'classes/sp/db_getLancamentoPais.php');
 // =========================================================================
 // Rotina de visualização dos dados do lançamento
 // -------------------------------------------------------------------------
@@ -131,6 +132,7 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
     }
     $l_html.=chr(13).'      <tr><td width="30%"><b>Tipo de lançamento: </b></td><td>'.f($RS,'nm_tipo_lancamento').' </td></tr>';
     $l_html.=chr(13).'      <tr><td><b>Valor do reembolso:</b></td><td>'.(($w_sb_moeda!='') ? $w_sb_moeda.' ' : '').formatNumber(Nvl(f($RS,'valor'),0)).' </td></tr>';
+    $w_valor_solic = f($RS,'valor');
     $sql = new db_getSolicCotacao; $RS_Moeda_Cot = $sql->getInstanceOf($dbms,$w_cliente, $v_chave,null,null,null,null);
     $RS_Moeda_Cot = SortArray($RS_Moeda_Cot,'sb_moeda','asc');
     foreach($RS_Moeda_Cot as $row) {
@@ -207,6 +209,18 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
         $l_html.=chr(13).'          <tr><td><b>Número da conta:</b></td>';
         $l_html.=chr(13).'              <td>'.Nvl(f($RS,'nr_conta_org'),'---').((nvl(f($RS,'sg_moeda_cc'),'')=='') ? '' : ' ('.f($RS,'sg_moeda_cc').')').'</td></tr>';
       }
+      
+      $l_html.=chr(13).'      <tr bgColor="'.$conTrBgColor.'"><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Informações Contábeis</td>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Conta Contábil de Débito:</b></td><td>'.nvl(f($RS,'cc_debito'),'---').'</td></tr>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Conta Contábil de Crédito:</b></td><td>'.nvl(f($RS,'cc_credito'),'---').'</td></tr>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Última atualização:</b></td><td>'.nvl(FormataDataEdicao(f($RS,'phpdt_cc_data'),3),'---').'</td></tr>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Responsável pela atualização:</b></td>';
+      if (Nvl(f($RS,'cc_pessoa'),'nulo')!='nulo') {
+        if ($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($RS,'cc_pessoa'),$TP,f($RS,'cc_pessoa_nome_res')).'</td>';
+        else                 $l_html.=chr(13).'        <td>'.f($RS,'cc_pessoa_nome_res').'</td>';
+      } else {
+        $l_html.=chr(13).'        <td>---<td>';
+      }
     }
     $w_vl_retencao    = Nvl(f($RS,'valor_retencao'),0);
     $w_vl_normal      = Nvl(f($RS,'valor_imposto'),0);
@@ -282,6 +296,36 @@ function VisualReembolso($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       $l_html.=chr(13).'        <td align="right">'.round(f($row,'tamanho')/1024,1).'&nbsp;</td>';
       $l_html.=chr(13).'      </tr>';
     } 
+    $l_html.=chr(13).'         </table></td></tr>';
+  } 
+  
+  // Valores por país
+  $sql = new db_getLancamentoPais; $RS = $sql->getInstanceOf($dbms,$w_cliente, null, $v_chave,null,null);
+  $RS = SortArray($RS,'nome','asc');
+  if (count($RS)>0) {
+    $l_html.=chr(13).'      <tr><td colspan="2"><br><font size="2"><b>VALORES POR PAÍS<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>';
+    $l_html.=chr(13).'      <tr><td align="center" colspan="2">';
+    $l_html.=chr(13).'        <table width=40%  border="1" bordercolor="#00000">';
+    $l_html.=chr(13).'          <tr align="center">';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>País</b></td>';
+    $l_html.=chr(13).'            <td bgColor="#f0f0f0"><b>Valor</b></td>';
+    $l_html.=chr(13).'          </tr>';
+    $w_cor=$w_TrBgColor;
+    $w_vl_total     = 0;
+    foreach($RS as $row) {
+      $l_html.=chr(13).'      <tr valign="top">';
+      $l_html.=chr(13).'        <td>'.f($row,'nome').'</td>';
+      $l_html.=chr(13).'        <td align="right">'.formatNumber(f($row,'valor')).'</td>';
+      $l_html.=chr(13).'      </tr>';
+      $w_vl_total += f($row,'valor');
+    } 
+    $l_html.=chr(13).'      <tr valign="top">';
+    $l_html.=chr(13).'        <td align="right"><b>Total</b></td>';
+    $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_vl_total).'</b></td>';
+    $l_html.=chr(13).'      </tr>';
+    if ($w_vl_total!=$w_valor_solic) {
+      $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="red" align="center"><b>ATENÇÃO: Soma dos valores difere do valor do lançamento!</b></td></tr>';
+    }
     $l_html.=chr(13).'         </table></td></tr>';
   } 
   // Se for envio, executa verificações nos dados da solicitação

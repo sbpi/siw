@@ -145,7 +145,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Período:</b></td><td colspan="12">'.FormataDataEdicao(f($RS,'inicio')).' a '.FormataDataEdicao(f($RS,'fim')).'</td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Bilhetes / Passagens:</b></td><td colspan="12">'.Nvl(f($RS,'nm_passagem'),'---').' </td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Categoria da diária:</b></td><td colspan="12">'.Nvl(f($RS,'nm_diaria'),'---').' </td></tr>';
-      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Hospedagem:</b></td><td colspan="12">'.Nvl(f($RS,'nm_hospedagem'),'---').'</td></tr>';
+      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Hospedagem no Brasil:</b></td><td colspan="12">'.Nvl(f($RS,'nm_hospedagem'),'---').'</td></tr>';
       $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Veículo:</b></td><td colspan="12">'.Nvl(f($RS,'nm_veiculo'),'---').' </td></tr>';
       if (f($RS,'internacional')=='N') {
         $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Diária em fim de semana:</b></td><td colspan="12">'.retornaSimNao(f($RS,'diaria_fim_semana')).' </td></tr>';
@@ -1273,7 +1273,7 @@ function VisualViagem($l_chave,$l_o,$l_usuario,$l_p1,$l_tipo,$l_identificacao='S
         $l_html.=chr(13).'      <tr><td width="30%"><b>Data da devolução:</b></td><td colspan="12" align="left">'.formataDataEdicao(f($RS,'ressarcimento_data')).'</td></tr>';
         $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Código do depósito identificado:</b></td><td colspan="12">'.nvl(f($RS,'deposito_identificado'),'---').'</td></tr>';
       }
-      $l_html.=chr(13).'      <tr><td width="30%"><b>Valor devolvido:</b></td><td colspan="12" align="left">R$ '.formatNumber(f($RS,'ressarcimento_valor')).'</td></tr>';
+      $l_html.=chr(13).'      <tr><td width="30%"><b>Valor devolvido:</b></td><td colspan="12" align="left">'.nvl(f($RS,'sb_moeda_ressarcimento'),'R$').' '.formatNumber(f($RS,'ressarcimento_valor')).'</td></tr>';
       if (f($RS,'ressarcimento')=='S') {
         $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Observação:</b></td><td colspan="12">'.nvl(CRLF2BR(f($RS,'ressarcimento_observacao')),'---').'</td></tr>';
       } 

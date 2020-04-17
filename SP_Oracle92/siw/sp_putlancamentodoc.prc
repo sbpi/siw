@@ -54,6 +54,17 @@ begin
              valor_excedente   = p_excedente,
              valor_reajuste    = p_reajuste
        where sq_lancamento_doc = p_chave_aux;
+       
+       -- Se o documento tem apenas um item, iguala seu valor ao do documento
+       select count(*) into w_cont from fn_documento_item where sq_lancamento_doc = p_chave_aux;
+       
+       If w_cont = 1 Then
+          update fn_documento_item
+             set valor_unitario = w_valor,
+                 valor_total    = w_valor
+          where sq_lancamento_doc = p_chave_aux;
+       End If;
+       
    Elsif p_operacao = 'E' Then -- Exclusão
       delete fn_documento_valores where sq_lancamento_doc = p_chave_aux;
       delete fn_documento_item where sq_lancamento_doc = p_chave_aux;

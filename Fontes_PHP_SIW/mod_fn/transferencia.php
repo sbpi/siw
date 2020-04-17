@@ -489,6 +489,8 @@ function Geral() {
     $w_moeda_debito         = $_REQUEST['w_moeda_debito'];
     $w_moeda_credito        = $_REQUEST['w_moeda_credito'];
     $w_sq_forma_pagamento   = $_REQUEST['w_sq_forma_pagamento'];
+    $w_cc_debito            = $_REQUEST['w_cc_debito'];
+    $w_cc_credito           = $_REQUEST['w_cc_credito'];
 
   } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
@@ -508,6 +510,8 @@ function Geral() {
       $w_fim                  = formataDataEdicao(f($RS,'fim'));
       $w_valor                = formatNumber(f($RS,'valor'));
       $w_sq_forma_pagamento   = f($RS,'sq_forma_pagamento');
+      $w_cc_debito            = f($RS,'cc_debito');
+      $w_cc_credito           = f($RS,'cc_credito');
 
       // Recupera valores gravados em outra moeda
       if (nvl($w_moeda_credito,0)>0 && nvl($w_moeda_debito,0)>0 && nvl($w_moeda_credito,0)!=nvl($w_moeda_debito,0)) {
@@ -632,6 +636,15 @@ function Geral() {
       CompValor('w_valor_conversao','Valor '.f($RS_Credito,'sg_moeda'),'>','0,00','zero');
     }
     Validate('w_descricao','Observação','1','',5,2000,'1','1');
+    
+    Validate('w_cc_debito','Conta Débito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    Validate('w_cc_credito','Conta Crédito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    
+    ShowHTML('  if ((theForm.w_cc_debito.value != "" && theForm.w_cc_credito.value == "") || (theForm.w_cc_debito.value == "" && theForm.w_cc_credito.value != "")) {');
+    ShowHTML('     alert ("Informe ambas as contas contábeis ou nenhuma delas!");');
+    ShowHTML('     theForm.w_cc_debito.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
   } 
   Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   ValidateClose();
@@ -678,12 +691,12 @@ function Geral() {
     ShowHTML('<INPUT type="hidden" name="w_dias" value="0">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="100%" border="0">');
-    ShowHTML('      <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td colspan=3 align="center" bgcolor="#D0D0D0"><b>Identificação</td></td></tr>');
-    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
-    ShowHTML('      <tr><td colspan=3>Os dados deste bloco serão utilizados para identificação do lançamento, bem como para o controle de sua execução.</td></tr>');
-    ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan="4" align="center" height="2" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan="4" align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan="4" align="center" bgcolor="#D0D0D0"><b>Identificação</td></td></tr>');
+    ShowHTML('      <tr><td colspan="4" align="center" height="1" bgcolor="#000000"></td></tr>');
+    ShowHTML('      <tr><td colspan="4">Os dados deste bloco serão utilizados para identificação do lançamento, bem como para o controle de sua execução.</td></tr>');
+    ShowHTML('      <tr><td colspan="4" align="center" height="1" bgcolor="#000000"></td></tr>');
 
     ShowHTML('          <tr valign="top">');
     selecaoTipoLancamento('Tipo de lançamento:',null,null,$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',$SG,null,3);
@@ -694,11 +707,11 @@ function Geral() {
       ShowHTML('<INPUT type="hidden" name="w_sq_forma_pagamento" value="'.$w_sq_forma_pagamento.'">');
     }
     if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
-      SelecaoContaBanco('<u>C</u>onta origem:','C','Selecione a conta bancária de origem da transferência.',$w_conta_debito,null,'w_conta_debito',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_conta_credito\'; document.Form.submit();"');
-      SelecaoContaBanco('<u>C</u>onta destino:','C','Selecione a conta bancária de destino da transferência.',$w_conta_credito,null,'w_conta_credito',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_fim\'; document.Form.submit();"');
+      SelecaoContaBanco('<u>C</u>onta origem:','C','Selecione a conta bancária de origem da transferência.',$w_conta_debito,null,'w_conta_debito',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_conta_credito\'; document.Form.submit();"',2);
+      SelecaoContaBanco('<u>C</u>onta destino:','C','Selecione a conta bancária de destino da transferência.',$w_conta_credito,null,'w_conta_credito',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_fim\'; document.Form.submit();"',2);
     } else {
-      SelecaoContaBanco('<u>C</u>onta origem:','C','Selecione a conta bancária de origem da transferência.',$w_conta_debito,null,'w_conta_debito',null,null);
-      SelecaoContaBanco('<u>C</u>onta destino:','C','Selecione a conta bancária de destino da transferência.',$w_conta_credito,null,'w_conta_credito',null,null);
+      SelecaoContaBanco('<u>C</u>onta origem:','C','Selecione a conta bancária de origem da transferência.',$w_conta_debito,null,'w_conta_debito',null,null,2);
+      SelecaoContaBanco('<u>C</u>onta destino:','C','Selecione a conta bancária de destino da transferência.',$w_conta_credito,null,'w_conta_credito',null,null,2);
     }
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
@@ -712,19 +725,24 @@ function Geral() {
     if (nvl($w_moeda_credito,0)>0 && nvl($w_moeda_debito,0)>0 && nvl($w_moeda_credito,0)!=nvl($w_moeda_debito,0)) {
       ShowHTML('        <td><b><u>V</u>alor '.f($RS_Credito,'sb_moeda').':</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor_conversao" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_conversao.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);">'.converteMoeda('Form','w_fim','w_valor_conversao','w_valor',$w_moeda_debito,$w_moeda_credito).'</td>');
     }
-    ShowHTML('      <tr><td colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_descricao" class="sti" ROWS=3 cols=75 title="Observação sobre a aplicação.">'.$w_descricao.'</TEXTAREA></td>');
+    ShowHTML('      <tr><td colspan="4"><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_descricao" class="sti" ROWS=3 cols=75 title="Observação sobre a aplicação.">'.$w_descricao.'</TEXTAREA></td>');
+
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>C</u>onta contábil de débito:</b></br><input type="text" name="w_cc_debito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_debito.'"></td>');
+    ShowHTML('        <td><b><u>C</u>onta contábil de crédito:</b></br><input type="text" name="w_cc_credito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_credito.'"></td>');
+    
     ShowHTML('          </table>');
     
-    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
+    ShowHTML('      <tr><td align="center" colspan="4" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
-    ShowHTML('      <tr><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
-    ShowHTML('      <tr><td align="center" colspan="3">');
+    ShowHTML('      <tr><td align="LEFT" colspan="4"><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    ShowHTML('      <tr><td align="center" colspan="4">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
     if ($P1==0) {
       ShowHTML('      <input class="STB" type="button" onClick="location.href=\''.montaURL_JS($w_dir,'tesouraria.php?par=inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.MontaFiltro('GET')).'\';" name="Botao" value="Abandonar">');
     } else {
      $sql = new db_getMenuData; $RS = $sql->getInstanceOf($dbms,$w_menu);
-     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$R.'&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
+     ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.'INICIAL&w_copia='.$w_copia.'&O=L&SG='.f($RS,'sigla').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.MontaFiltro('GET')).'\';" name="Botao" value="Cancelar">');
     }
     ShowHTML('          </td>');
     
@@ -1194,7 +1212,8 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda_debito'],$w_chave_nova, $w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda_debito'],$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],
+          $w_chave_nova, $w_codigo);
       
       if ($O!='E') {
         // Reembolso sempre é para o usuário logado
@@ -1262,18 +1281,21 @@ function Grava() {
 
         $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$w_chave_nova,$w_usuario,$_REQUEST['w_tramite'],
           $_REQUEST['w_fim'],Nvl($_REQUEST['w_valor'],0),null,$_REQUEST['w_conta_debito'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
-          null,'Conclusão automática de aplicação.',null,null,null,null);
+          null,'Conclusão automática de aplicação.',$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],null,null,null,null);
       }
     
       $w_html = VisualTransferencia(nvl($_REQUEST['w_chave'],$w_chave_nova),'L',$w_usuario,1,'1');
       CriaBaseLine(nvl($_REQUEST['w_chave'],$w_chave_nova),$w_html,f($RS_Menu,'nome'),$_REQUEST['w_tramite']);
 
       ScriptOpen('JavaScript');
-      if ($O=='E') {
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,'tesouraria.php?par=inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.MontaFiltro('GET')).'\';');
+      if ($P1==0) {
+         if ($O=='E' || $P2!=1) {
+           ShowHTML('  location.href=\''.montaURL_JS($w_dir,'tesouraria.php?par=inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.MontaFiltro('GET')).'\';');
+         } else {
+           ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'geral&O=A&w_chave='.nvl($_REQUEST['w_chave'],$w_chave_nova).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+         }
       } else {
-        ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'geral&O=A&w_chave='.$w_chave_nova.'&w_tipo='.$_REQUEST['w_tipo'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
-        //ShowHTML('  location.href=\''.montaURL_JS($w_dir,f($RS_Menu,'link').'&O=L&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
+         ShowHTML('  location.href=\''.montaURL_JS($w_dir,$w_pagina.'geral&O=A&w_chave='.$w_chave_nova.'&w_tipo='.$_REQUEST['w_tipo'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'\';');
       }
       ScriptClose();
     } else {

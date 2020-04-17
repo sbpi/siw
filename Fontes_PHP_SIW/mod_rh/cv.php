@@ -2137,8 +2137,8 @@ function Grava() {
               $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms,'I',
                   $_REQUEST['w_chave'],$w_cliente,$_REQUEST['w_nome'],$_REQUEST['w_nome_resumido'],$_REQUEST['w_cpf'],$_REQUEST['w_sexo'],
                   $_REQUEST['w_sq_tipo_vinculo'],'Física',$_REQUEST['w_unidade_lotacao'],$_REQUEST['w_localizacao'],
-                  $_REQUEST['w_cpf'],$_REQUEST['w_email'],null,null,'B');
-              $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms,'T',$_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+                  $_REQUEST['w_cpf'],$_REQUEST['w_email'],null,null,'B','N','N','N');
+              $SQL = new dml_putSiwUsuario; $SQL->getInstanceOf($dbms,'T',$_REQUEST['w_chave'],$w_cliente,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
             } 
           }
         } 

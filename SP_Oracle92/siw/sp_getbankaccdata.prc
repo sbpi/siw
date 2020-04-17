@@ -9,7 +9,7 @@ begin
              a.tipo_conta,            a.ativo,                     a.padrao,           a.devolucao_valor,
              a.saldo_inicial,         a.sq_pais_estrang,           a.aba_code,         a.swift_code,
              a.endereco_estrang,      a.banco_estrang,             a.agencia_estrang,  a.cidade_estrang,
-             a.informacoes,
+             a.informacoes,           a.codigo_externo,
              c.sq_moeda,              c.codigo cd_moeda,           c.sigla sg_moeda,   c.simbolo sb_moeda,
              d.nome nm_banco,
              c.ativo at_moeda

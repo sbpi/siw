@@ -821,6 +821,8 @@ function Geral() {
     $w_solic_apoio          = $_REQUEST['w_solic_apoio'];
     $w_data_autorizacao     = $_REQUEST['w_data_autorizacao'];
     $w_texto_autorizacao    = $_REQUEST['w_texto_autorizacao'];
+    $w_cc_debito            = $_REQUEST['w_cc_debito'];
+    $w_cc_credito           = $_REQUEST['w_cc_credito'];
     
     // Recarrega dados do comprovante
     $w_sq_tipo_documento    = $_REQUEST['w_sq_tipo_documento'];
@@ -885,6 +887,8 @@ function Geral() {
       $w_solic_apoio          = f($RS_Solic,'sq_solic_apoio');
       $w_data_autorizacao     = FormataDataEdicao(f($RS_Solic,'data_autorizacao'));
       $w_texto_autorizacao    = f($RS_Solic,'texto_autorizacao');
+      $w_cc_debito            = f($RS_Solic,'cc_debito');
+      $w_cc_credito           = f($RS_Solic,'cc_credito');
     } 
 
     // Recupera dados do comprovante
@@ -1055,6 +1059,16 @@ function Geral() {
     CompData('w_vencimento','Limite para utilização','<=',$w_limite,f($RS_Parametro,'fundo_fixo_dias_utilizacao').' dias da data corrente ou até o final do ano!');
     if ($w_exibe_fp) Validate('w_sq_forma_pagamento','Forma de recebimento','SELECT',1,1,18,'','0123456789');       
     //Validate('w_valor','Valor do documento','VALOR','1',4,18,'','0123456789.,');
+    Validate('w_descricao','Finalidade','1','',5,2000,'1','1');
+    
+    Validate('w_cc_debito','Conta Débito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    Validate('w_cc_credito','Conta Crédito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    ShowHTML('  if ((theForm.w_cc_debito.value != "" && theForm.w_cc_credito.value == "") || (theForm.w_cc_debito.value == "" && theForm.w_cc_credito.value != "")) {');
+    ShowHTML('     alert ("Informe ambas as contas contábeis ou nenhuma delas!");');
+    ShowHTML('     theForm.w_cc_debito.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    
     Validate('w_sq_tipo_documento','Tipo do documento', '1', '1', '1', '18', '', '0123456789');
     if ($w_exige_conta) Validate('w_conta','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_numero','Número do documento', '1', '1', '1', '30', '1', '1');
@@ -1168,6 +1182,11 @@ function Geral() {
     ShowHTML('          <td><b><u>L</u>imite para utilização:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_vencimento,$w_limite).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_vencimento').'</td>');
 
     ShowHTML('      <tr><td colspan="5"><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
+
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>C</u>onta contábil de débito:</b></br><input type="text" name="w_cc_debito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_debito.'"></td>');
+    ShowHTML('        <td><b><u>C</u>onta contábil de crédito:</b></br><input type="text" name="w_cc_credito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_credito.'"></td>');
+    
     ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" valign="top" align="center" bgcolor="#D0D0D0"><b>Documento de despesa</td></td></tr>');
@@ -1190,7 +1209,7 @@ function Geral() {
       foreach($w_moedas as $k => $v) {
         ShowHTML('<INPUT type="hidden" name="w_moeda[]" value="'.$k.'">');
         eval('$valor = $w_valor_'.$k.';');
-        ShowHTML('        <tr><td colspan=4><td><b>Valo<u>r</u> ('.$v.'):</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_'.$k.'" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do lançamento na moeda informada.">'.converteMoeda('Form','w_quitacao','w_valor_'.$k,'w_valor_real',f($RS_Solic,'sq_moeda'),$k).'</td>');
+        ShowHTML('        <tr><td colspan=4><td><b>Valo<u>r</u> ('.$v.'):</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_valor_'.$k.'" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor do lançamento na moeda informada.">'.converteMoeda('Form','w_data','w_valor_'.$k,'w_valor',f($RS_Conta,'sq_moeda'),$k).'</td>');
       }
     }
 
@@ -1765,6 +1784,8 @@ function Concluir() {
     $w_observacao         = $_REQUEST['w_observacao'];
     $w_conta              = $_REQUEST['w_conta'];
     $w_sq_tipo_lancamento = $_REQUEST['$w_sq_tipo_lancamento'];
+    $w_cc_debito          = $_REQUEST['w_cc_debito'];
+    $w_cc_credito         = $_REQUEST['w_cc_credito'];
   } 
 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
@@ -1774,10 +1795,13 @@ function Concluir() {
   $w_tramite            = f($RS_Solic,'sq_siw_tramite');
   $w_conta              = f($RS_Solic,'sq_pessoa_conta');
   $w_valor_real         = formatNumber(f($RS_Solic,'valor'));
+  $w_saldo              = f($RS_Solic,'valor');
   $w_sg_forma_pagamento = f($RS_Solic,'sg_forma_pagamento');
   $w_sq_tipo_lancamento = f($RS_Solic,'sq_tipo_lancamento');
   $w_inicio             = FormataDataEdicao(time());
   $w_sq_projeto_rubrica = f($RS_Solic,'sq_projeto_rubrica');
+  $w_cc_debito          = f($RS_Solic,'cc_debito');
+  $w_cc_credito         = f($RS_Solic,'cc_credito');
 
   $sql = new db_getContaBancoList; $RS_Conta = $sql->getInstanceOf($dbms,$w_cliente,null,'FINANCEIRO');
   if (count($RS_Conta)>1) { 
@@ -1814,9 +1838,7 @@ function Concluir() {
   $sql = new db_getSolicFN; $RS1 = $sql->getInstanceOf($dbms,f($RSL,'sq_menu'),$w_usuario,null,3,
             null,null,null,null,null,null, null,null,null,null, null, null, null, null, null, null, null,
             null, null, null, null, null, $w_chave, null, null, null, null);
-  $w_valor_real = 0;
-  foreach ($RS1 as $row)  $w_valor_real += Nvl(f($row,'valor'),0);
-  $w_valor_real = FormatNumber($w_valor_real);  
+  foreach ($RS1 as $row)  $w_saldo -= Nvl(f($row,'valor'),0);
   
   // Se for envio, executa verificações nos dados da solicitação
   $w_erro = ValidaFundoFixo($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
@@ -1835,10 +1857,18 @@ function Concluir() {
     if (count($RS_Rub)>0) Validate('w_sq_projeto_rubrica','Rubrica', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_quitacao','Data do encerramento', 'DATA', 1, 10, 10, '', '0123456789/');
     CompData('w_quitacao','Data do encerramento','<=',FormataDataEdicao(time()),'data atual');
-    Validate('w_valor_real','Valor utilizado','VALOR','1', 4, 18, '', '0123456789.,');
     if (w_sg_forma_pagamento=='DEPOSITO') Validate('w_codigo_deposito','Código do depósito', '1', '1', 1, 50, '1', '1');
     if ($w_exige_conta) Validate('w_conta','Conta bancária', 'SELECT', 1, 1, 18, '', '0123456789');
     Validate('w_observacao','Observação', '', '', '1', '500', '1', '1');
+    
+    Validate('w_cc_debito','Conta Débito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    Validate('w_cc_credito','Conta Crédito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    ShowHTML('  if ((theForm.w_cc_debito.value != "" && theForm.w_cc_credito.value == "") || (theForm.w_cc_debito.value == "" && theForm.w_cc_credito.value != "")) {');
+    ShowHTML('     alert ("Informe ambas as contas contábeis ou nenhuma delas!");');
+    ShowHTML('     theForm.w_cc_debito.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
+    
     Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
     if ($P1!=1) {
        // Se não for encaminhamento
@@ -1903,7 +1933,10 @@ function Concluir() {
     }
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><b><u>D</u>ata do encerramento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_quitacao" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.Nvl($w_quitacao,$w_inicio).'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de pagamento deste lançamento.">'.ExibeCalendario('Form','w_quitacao').'</td>');
-    ShowHTML('        <td><b>Va<u>l</u>or utilizado:</b><br><input '.$w_Disabled.' accesskey="L" type="text" name="w_valor_real" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor_real.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor real do lançamento."></td>');
+    ShowHTML('        <td><b>Valor sacado:<br>'.formatNumber(f($RS_Solic,'valor')).'</b></td>');
+    ShowHTML('        <td><b>Valor utilizado:<br>'.formatNumber(f($RS_Solic,'valor')-$w_saldo).'</b></td>');
+    ShowHTML('        <td><b>Saldo a depositar:<br>'.formatNumber($w_saldo).'</b></td>');
+    ShowHTML('<INPUT type="hidden" name="w_valor_real" value="'.$w_valor_real.'">');
     if ($w_sg_forma_pagamento=='DEPOSITO') {
       ShowHTML('        <td><b><u>C</u>ódigo do depósito:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_deposito" class="sti" SIZE="20" MAXLENGTH="50" VALUE="'.$w_codigo_deposito.'" title="Informe o código do depósito identificado."></td>');
     }
@@ -1914,6 +1947,11 @@ function Concluir() {
     }
     ShowHTML('      <tr><td colspan="4"><b>Obs<u>e</u>rvação:</b><br><textarea '.$w_Disabled.' accesskey="E" name="w_observacao" class="sti" ROWS=5 cols=75 title="Descreva o quanto a demanda atendeu aos resultados esperados.">'.$w_observacao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan="4"><b>A<u>r</u>quivo:</b><br><input '.$w_Disabled.' accesskey="R" type="file" name="w_caminho" class="sti" SIZE="80" MAXLENGTH="100" VALUE="" title="OPCIONAL. Se desejar anexar um arquivo, clique no botão ao lado para localizá-lo. Ele será transferido automaticamente para o servidor.">');
+
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>C</u>onta contábil de débito:</b></br><input type="text" name="w_cc_debito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_debito.'"></td>');
+    ShowHTML('        <td><b><u>C</u>onta contábil de crédito:</b></br><input type="text" name="w_cc_credito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_credito.'"></td>');
+
     ShowHTML('      <tr colspan="4"><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('    <tr><td align="center" colspan=4><hr>');
     ShowHTML('      <input class="stb" type="submit" name="Botao" value="Gravar">');
@@ -2125,7 +2163,7 @@ function Grava() {
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],
           $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$w_moeda,
-          $w_chave_nova, $w_codigo);
+          $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
         
       if ($O!='E') {
         // Recupera o beneficiário do fundo fixo (chamado de "Suprido")
@@ -2198,7 +2236,8 @@ function Grava() {
             // Encerra a solicitação se houver apenas um trâmite ativo
             $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$w_chave_nova,$w_usuario,$w_tramite_conc,
               formataDataEdicao(time()),Nvl($_REQUEST['w_valor'],0),null,$_REQUEST['w_conta'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
-              $_REQUEST['w_sq_projeto_rubrica'],'Conclusão automática de pagamento por fundo fixo.',null,null,null,null);
+              $_REQUEST['w_sq_projeto_rubrica'],'Conclusão automática de pagamento por fundo fixo.',$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],
+              null,null,null,null);
           } else {
             if ($P1==0) {
               // Envia a solicitação para execução   
@@ -2475,7 +2514,8 @@ function Grava() {
           } 
           $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$_REQUEST['w_chave'],$w_usuario,$_REQUEST['w_tramite'],
             $_REQUEST['w_quitacao'],$_REQUEST['w_valor_real'],$_REQUEST['w_codigo_deposito'],$_REQUEST['w_conta'],$_REQUEST['w_sq_tipo_lancamento'],
-            $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_observacao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
+            $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_observacao'],$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],
+            $w_file,$w_tamanho,$w_tipo,$w_nome);
         } else {
           ScriptOpen('JavaScript');
           ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');

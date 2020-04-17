@@ -15,6 +15,22 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote, 
 
   if (count($l_rs_solic)) {
     $l_blocos = 1;
+
+    $l_html .= '<tr><td>&nbsp;</td></tr>'.chr(13).chr(10);
+    $l_html .= '<tr><td><b>Legenda para as cores das linhas:</b><table border=0>'.chr(13).chr(10);
+    if ($l_tipo=='TELAUSUARIO') {
+      $w_texto = 'O usuário';
+    } else {
+      $w_texto = 'Você';
+    }
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;<td>'.$w_texto.' é o executor ou o responsável pelo trâmite.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue2.'">&nbsp;<td>'.$w_texto.'  é o solicitante ou o responsável pela solicitação.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColor.'">&nbsp;<td>'.$w_texto.'  tem permissão para acompanhar o andamento da solicitação.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrAlternateBgColor.'">&nbsp;<td>'.$w_texto.'  tem permissão para acompanhar o andamento da solicitação.'.chr(13).chr(10);
+    $l_html .= '  </table>'.chr(13).chr(10);
+    $l_html .= '</tr>'.chr(13).chr(10);
+    $l_html .= '<tr><td>&nbsp;</td></tr>'.chr(13).chr(10);
+
     $l_html .= '<tr>'.chr(13).chr(10);
     if ($l_tipo!='TELAUSUARIO') {
       $l_html .= '    <td><b>DOCUMENTOS EM ATRASO OU ALERTA: '.chr(13).chr(10);
@@ -105,18 +121,6 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote, 
     }
   
     $l_html .= '    </table>'.chr(13).chr(10);
-    $l_html .= '<tr><td><b>Legenda para as cores das linhas:</b><table border=0>'.chr(13).chr(10);
-    if ($l_tipo=='TELAUSUARIO') {
-      $w_texto = 'O usuário';
-    } else {
-      $w_texto = 'Você';
-    }
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;<td>'.$w_texto.' é o executor ou o responsável pelo trâmite.'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue2.'">&nbsp;<td>'.$w_texto.'  é o solicitante ou o responsável pela solicitação.'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColor.'">&nbsp;<td>'.$w_texto.'  tem permissão para acompanhar o andamento da solicitação.'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrAlternateBgColor.'">&nbsp;<td>'.$w_texto.'  tem permissão para acompanhar o andamento da solicitação.'.chr(13).chr(10);
-    $l_html .= '  </table>'.chr(13).chr(10);
-    $l_html .= '</tr>'.chr(13).chr(10);
   }
 
 
@@ -125,6 +129,21 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote, 
     if ($l_blocos) $l_html .= '<tr><td colspan=2><p><hr noshade color=#000000 size=4></p></td></tr>'.chr(13).chr(10);
   
     $l_blocos = 1;
+
+    if ($l_tipo=='TELAUSUARIO') {
+      $w_texto = 'O usuário';
+    } else {
+      $w_texto = 'Você';
+    }
+    $l_html .= '<tr><td>&nbsp;</td></tr>'.chr(13).chr(10);
+    $l_html .= '<tr><td><b>Legenda para as cores das linhas:</b><table border=0>'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;<td>'.$w_texto.' é o responsável ou o titular/substituto do setor responsável pelo pacote de trabalho.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColor.'">&nbsp;<td>'.$w_texto.' tem permissão para acompanhar o andamento do pacote de trabalho.'.chr(13).chr(10);
+    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrAlternateBgColor.'">&nbsp;<td>'.$w_texto.' tem permissão para acompanhar o andamento do pacote de trabalho.'.chr(13).chr(10);
+    $l_html .= '  </table>'.chr(13).chr(10);
+    $l_html .= '</tr>'.chr(13).chr(10);
+    $l_html .= '<tr><td>&nbsp;</td></tr>'.chr(13).chr(10);
+
     $l_html .= '<tr>'.chr(13).chr(10);
     $l_html .= '    <td><b>PACOTES DE TRABALHO EM ATRASO OU ALERTA: '.chr(13).chr(10);
     $l_html .= '    <td align="right"><b>Registros: '.count($l_rs_pacote).chr(13).chr(10);
@@ -203,17 +222,6 @@ function VisualAlerta($l_cliente,$l_usuario,$l_tipo, $l_rs_solic, $l_rs_pacote, 
     }
   
     $l_html .= '    </table>'.chr(13).chr(10);
-    if ($l_tipo=='TELAUSUARIO') {
-      $w_texto = 'O usuário';
-    } else {
-      $w_texto = 'Você';
-    }
-    $l_html .= '<tr><td><b>Legenda para as cores das linhas:</b><table border=0>'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColorLightBlue1.'">&nbsp;<td>'.$w_texto.' é o responsável ou o titular/substituto do setor responsável pelo pacote de trabalho.'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrBgColor.'">&nbsp;<td>'.$w_texto.' tem permissão para acompanhar o andamento do pacote de trabalho.'.chr(13).chr(10);
-    $l_html .= '  <tr><td width=50 bgcolor="'.$conTrAlternateBgColor.'">&nbsp;<td>'.$w_texto.' tem permissão para acompanhar o andamento do pacote de trabalho.'.chr(13).chr(10);
-    $l_html .= '  </table>'.chr(13).chr(10);
-    $l_html .= '</tr>'.chr(13).chr(10);
   }
   return $l_html;
 } 

@@ -70,7 +70,8 @@ begin
  if p_restricao <> 'PAELIM' and (substr(p_restricao,1,2) = 'PA' or substr(p_restricao,1,4) = 'GREM') Then
       -- Recupera as demandas que o usuário pode ver
       open p_result for 
-         select a.sq_menu,            a.sq_modulo,                   a.nome,
+         select /*+ RULE*/
+                a.sq_menu,            a.sq_modulo,                   a.nome,
                 a.tramite,            a.ultimo_nivel,                a.p1,
                 a.p2,                 a.p3,                          a.p4,
                 a.sigla,              a.descentralizado,             a.externo,

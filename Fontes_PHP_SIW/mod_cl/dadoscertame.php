@@ -15,9 +15,9 @@ function DadosCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   if (count($RS_MenuCode)>0) $w_pedido = true; else $w_pedido = false;
 
   // Recupera os dados da solicitacao
-  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,$w_menu,$l_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
-          $v_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-          null,null,null,null);
+  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,$w_menu,$l_usuario,$SG,3,
+          null,null,null,null,null,null,null,null,null,null,$v_chave,null,null,null,null,null,null,
+          null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
   $l_tramite        = f($RS,'sq_siw_tramite');
   $l_sigla          = f($RS,'sigla');

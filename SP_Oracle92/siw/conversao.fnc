@@ -52,7 +52,7 @@ begin
             -- Trata conversão de moedas envolvendo o Real
             If w_moeda_origem.sigla = 'BRL' Then
                -- Conversão de Real para outra moeda
-               select p_valor / (case p_taxa when 'C' then taxa_compra else taxa_venda end)
+               select trunc(p_valor / (case p_taxa when 'C' then taxa_compra else taxa_venda end),2)
                  into Result
                  from co_moeda_cotacao 
                 where cliente  = p_cliente
@@ -60,7 +60,7 @@ begin
                   and data     = (select max(data) from co_moeda_cotacao where cliente = p_cliente and sq_moeda = p_moeda_destino and data <= p_data);
             Else
                -- Conversão de outra moeda para Real
-               select p_valor * (case p_taxa when 'C' then taxa_compra else taxa_venda end)
+               select trunc(p_valor * (case p_taxa when 'C' then taxa_compra else taxa_venda end),2)
                  into Result
                  from co_moeda_cotacao 
                 where cliente  = p_cliente
@@ -70,7 +70,7 @@ begin
          Else
             -- Trata conversão de moedas diferentes do Real
             -- Conversão de outra moeda para Real
-            select p_valor * (case p_taxa when 'C' then (ori.taxa_compra/des.taxa_compra) else (ori.taxa_venda/des.taxa_venda) end)
+            select trunc(p_valor * (case p_taxa when 'C' then (ori.taxa_compra/des.taxa_compra) else (ori.taxa_venda/des.taxa_venda) end),2)
               into Result
               from co_moeda_cotacao ori,
                    co_moeda_cotacao des

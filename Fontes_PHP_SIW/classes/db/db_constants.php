@@ -7,31 +7,31 @@ define("MSSQL_DATABASE_NAME", "SIWGP");
 define("MSSQL_VERSION_TEXT", "MS SQL Server 2000 SP 3");
 
 // Oracle8 Database Constants
-define("ORA8_SERVER_NAME", "galileu");
+define("ORA8_SERVER_NAME", "XE");
 define("ORA8_DB_USERID", "otca");
 define("ORA8_DB_PASSWORD", "eeool22012");
 define("ORA8_DATABASE_NAME", "otca");
-define("ORA8_VERSION_TEXT", "Oracle Server 12c");
+define("ORA8_VERSION_TEXT", "Oracle Server 8.1.7");
 
 // Oracle9 Database Constants
-define("ORA9_SERVER_NAME", "galileu");
-define("ORA9_DB_USERID", "siw");
+define("ORA9_SERVER_NAME", "GALILEU");
+define("ORA9_DB_USERID", "otcap");
 define("ORA9_DB_PASSWORD", "eeool22012");
-define("ORA9_DATABASE_NAME", "siw");
-define("ORA9_VERSION_TEXT", "Oracle Server 10g");
+define("ORA9_DATABASE_NAME", "otcap");
+define("ORA9_VERSION_TEXT", "Oracle Server 12c");
 
-// Oracle11XE Database Constants
-define("ORA10_SERVER_NAME", "galileu");
+// Oracle9 Database Constants
+define("ORA10_SERVER_NAME", "GALILEU");
 define("ORA10_DB_USERID", "INTEGRA");
 define("ORA10_DB_PASSWORD", "eeool22012");
 define("ORA10_DATABASE_NAME", "INTEGRA");
-define("ORA10_VERSION_TEXT", "Oracle Server 11XE");
+define("ORA10_VERSION_TEXT", "Oracle Server 10g");
 
 // OracleHM Database Constants
-define("ORAHM_SERVER_NAME", "galileu");
-define("ORAHM_DB_USERID", "UNESCO");
+define("ORAHM_SERVER_NAME", "GALILEU");
+define("ORAHM_DB_USERID", "sig");
 define("ORAHM_DB_PASSWORD", "eeool22012");
-define("ORAHM_DATABASE_NAME", "UNESCO");
+define("ORAHM_DATABASE_NAME", "sig");
 define("ORAHM_VERSION_TEXT", "Oracle Server 10g");
 
 // PGSQL 8.0 Database Constants

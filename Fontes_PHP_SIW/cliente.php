@@ -1087,32 +1087,39 @@ function ContasBancarias() {
   $w_sq_pessoa_conta=$_REQUEST['w_sq_pessoa_conta'];
 
   if ($w_troca>'') {
-    $w_banco        = $_REQUEST['w_banco'];
-    $w_agencia      = $_REQUEST['w_agencia'];
-    $w_numero_conta = $_REQUEST['w_numero_conta'];
-    $w_moeda        = $_REQUEST['w_moeda'];
-    $w_operacao     = $_REQUEST['w_operacao'];
-    $w_tipo_conta   = $_REQUEST['w_tipo_conta'];
-    $w_ativo        = $_REQUEST['w_ativo'];
-    $w_devolucao    = $_REQUEST['w_devolucao'];
-    $w_padrao       = $_REQUEST['w_padrao'];
+    $w_banco            = $_REQUEST['w_banco'];
+    $w_agencia          = $_REQUEST['w_agencia'];
+    $w_numero_conta     = $_REQUEST['w_numero_conta'];
+    $w_moeda            = $_REQUEST['w_moeda'];
+    $w_operacao         = $_REQUEST['w_operacao'];
+    $w_tipo_conta       = $_REQUEST['w_tipo_conta'];
+    $w_ativo            = $_REQUEST['w_ativo'];
+    $w_devolucao        = $_REQUEST['w_devolucao'];
+    $w_padrao           = $_REQUEST['w_padrao'];
+    $w_codigo_externo   = $_REQUEST['w_codigo_externo'];
   } elseif ($O=='L') {
     // Recupera as contas bancárias do cliente
     $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$w_sq_pessoa,null,null);
-    $RS = SortArray($RS,'padrao','desc', 'tipo_conta','asc','banco','asc','numero','asc');
+    if ($p_ordena>'') {
+      $lista = explode(',',str_replace(' ',',',$p_ordena));
+      $RS = SortArray($RS,$lista[0],$lista[1],'padrao','desc', 'tipo_conta','asc','banco','asc','numero','asc');
+    } else {
+      $RS = SortArray($RS,'padrao','desc', 'tipo_conta','asc','banco','asc','numero','asc');
+    }
   } elseif (!(strpos('AEV',$O)===false)) {
     // Recupera os dados da conta bancária informada
     $sql = new db_getContaBancoData; $RS = $sql->getInstanceOf($dbms,$w_sq_pessoa_conta);
-    $w_banco        = f($RS,'sq_banco');
-    $w_agencia      = f($RS,'agencia');
-    $w_numero_conta = f($RS,'numero');
-    $w_moeda        = f($RS,'sq_moeda');
-    $w_operacao     = f($RS,'operacao');
-    $w_tipo_conta   = f($RS,'tipo_conta');
-    $w_ativo        = f($RS,'ativo');
-    $w_padrao       = f($RS,'padrao');
-    $w_devolucao    = f($RS,'devolucao_valor');
-    $w_saldo        = formatNumber(f($RS,'saldo_inicial'));
+    $w_banco          = f($RS,'sq_banco');
+    $w_agencia        = f($RS,'agencia');
+    $w_numero_conta   = f($RS,'numero');
+    $w_moeda          = f($RS,'sq_moeda');
+    $w_operacao       = f($RS,'operacao');
+    $w_tipo_conta     = f($RS,'tipo_conta');
+    $w_ativo          = f($RS,'ativo');
+    $w_padrao         = f($RS,'padrao');
+    $w_devolucao      = f($RS,'devolucao_valor');
+    $w_saldo          = formatNumber(f($RS,'saldo_inicial'));
+    $w_codigo_externo = f($RS,'codigo_externo');
   } 
   // Recupera informação do campo operação do banco selecionado
   if (nvl($w_sq_banco,'')>'') {
@@ -1143,6 +1150,7 @@ function ContasBancarias() {
         if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') Validate('w_moeda','Moeda','SELECT','1','1','10','','1');
         Validate('w_saldo','Saldo inicial','VALOR','1','4','18','','0123456789.,');
       }
+      Validate('w_codigo_externo','Código Externo','1','','','60','1','1');
     }
     if ($_SESSION['P_PORTAL']=='') {
       Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
@@ -1172,17 +1180,18 @@ function ContasBancarias() {
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Tipo</td>');
-    ShowHTML('          <td><b>Banco</td>');
-    ShowHTML('          <td><b>Agência</td>');
-    ShowHTML('          <td><b>Conta</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Tipo','tipo_conta').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Banco','banco').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Agência','agencia').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Conta','numero').'</td>');
     if ($P1==2) {
-      ShowHTML('          <td><b>Devolução</td>');
-      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ShowHTML('          <td><b>Moeda</td>');
-      ShowHTML('          <td><b>Saldo inicial</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Devolução','devolucao_valor').'</td>');
+      if (nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') ShowHTML('          <td><b>'.LinkOrdena('Moeda','sb_moeda').'</td>');
+      ShowHTML('          <td><b>'.LinkOrdena('Saldo inicial','saldo_inicial').'</td>');
     }
-    ShowHTML('          <td><b>Ativo</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Ativo','codigo_externo').'</td>');
     ShowHTML('          <td><b>Padrão</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</td>');
     ShowHTML('          <td class="remover"><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)<=0) {
@@ -1204,6 +1213,7 @@ function ContasBancarias() {
         }
         ShowHTML('        <td align="center">'.retornaSimNao(f($row,'ativo')).'</td>');
         ShowHTML('        <td align="center">'.retornaSimNao(f($row,'padrao')).'</td>');
+        ShowHTML('        <td>'.nvl(f($row,'codigo_externo'),"&nbsp;").'</td>');
         ShowHTML('        <td class="remover" align="top" nowrap>');
         ShowHTML('          <A class="hl" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_sq_pessoa='.$w_sq_pessoa.'&w_sq_pessoa_conta='.f($row,'sq_pessoa_conta').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'">AL</A>&nbsp');
         ShowHTML('          <A class="hl" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_sq_pessoa='.$w_sq_pessoa.'&w_sq_pessoa_conta='.f($row,'sq_pessoa_conta').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" onClick="return confirm(\'Confirma a exclusão da conta?\');">EX</A>&nbsp');
@@ -1271,6 +1281,7 @@ function ContasBancarias() {
     } else {
       ShowHTML('              <input type="radio" name="w_padrao" class="str" VALUE="N">Não <input type="radio" name="w_padrao" class="str" VALUE="S" checked>Sim');
     }
+    ShowHTML('          <td colspan="2"><b><U>C</U>odigo externo:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_externo" size="60" maxlength="60" value="'.$w_codigo_externo.'"></td>');
     if ($_SESSION['P_PORTAL']=='') {
       ShowHTML('      <tr><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     } 
@@ -1975,7 +1986,7 @@ function Grava() {
         $SQL = new dml_putCoPesConBan; $SQL->getInstanceOf($dbms,$O,
             $_REQUEST['w_sq_pessoa_conta'],$_REQUEST['w_sq_pessoa'],$_REQUEST['w_moeda'],$_REQUEST['w_tipo_conta'],
             $w_chave,$_REQUEST['w_operacao'],$_REQUEST['w_numero_conta'],$_REQUEST['w_devolucao'],$_REQUEST['w_saldo'],
-            $_REQUEST['w_ativo'], $_REQUEST['w_padrao']);
+            $_REQUEST['w_ativo'], $_REQUEST['w_padrao'], $_REQUEST['w_codigo_externo']);
 
         ScriptOpen('JavaScript');
         ShowHTML('  location.href=\''.$R.'&O=L&w_sq_pessoa='.$_REQUEST['w_sq_pessoa'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'\';');

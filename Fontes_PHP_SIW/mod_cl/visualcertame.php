@@ -1,12 +1,4 @@
 <?php
-include_once($w_dir_volta.'classes/sp/db_getCLSolicItem.php');
-include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
-include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
-include_once($w_dir_volta.'classes/sp/db_getSolicRubrica.php');
-include_once($w_dir_volta.'classes/sp/db_getLCModalidade.php');
-include_once($w_dir_volta.'classes/sp/db_getSolicAnexo.php');
-include_once($w_dir_volta.'classes/sp/db_getSolicObjetivo.php');
-include_once($w_dir_volta.'classes/sp/db_getSolicList.php');
 // =========================================================================
 // Rotina de visualização dos dados da solicitacao
 // -------------------------------------------------------------------------
@@ -23,9 +15,10 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   if (count($RS_MenuCode)>0) $w_pedido = true; else $w_pedido = false;
 
   // Recupera os dados da solicitacao
-  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,$w_menu,$l_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
-          $v_chave,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-          null,null,null,null);
+  $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,$w_menu,$l_usuario,$SG,3,
+          null,null,null,null,null,null,null,null,null,null,$v_chave,
+          null,null,null,null,null,null,null,null,null,null,null,null,null,
+          null,null,null,null,null,null,null,null,null,null,null,null,null);
   foreach($RS as $row){$RS=$row; break;}
   $l_tramite        = f($RS,'sq_siw_tramite');
   $l_sigla          = f($RS,'sigla');
@@ -158,8 +151,6 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
     } else {
       $l_html.=chr(13).'      <tr><td><b>Unidade solicitante: </b></td><td>'.f($RS,'nm_unidade_resp').'</td></tr>';
     }
-    $l_html.=$crlf.'      <tr><td><b>Local de entrega/prestação serviço:</b></td>';
-    $l_html.=$crlf.'          <td>'.f($RS,'nm_cidade').'</td></tr>';
     if(f($RS,'decisao_judicial')=='S') {
       $l_html.=chr(13).'      <tr><td><b>Número original: </b></td><td>'.f($RS,'numero_original').' </td></tr>';
       $l_html.=chr(13).'      <tr><td><b>Data de recebimento:</b></td><td>'.FormataDataEdicao(f($RS,'data_recebimento')).' </td></tr>'; 

@@ -3,7 +3,7 @@ create or replace view VW_PROJETO_FINANCEIRO as
 select 'I' TIPO, e2.qtd_itens,
        b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(e1.sq_projeto_rubrica,'ORDENACAO') ordena,*/ e1.nome nm_rubrica, e1.sq_rubrica_pai, e1.aplicacao_financeira,
-       e.sq_projeto_rubrica, g.sq_solic_apoio sq_fonte, g.sq_siw_solicitacao sq_projeto_fonte, g.entidade nm_fonte,
+       e.sq_projeto_rubrica, 
        a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro, a.codigo_externo cd_financeiro_externo,
        a.descricao||' - '||e.descricao ds_financeiro,
        case when f.sq_siw_solicitacao is null then e.valor_total
@@ -24,7 +24,7 @@ select 'I' TIPO, e2.qtd_itens,
        -- Necessidade de conversão para BRL (contabilidade): 
        -- se o pagamento foi em Reais ou se o projeto é em Reais e foi inserido um valor nessa moeda, não precisa.
        case when a2.sigla          = 'BRL' then 'N'
-            when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then 'N'
+            when f1.sq_siw_solicitacao is not null then 'N'
             else 'S'
        end exige_brl,
        c2.data brl_taxa_compra_data, c2.taxa_compra brl_taxa_compra, 
@@ -33,10 +33,13 @@ select 'I' TIPO, e2.qtd_itens,
        -- (2) se o projeto é em Reais e foi inserido um valor nessa moeda: valor do pagamento convertido para a moeda do projeto
        -- (3) caso contrário: valor do pagamento convertido pela taxa de câmbio de compra
        case when a2.sigla          = 'BRL' then e.valor_total
-            when e2.qtd_itens      = 1 then f.valor
-            when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then e.valor_total*f.fator
+            when f1.sq_siw_solicitacao is not null then
+                 case when e2.qtd_itens = 1 then f1.valor
+                      when e2.qtd_itens = 2 then round(e.valor_total*f1.fator,2) -- 2 itens arredonda para não dar erro
+                      else e.valor_total*f1.fator -- mais de 2 itens, só retorna o valor
+                      end
             else case when c2.sq_moeda_cotacao is null then null
-                      else e.valor_total*c2.taxa_compra
+                      else trunc(e.valor_total*c2.taxa_compra,2)
                  end
        end brl_valor_compra,
        c3.data brl_taxa_venda_data,  c3.taxa_venda  brl_taxa_venda,
@@ -45,22 +48,21 @@ select 'I' TIPO, e2.qtd_itens,
        -- (2) se o projeto é em Reais e foi inserido um valor nessa moeda: valor do pagamento convertido para a moeda do projeto
        -- (3) caso contrário: valor do pagamento convertido pela taxa de câmbio de venda
        case when a2.sigla          = 'BRL' then e.valor_total
-            when e2.qtd_itens      = 1 then f.valor
-            when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then e.valor_total*f.fator
+            when f1.sq_siw_solicitacao is not null then
+                 case when e2.qtd_itens = 1 then f1.valor
+                      when e2.qtd_itens = 2 then round(e.valor_total*f1.fator,2) -- 2 itens arredonda para não dar erro
+                      else e.valor_total*f1.fator -- mais de 2 itens, só retorna o valor
+                      end
             else case when c3.sq_moeda_cotacao is null then null
-                      else e.valor_total*c3.taxa_venda
+                      else trunc(e.valor_total*c3.taxa_venda,2)
                  end
-       end brl_valor_venda, trunc(1/f.fator,4) fator_conversao
+       end brl_valor_venda,
+       case when a2.sigla = 'BRL' or f1.sq_siw_solicitacao is not null then 1 else trunc(1/f1.fator,4) end fator_conversao
   from siw_solicitacao                      a
        inner         join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite and a1.sigla in ('EE','AT'))
        inner         join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
        inner         join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and a3.sigla <> 'FNDFIXO' and a3.sigla <> 'FNDFUNDO')
        inner         join fn_lancamento     c  on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
-         left        join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
-                                                   c.cliente             = c2.cliente and
-                                                   a2.sq_moeda           = c2.sq_moeda and
-                                                   c2.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
-                                                  )
        inner         join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          inner       join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
            inner     join (select sq_lancamento_doc, count(*) qtd_itens
@@ -70,7 +72,6 @@ select 'I' TIPO, e2.qtd_itens,
            inner     join pj_rubrica        e1 on (e.sq_projeto_rubrica  = e1.sq_projeto_rubrica)
              inner   join siw_solicitacao   b  on (e1.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
-           left      join siw_solic_apoio   g  on (e.sq_solic_apoio      = g.sq_solic_apoio)
        left          join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator, l.sq_moeda sq_moeda
                              from siw_solicitacao                    k
                                   inner       join siw_tramite      k1 on (k.sq_siw_tramite     = k1.sq_siw_tramite and k1.ativo = 'N')
@@ -82,9 +83,21 @@ select 'I' TIPO, e2.qtd_itens,
                                                                            m.valor              > 0
                                                                           )
                           )                 f  on (a.sq_siw_solicitacao  = f.sq_siw_solicitacao)
+       left          join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator, m.sq_moeda sq_moeda
+                             from siw_solicitacao                    k
+                                  inner       join siw_solic_cotacao m on (k.sq_siw_solicitacao = m.sq_siw_solicitacao and
+                                                                           m.sq_moeda           = 34 and -- BRL
+                                                                           m.valor              > 0
+                                                                          )
+                          )                 f1 on (a.sq_siw_solicitacao  = f1.sq_siw_solicitacao)
+         left        join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
+                                                   c.cliente             = c2.cliente and
+                                                   a2.sq_moeda           = c2.sq_moeda and
+                                                   c2.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
+                                                  )
          left        join co_moeda_cotacao  c3 on (-- Taxa de venda deve ser do dia da conclusão do lançamento
                                                    c.cliente             = c3.cliente and
-                                                   f.sq_moeda            = c3.sq_moeda and
+                                                   a2.sq_moeda           = c3.sq_moeda and
                                                    c3.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
                                                   )
 UNION ALL
@@ -92,7 +105,7 @@ UNION ALL
 select 'D' TIPO, 1 qtd_itens,
        b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
-       c.sq_projeto_rubrica, g.sq_solic_apoio sq_fonte, g.sq_siw_solicitacao sq_projeto_fonte, g.entidade nm_fonte,
+       c.sq_projeto_rubrica, 
        a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,  a.codigo_externo cd_financeiro_externo,
        a.descricao ds_financeiro,
        case when f.sq_siw_solicitacao is null then a.valor       else f.valor               end valor, -- Valor convertido na moeda do projeto
@@ -107,37 +120,32 @@ select 'D' TIPO, 1 qtd_itens,
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
        c.vencimento, c.quitacao, a.conclusao, 1 ordem, 0 sq_documento_item,
        case when a2.sigla          = 'BRL' then 'N'
-            when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then 'N'
+            when f1.sq_siw_solicitacao is not null then 'N'
             else 'S'
        end exige_brl,
        c2.data brl_taxa_compra_data, c2.taxa_compra brl_taxa_compra, 
        case when a2.sigla          = 'BRL' then a.valor
-            when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then f.valor
+            when f1.sq_siw_solicitacao is not null then f1.valor
             else case when c2.sq_moeda_cotacao is null then null
                       else trunc(a.valor*c2.taxa_compra,2)
                  end
        end brl_valor_compra,
        c3.data brl_taxa_venda_data,  c3.taxa_venda  brl_taxa_venda,
        case when a2.sigla          = 'BRL' then a.valor
-            when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then f.valor
+            when f1.sq_siw_solicitacao is not null then f1.valor
             else case when c3.sq_moeda_cotacao is null then null
                       else trunc(a.valor*c3.taxa_venda,2)
                  end
-       end brl_valor_venda, trunc(1/f.fator,4) fator_conversao
+       end brl_valor_venda,
+       case when a2.sigla = 'BRL' or f1.sq_siw_solicitacao is not null then 1 else trunc(1/f1.fator,4) end fator_conversao
   from siw_solicitacao                    a
        inner       join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite and a1.sigla in ('EE','AT'))
        inner       join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
        inner       join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and a3.sigla <> 'FNDFIXO' and a3.sigla <> 'FNDFUNDO')
        inner       join fn_lancamento     c  on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
          inner     join pj_rubrica        c1 on (c.sq_projeto_rubrica  = c1.sq_projeto_rubrica)
-         left      join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
-                                                 c.cliente             = c2.cliente and
-                                                 a2.sq_moeda           = c2.sq_moeda and
-                                                 c2.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
-                                                )
            inner   join siw_solicitacao   b  on (c1.sq_siw_solicitacao = b.sq_siw_solicitacao)
              inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
-         left      join siw_solic_apoio   g  on (c.sq_solic_apoio      = g.sq_solic_apoio)
        inner       join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          left      join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
        left        join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator, l.sq_moeda sq_moeda
@@ -151,9 +159,21 @@ select 'D' TIPO, 1 qtd_itens,
                                                                          m.valor              > 0
                                                                         )
                         )                 f  on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)
+       left          join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator, m.sq_moeda sq_moeda
+                             from siw_solicitacao                    k
+                                  inner       join siw_solic_cotacao m on (k.sq_siw_solicitacao = m.sq_siw_solicitacao and
+                                                                           m.sq_moeda           = 34 and -- BRL
+                                                                           m.valor              > 0
+                                                                          )
+                          )                 f1 on (a.sq_siw_solicitacao  = f1.sq_siw_solicitacao)
+         left      join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
+                                                 c.cliente             = c2.cliente and
+                                                 a2.sq_moeda           = c2.sq_moeda and
+                                                 c2.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
+                                                )
          left      join co_moeda_cotacao  c3 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
                                                  c.cliente             = c3.cliente and
-                                                 f.sq_moeda            = c3.sq_moeda and
+                                                 a2.sq_moeda            = c3.sq_moeda and
                                                  c3.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
                                                 )
  where e.sq_documento_item is null
@@ -162,7 +182,7 @@ UNION ALL
 select 'D' TIPO, 1 qtd_itens,
        b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
-       c.sq_projeto_rubrica, g.sq_solic_apoio sq_fonte, g.sq_siw_solicitacao sq_projeto_fonte, g.entidade nm_fonte,
+       c.sq_projeto_rubrica, 
        a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,  a.codigo_externo cd_financeiro_externo,
        a.descricao ds_financeiro,
        case when f.sq_siw_solicitacao is null then a.valor       else f.valor               end valor, -- Valor convertido na moeda do projeto
@@ -177,37 +197,32 @@ select 'D' TIPO, 1 qtd_itens,
        b2.sq_moeda sq_pj_moeda, b2.sigla sg_pj_moeda,
        c.vencimento, c.quitacao, a.conclusao, 1 ordem, 0 sq_documento_item,
        case when a2.sigla          = 'BRL' then 'N'
-            when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then 'N'
+            when f1.sq_siw_solicitacao is not null then 'N'
             else 'S'
        end exige_brl,
        c2.data brl_taxa_compra_data, c2.taxa_compra brl_taxa_compra, 
        case when a2.sigla          = 'BRL' then a.valor
-            when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then f.valor
+            when f1.sq_siw_solicitacao is not null then f1.valor
             else case when c2.sq_moeda_cotacao is null then null
                       else trunc(a.valor*c2.taxa_compra,2)
                  end
        end brl_valor_compra,
        c3.data brl_taxa_venda_data,  c3.taxa_venda  brl_taxa_venda,
        case when a2.sigla          = 'BRL' then a.valor
-            when nvl(b2.sigla,'-') = 'BRL' and f.sq_siw_solicitacao is not null then f.valor
+            when f1.sq_siw_solicitacao is not null then f1.valor
             else case when c3.sq_moeda_cotacao is null then null
                       else trunc(a.valor*c3.taxa_venda,2)
                  end
-       end brl_valor_venda, trunc(1/f.fator,4) fator_conversao
+       end brl_valor_venda, 
+       case when a2.sigla = 'BRL' or f1.sq_siw_solicitacao is not null then 1 else trunc(1/f1.fator,4) end fator_conversao
   from siw_solicitacao                    a
        inner       join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite and a1.sigla in ('EE','AT'))
        inner       join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
        inner       join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and a3.sigla = 'FNDFUNDO')
        inner       join fn_lancamento     c  on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
          inner     join pj_rubrica        c1 on (c.sq_projeto_rubrica  = c1.sq_projeto_rubrica)
-         left      join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
-                                                 c.cliente             = c2.cliente and
-                                                 a2.sq_moeda           = c2.sq_moeda and
-                                                 c2.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
-                                                )
            inner   join siw_solicitacao   b  on (c1.sq_siw_solicitacao = b.sq_siw_solicitacao)
              inner join co_moeda          b2 on (b.sq_moeda            =  b2.sq_moeda)
-         left      join siw_solic_apoio   g  on (c.sq_solic_apoio      = g.sq_solic_apoio)
        inner       join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          left      join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
        left        join (select k.sq_siw_solicitacao, m.valor/k2.valor*k.valor valor, k2.valor/m.valor fator, l.sq_moeda sq_moeda
@@ -220,9 +235,21 @@ select 'D' TIPO, 1 qtd_itens,
                                                                          m.valor               > 0
                                                                         )
                         )                 f  on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)
+       left          join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator, m.sq_moeda sq_moeda
+                             from siw_solicitacao                    k
+                                  inner       join siw_solic_cotacao m on (k.sq_siw_solicitacao = m.sq_siw_solicitacao and
+                                                                           m.sq_moeda           = 34 and -- BRL
+                                                                           m.valor              > 0
+                                                                          )
+                          )                 f1 on (a.sq_siw_solicitacao  = f1.sq_siw_solicitacao)
+         left      join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
+                                                 c.cliente             = c2.cliente and
+                                                 a2.sq_moeda           = c2.sq_moeda and
+                                                 c2.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
+                                                )
          left      join co_moeda_cotacao  c3 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
                                                  c.cliente             = c3.cliente and
-                                                 f.sq_moeda            = c3.sq_moeda and
+                                                 a2.sq_moeda            = c3.sq_moeda and
                                                  c3.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
                                                 )
  where e.sq_documento_item is null;

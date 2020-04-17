@@ -1,12 +1,10 @@
 <?php
-  
 // =========================================================================
 // Rotina de validação dos dados do certame
 // -------------------------------------------------------------------------
 
 function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramite) {
   extract($GLOBALS);
-  
   // Se não encontrar erro, esta função retorna cadeia fazia.
   // Se o retorno for diferente de cadeia vazia, o primeiro byte indica o tipo de erro
   // 0 - Erro de integridade. Nem gestores podem encaminhar a solicitação
@@ -25,10 +23,8 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
   //-----------------------------------------------------------------------------------
   // Recupera os dados da solicitação
   $sql = new db_getSolicCL; $l_rs_solic = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],$l_sg1,3,
-                  null,null,null,null,null,null,null,null,null,null,
-                  $l_chave,null,null,null,null,null,null,
-                  null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-          null,null,null,null);
+                  null,null,null,null,null,null,null,null,null,null,$l_chave,null,null,null,null,null,null,
+                  null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
   // Se a solicitação informada não existir, abandona a execução
   if (count($l_rs_solic)==0) {
     return '0<li>Não existe registro no banco de dados com o número informado.';
@@ -96,12 +92,12 @@ function ValidaCertame($l_cliente,$l_chave,$l_sg1,$l_sg2,$l_sg3,$l_sg4,$l_tramit
   if (count($l_rs_tramite)>0 || (f($l_rs_tramite,'sigla')=='CI') && f($l_rs_solic,'gera_contrato')=='N') {
     if(f($l_rs_tramite,'sigla')=='AP') {
       if(nvl(f($l_rs_solic,'sq_lcmodalidade'),'')=='') {
-        $l_erro.='<li>Use a operação IN da listagem para informar os dados da compra.';
+        $l_erro.='<li>Informe os dados da análise.';
         $l_tipo=0;       
       }
     } elseif(f($l_rs_tramite,'sigla')=='EA' || f($l_rs_tramite,'sigla')=='EE') {
       if(nvl(f($l_rs_solic,'sq_lcsituacao'),'')=='') {
-        $l_erro.='<li>Use a operação IN da listagem para informar os dados da compra.';
+        $l_erro.='<li>Informe os dados da análise.';
         $l_tipo=0;       
       }
     }

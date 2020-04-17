@@ -29,8 +29,10 @@ class db_getCountryList {
             "                               when 3 then 'Ásia'$crlf" .
             "                               when 4 then 'África'$crlf" .
             "                               else        'Oceania'$crlf" .
-            "             end as nm_continente$crlf" .
+            "             end as nm_continente,$crlf" .
+            "             m.nome nm_moeda, m.simbolo sb_moeda$crlf" .
             "        from co_pais              a$crlf" .
+            "             left join co_moeda   m on (a.sq_moeda = m.sq_moeda)$crlf" .
             "             left join (select x.sq_pais, count(x.sq_pais) as qtd$crlf" .
             "                          from eo_indicador_afericao   x$crlf" .
             "                               inner join eo_indicador y on (x.sq_eoindicador = y.sq_eoindicador and$crlf" .
@@ -41,11 +43,12 @@ class db_getCountryList {
             "                        group by x.sq_pais$crlf" .
             "                       )          b on (a.sq_pais  = b.sq_pais)$crlf" .
             "       where ($p_restricao is null or ($p_restricao = 'ATIVO'        and a.ativo = 'S')$crlf" .
-            "                                  or ($p_restricao = 'NOMEBRASIL'   and a.nome = 'Brasil')$crlf" .
-            "                                  or ($p_restricao = 'NOMEFRANCA'   and a.nome = 'França')$crlf" .
-            "                                  or ($p_restricao = 'BRASILFRANCA' and (a.nome = 'Brasil' or a.nome = 'França'))$crlf" .
-            "                                  or ($p_restricao = 'INDICADOR')$crlf" .
-            "                                  or ($p_restricao like 'CONTINENTE%' and a.continente = ".str_replace('CONTINENTE','',$p_restricao)."))$crlf" .
+            "                                   or ($p_restricao = 'NOMEBRASIL'   and a.nome = 'Brasil')$crlf" .
+            "                                   or ($p_restricao = 'NOMEFRANCA'   and a.nome = 'França')$crlf" .
+            "                                   or ($p_restricao = 'BRASILFRANCA' and (a.nome = 'Brasil' or a.nome = 'França'))$crlf" .
+            "                                   or ($p_restricao = 'INDICADOR')$crlf" .
+            "                                   or ($p_restricao = 'OTCA'         and a.codigo_externo = 'OTCA')$crlf" .
+            "                                   or ($p_restricao like 'CONTINENTE%' and a.continente = ".str_replace('CONTINENTE','',$p_restricao)."))$crlf" .
             "         and ((coalesce($p_restricao,'-')  = 'INDICADOR' and b.sq_pais is not null) or$crlf" .
             "              (coalesce($p_restricao,'-') <> 'INDICADOR' and$crlf" .
             "               ($p_nome  is null or ($p_nome is not null and acentos(a.nome) like '%'".C."acentos($p_nome)".C."'%'))$crlf" .

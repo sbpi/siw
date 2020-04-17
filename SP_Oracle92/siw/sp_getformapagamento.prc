@@ -10,7 +10,7 @@ begin
    If p_restricao is null Then
       -- Recupera os tipos de contrato do cliente
       open p_result for 
-         select a.sq_forma_pagamento, a.cliente, a.nome, a.sigla, a.ativo,
+         select a.sq_forma_pagamento, a.cliente, a.nome, a.sigla, a.ativo, a.codigo_externo,
                 case a.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 c.sq_menu, c.nome as nm_menu, c.sigla as sg_menu
            from co_forma_pagamento                a
@@ -26,7 +26,7 @@ begin
          order by 2;
    elsif p_restricao = 'REGISTRO' then
       open p_result for 
-         select a.sq_forma_pagamento as chave, a.nome, a.sigla, a.ativo,
+         select a.sq_forma_pagamento as chave, a.nome, a.sigla, a.ativo, a.codigo_externo,
                 case a.ativo when 'S' Then 'Sim' Else 'Não' end  as nm_ativo
            from co_forma_pagamento   a
           where a.cliente        = p_cliente

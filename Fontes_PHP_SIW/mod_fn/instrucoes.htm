@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta NAME="robots" CONTENT="noindex, nofollow, noarchive" />
+  <meta NAME="author" CONTENT="SBPI Consultoria Ltda" />
+  <meta HTTP-EQUIV="X-UA-Compatible" CONTENT="IE=EmulateIE8" />
+  <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE" />
+  <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE" />
+  <meta HTTP-EQUIV="CONTENT-LANGUAGE" CONTENT="pt-BR" />
+  <meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=ISO-8859-1" />
+  <title>SIW - Documentos</title>
+</head>
+
+<body Text="#000000" Link="#0000FF" Alink="#0000FF" Vlink="#0000FF" Bgcolor="#F8F8FF" Background="" Bgproperties="fixed" Topmargin="5" Leftmargin="5"> 
+<b><font COLOR="#000000">Importação de itens de lançamento financeiro</font></b>
+<hr />
+<div align=center><p>Clique <a href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</p></div>
+
+<div align="justify">
+<p>O arquivo deve ser no formato CSV (<i>comma separated values</i>), usando o ponto-e-virgula como separador de colunas, sem aspas para delimitar os valores.</p>
+<p>Os programas Microsoft Excel e LibreOffice Calc estão preparados para gerar aquivos neste formato. Use a opção "Salvar como" e escolha o formato "CSV (separado por vírgulas) (*.csv)".</p>
+</div>
+
+<p><b>Orientações gerais:</b>
+<ul>
+  <li>Nenhum valor pode conter ponto-e-vírgula ";", pois este caractere é usado para separar uma coluna da outra.
+  <li>As rubricas devem ter seu código informado, <u>exatamente</u> como aparecem na visualização do projeto.
+  <li>As quantidades devem ser <u>números inteiros</u>, usando o ponto "." como separador de milhar.
+  <li>As colunas de valor referem-se ao <b>valor unitário</b> do item. Devem usar ponto "." como separador de milhar e "," como separador de decimal.
+  <li><b>Veja também o arquivo de exemplo apresentado na tela anterior.</b>
+</ul>
+</p>
+
+<p><b>Estrutura da Planilha</b></p>
+<div align=center>
+<table border="0" cellpadding="0" cellspacing="0" width="95%">
+  <tr bgcolor="#EFEFEF"><td align="center">
+    <tr><td colspan=3 align="center" height="1" bgcolor="#E0E0E0"></td></tr>
+    <tr><td colspan=3><table WIDTH="100%" bgcolor="#F7F7F7" BORDER="1" CELLSPACING="1" CELLPADDING="1" BorderColorDark="#000000" BorderColorLight="">
+        <tr bgcolor="#EFEFEF" align="center">
+          <td width="8%"><b>Linha</td>
+          <td width="8%"><b>Coluna</td>
+          <td width="*"><b>Orientações</td>
+        </tr>
+      <tr valign="top">
+        <td align="center" rowspan="6">1</td>
+        <td colspan="2">Na primeira linha você deve informar as rubricas que deseja inserir para cada item. 
+          Cada rubrica informada usará duas colunas. Uma para informar o código (exatamente igual ao exibido 
+          na visualização do projeto) e um texto qualquer que você deseje anexar à descrição do item para 
+          identificar a rubrica.</td>
+      </tr>
+      <tr bgcolor="#E0E0E0" valign="top">
+        <td align="center">1</td>
+        <td>Informe sempre a palavra "Ordem".</td>
+      </tr>
+      <tr bgcolor="#E0E0E0" valign="top">
+        <td align="center">2</td>
+        <td>Informe sempre a palavra "Descrição".</td>
+      </tr>
+      <tr bgcolor="#E0E0E0" valign="top">
+        <td align="center">3</td>
+        <td>Informe o código da primeira rubrica que deseja gerar para cada item, exatamente igual ao exibido na visualização do projeto. Exemplo: <b>2.2.1</b>.</td>
+      </tr>
+      <tr bgcolor="#E0E0E0" valign="top">
+        <td align="center">4</td>
+        <td>Informe uma breve descrição para a rubrica informada na coluna anterior. Exemplo: <b>Salário</b>.</td>
+      </tr>
+      <tr bgcolor="#E0E0E0" valign="top">
+        <td align="center">5/6, 7/8 ...</td>
+        <td>Se desejar, informe outros pares similares às colunas 3 e 4. Cada par de colunas irá gerar um item no lançamento financeiro para cada linha deste arquivo.</td>
+      </tr>
+      <tr valign="top">
+        <td align="center" rowspan="6">2, 3, 4 ...</td>
+        <td colspan="2">Na segunda linha em diante, informe os dados dos itens que deseja gerar. 
+            Será gerado um item para cada rubrica informada na linha 1.
+            Você deve informar valores para cada uma das colunas da primeira linha, conforme descrito abaixo.
+          </td>
+      </tr>
+      <tr bgcolor="#E0E0E0" valign="top">
+        <td align="center">1</td>
+        <td>Informe o número de ordem a ser usado na gravação dos itens desta linha. 
+            Na linha 2 o valor deve ser <b>1</b>, na linha 3 o valor deve ser <b>2</b> e assim por diante.
+        </td>
+      </tr>
+      <tr bgcolor="#E0E0E0" valign="top">
+        <td align="center">2</td>
+        <td>Informe o texto que será gravado na descrição do item. 
+            Ao texto informado aqui, será agregado o texto informado ao lado da rubrica na linha 1.            
+        </td>
+      </tr>
+      <tr bgcolor="#E0E0E0" valign="top">
+        <td align="center">3</td>
+        <td>Informe a quantidade relativa à primeira rubrica. 
+            Deve ser um <u>número inteiro</u>, usando o ponto "." como separador de milhar.
+            Se a quantidade for igual a zero, não será gerado item para a rubrica.
+            Exemplos: <b>1</b>, <b>100</b>, <b>1.000</b>.
+        </td>
+      </tr>
+      <tr bgcolor="#E0E0E0" valign="top">
+        <td align="center">4</td>
+        <td>Informe o <b>valor unitário</b> do item.
+            Deve usar ponto "." como separador de milhar e "," como separador de decimal. 
+            Números negativos são permitidos e devem ser precedidos pelo sinal de menos "-".
+            Exemplos: <b>0,57<b>, <b>1,00</b>, <b>-357,32</b>, <b>1.000,00</b>.
+        </td>
+      </tr>
+      <tr bgcolor="#E0E0E0" valign="top">
+        <td align="center">5/6, 7/8 ...</td>
+        <td>Se desejar, informe outros pares similares às colunas 3 e 4. Cada par de colunas irá gerar um item no lançamento financeiro, <u>desde que a quantidade <b>E</b> o valor sejam maiores que zero</u>.</td>
+      </tr>
+    </table></td></tr>
+</table>
+
+<div align="left"><p><b>Exemplo de planilha Microsoft Excel ou LibreOffice Calc</b></p></div>
+
+<table border=1 cellpadding=0 cellspacing=0 width="95%">
+ <tr align="center">
+  <td bgcolor="gray"></td>
+  <td bgcolor="gray">A</td>
+  <td bgcolor="gray">B</td>
+  <td bgcolor="gray">C</td>
+  <td bgcolor="gray">D</td>
+  <td bgcolor="gray">E</td>
+  <td bgcolor="gray">F</td>
+  <td bgcolor="gray">G</td>
+  <td bgcolor="gray">H</td>
+  <td bgcolor="gray">I</td>
+  <td bgcolor="gray">J</td>
+ </tr>
+ <tr align="center">
+  <td bgcolor="gray">1</td>
+  <td>Ordem</td>
+  <td>Descrição</td>
+  <td>2.2.1</td>
+  <td>Salário</td>
+  <td>2.2.2</td>
+  <td>INSS</td>
+  <td>2.2.4</td>
+  <td>Plano Saúde</td>
+  <td>2.2.2</td>
+  <td>Vale Refeição</td>
+ </tr>
+ <tr>
+  <td align="center" bgcolor="gray">2</td>
+  <td align="center">1</td>
+  <td>FULANO DA SILVA</td>
+  <td align="center">1</td>
+  <td align=right>5.422,99</td>
+  <td align="center">1</td>
+  <td align=right>-2.346,40</td>
+  <td align="center">0</td>
+  <td align=right>0,00</td>
+  <td align="center">17</td>
+  <td align=right>29,22</td>
+ </tr>
+ <tr>
+  <td align="center" bgcolor="gray">3</td>
+  <td align="center">2</td>
+  <td>BELTRANO COSTA</td>
+  <td align="center">1</td>
+  <td align=right>7.736,13</td>
+  <td align="center">1</td>
+  <td align=right>-642,33</td>
+  <td align="center">0</td>
+  <td align=right>685,77</td>
+  <td align="center">12</td>
+  <td align=right>29,22</td>
+ </tr>
+ <tr>
+  <td align="center" bgcolor="gray">4</td>
+  <td align="center">3</td>
+  <td>CICRANO BENTO</td>
+  <td align="center">1</td>
+  <td align=right>3.314,93</td>
+  <td align="center">1</td>
+  <td align=right>-364,64</td>
+  <td align="center">1</td>
+  <td align=right>0,00</td>
+  <td align="center">22</td>
+  <td align=right>29,22</td>
+ </tr>
+</table>
+</div>
+
+<p><b>Exemplo de arquivo CSV gerado a partir da planilha acima</b></p>
+
+<blockquote><pre>
+Ordem;Descrição;2.2.1;Salário;2.2.2;INSS;2.2.4;Plano Saúde;2.2.2;Vale Refeição
+2;1;FULANO;DA;SILVA;1;5.422,99;1;-2.346,40;0;0,00;17;29,22
+3;2;BELTRANO;COSTA;1;7.736,13;1;-642,33;0;685,77;12;29,22
+4;3;CICRANO;BENTO;1;3.314,93;1;-364,64;1;0,00;22;29,22
+</pre></blockquote>
+
+<p><b>Observações</b>
+<ul>
+  <li>Lógica de criação dos itens para FULANO DA SILVA:
+      <ul>
+        <li>O primeiro item terá como descrição <b>FULANO DA SILVA - Salário</b>, o segundo será <b>FULANO DA SILVA - INSS</b> e assim por diante.
+        <li>O valor total de cada item será sempre a multiplicação da quantidade pelo valor unitário. No caso do item <B>FULANO DA SILVA - Vale Refeição</b>, o valor total será igual a <b>496,74</b> (17 vezes 29,22).
+      </ul>
+  <li>A lógica de criação dos itens é a mesma para BELTRANO COSTA e CICRANO BENTO.
+  <li>Não será gerado item para FULANO DA SILVA na rubrica 2.2.4, pois a quantidade e o valor unitário não são maiores que zero.
+  <li>Não será gerado item para BELTRANO DA COSTA na rubrica 2.2.4, pois a quantidade é igual a zero.
+  <li>Não será gerado item para CICRANO BENTO na rubrica 2.2.4, pois o valor unitário é igual a zero.
+</ul>
+</p>
+
+<div align="center">
+<p>Clique <a href="javascript:history.back(1);">aqui</a> para voltar à tela anterior</p>
+</div>
+
+</html>

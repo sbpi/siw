@@ -424,7 +424,7 @@ function Inicial() {
     if (f($RS_Parametro,'codificacao_automatica')=='N') {
       ShowHTML('          <td><b><u>C</u>ódigo:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_codigo_interno" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$w_codigo_interno.'"></td>');
     } else {
-      if ($O=='I') ShowHTML('          <td><b><u>C</u>ódigo:</b><br>Geração automática</td>');
+      if ($O=='I' || $O=='C') ShowHTML('          <td><b><u>C</u>ódigo:</b><br>Geração automática</td>');
       else         ShowHTML('          <td><b><u>C</u>ódigo:</b><br><input READONLY type="text" name="w_codigo_automatico" class="stih" SIZE="20" MAXLENGTH="30" VALUE="'.$w_codigo_interno.'"></td>');         
     }
     ShowHTML('      <tr valign="top">');

@@ -162,17 +162,6 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
       $l_erro .= '<li>Dados bancários precisam ser confirmados. Acesse a tela do beneficiário e clique no botão "Gravar"';
       $l_tipo=0;
     }
-
-    if (f($l_rs_solic, 'fim_semana') == 'S' and nvl(f($l_rs_solic, 'justificativa_dia_util'), '') == '') {
-      $l_erro .= '<li>Não foi informada a justificativa para viagem abrangendo fim de semana/feriado, a ser informada no momento do envio da solicitação.';
-      if ($l_tipo == '')
-        $l_tipo = 2;
-    }
-    if ((mktime(0, 0, 0, date(m), date(d), date(Y)) > f($l_rs_solic, 'limite_envio')) && nvl(f($l_rs_solic, 'justificativa'), '') == '') {
-      $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos ' . f($l_rs_solic, 'dias_antecedencia') . ' dias úteis de antecedência do pedido, a ser informada no momento do envio da solicitação.';
-      if ($l_tipo == '')
-        $l_tipo = 2;
-    }
   }
   /**
    *       // Verifica se a viagem foi vinculada a pelo menos uma tarefa
@@ -286,6 +275,19 @@ function ValidaViagem($v_cliente, $v_chave, $v_sg1, $v_sg2, $v_sg3, $v_sg4, $v_t
         $w_cidade_atual = f($row, 'cidade_dest');
       }
       $i++;
+    }
+  }
+    
+  if (f($l_rs_tramite, 'sigla') == 'CI') {    
+    if (f($l_rs_solic, 'fim_semana') == 'S' and nvl(f($l_rs_solic, 'justificativa_dia_util'), '') == '') {
+      $l_erro .= '<li>Não foi informada a justificativa para viagem abrangendo fim de semana/feriado, <b><u>a ser informada no momento do envio da solicitação</u></b>.';
+      if ($l_tipo == '')
+        $l_tipo = 2;
+    }
+    if ((mktime(0, 0, 0, date(m), date(d), date(Y)) > f($l_rs_solic, 'limite_envio')) && nvl(f($l_rs_solic, 'justificativa'), '') == '') {
+      $l_erro .= '<li>Não foi informada a justificativa para não cumprimento dos ' . f($l_rs_solic, 'dias_antecedencia') . ' dias úteis de antecedência do pedido, <b><u>a ser informada no momento do envio da solicitação</b></u>.';
+      if ($l_tipo == '')
+        $l_tipo = 2;
     }
   }
 

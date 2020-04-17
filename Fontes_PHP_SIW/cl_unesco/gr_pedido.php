@@ -16,6 +16,10 @@ include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerSite.php');
 include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getUorgData.php');
+include_once($w_dir_volta.'classes/sp/db_getCountryData.php');
+include_once($w_dir_volta.'classes/sp/db_getRegionData.php');
+include_once($w_dir_volta.'classes/sp/db_getStateData.php');
+include_once($w_dir_volta.'classes/sp/db_getCityData.php');
 include_once($w_dir_volta.'classes/sp/db_getMoeda.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicCL.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
@@ -79,45 +83,45 @@ $w_usuario  = RetornaUsuario();
 $w_menu     = $P2;
 $w_ano      = RetornaAno();
 
-$p_tipo          = upper($_REQUEST['w_tipo']);
-$p_projeto       = upper($_REQUEST['p_projeto']);
-$p_atividade     = upper($_REQUEST['p_atividade']);
-$p_graf          = upper($_REQUEST['p_graf']);
-$p_ativo         = upper($_REQUEST['p_ativo']);
-$p_solicitante   = upper($_REQUEST['p_solicitante']);
-$p_prioridade    = upper($_REQUEST['p_prioridade']);
-$p_unidade       = upper($_REQUEST['p_unidade']);
-$p_proponente    = upper($_REQUEST['p_proponente']);
-$p_usu_resp      = upper($_REQUEST['p_usu_resp']);
-$p_ordena        = lower($_REQUEST['p_ordena']);
-$p_ini_i         = upper($_REQUEST['p_ini_i']);
-$p_ini_f         = upper($_REQUEST['p_ini_f']);
-$p_fim_i         = upper($_REQUEST['p_fim_i']);
-$p_fim_f         = upper($_REQUEST['p_fim_f']);
-$p_atraso        = upper($_REQUEST['p_atraso']);
-$p_acao_ppa      = upper($_REQUEST['p_acao_ppa']);
-$p_empenho       = upper($_REQUEST['p_empenho']);
-$p_chave         = upper($_REQUEST['p_chave']);
-$p_assunto       = upper($_REQUEST['p_assunto']);
-$p_tipo_material = upper($_REQUEST['p_tipo_material']);
-$p_seq_protocolo = upper($_REQUEST['p_seq_protocolo']);
-$p_situacao      = upper($_REQUEST['p_situacao']);
-$p_ano_protocolo = upper($_REQUEST['p_ano_protocolo']);
-$p_pais          = upper($_REQUEST['p_pais']);
-$p_regiao        = upper($_REQUEST['p_regiao']);
-$p_uf            = upper($_REQUEST['p_uf']);
-$p_cidade        = upper($_REQUEST['p_cidade']);
-$p_uorg_resp     = upper($_REQUEST['p_uorg_resp']);
-$p_palavra       = upper($_REQUEST['p_palavra']);
-$p_prazo         = upper($_REQUEST['p_prazo']);
-$p_fase          = explodeArray($_REQUEST['p_fase']);
-$p_sqcc          = upper($_REQUEST['p_sqcc']);
-$p_agrega        = upper($_REQUEST['p_agrega']);
-$p_tamanho       = upper($_REQUEST['p_tamanho']);
-$p_ano           = $_REQUEST['p_ano'];
-$p_inicio        = $_REQUEST['p_inicio'];
-$p_final         = $_REQUEST['p_final'];
-$p_moeda         = $_REQUEST['p_moeda']; 
+$p_tipo         = upper($_REQUEST['w_tipo']);
+$p_projeto      = upper($_REQUEST['p_projeto']);
+$p_atividade    = upper($_REQUEST['p_atividade']);
+$p_graf         = upper($_REQUEST['p_graf']);
+$p_ativo        = upper($_REQUEST['p_ativo']);
+$p_solicitante  = upper($_REQUEST['p_solicitante']);
+$p_prioridade   = upper($_REQUEST['p_prioridade']);
+$p_unidade      = upper($_REQUEST['p_unidade']);
+$p_proponente   = upper($_REQUEST['p_proponente']);
+$p_usu_resp     = upper($_REQUEST['p_usu_resp']);
+$p_ordena       = lower($_REQUEST['p_ordena']);
+$p_ini_i        = upper($_REQUEST['p_ini_i']);
+$p_ini_f        = upper($_REQUEST['p_ini_f']);
+$p_fim_i        = upper($_REQUEST['p_fim_i']);
+$p_fim_f        = upper($_REQUEST['p_fim_f']);
+$p_atraso       = upper($_REQUEST['p_atraso']);
+$p_acao_ppa     = upper($_REQUEST['p_acao_ppa']);
+$p_empenho      = upper($_REQUEST['p_empenho']);
+$p_chave        = upper($_REQUEST['p_chave']);
+$p_assunto      = upper($_REQUEST['p_assunto']);
+$p_tipo_material= upper($_REQUEST['p_tipo_material']);
+$p_seq_protocolo= upper($_REQUEST['p_seq_protocolo']);
+$p_ano_protocolo= upper($_REQUEST['p_ano_protocolo']);
+$p_situacao     = upper($_REQUEST['p_situacao']);
+$p_pais         = upper($_REQUEST['p_pais']);
+$p_regiao       = upper($_REQUEST['p_regiao']);
+$p_uf           = upper($_REQUEST['p_uf']);
+$p_cidade       = upper($_REQUEST['p_cidade']);
+$p_uorg_resp    = upper($_REQUEST['p_uorg_resp']);
+$p_palavra      = upper($_REQUEST['p_palavra']);
+$p_prazo        = upper($_REQUEST['p_prazo']);
+$p_fase         = explodeArray($_REQUEST['p_fase']);
+$p_sqcc         = upper($_REQUEST['p_sqcc']);
+$p_agrega       = upper($_REQUEST['p_agrega']);
+$p_tamanho      = upper($_REQUEST['p_tamanho']);
+$p_ano          = $_REQUEST['p_ano'];
+$p_inicio       = $_REQUEST['p_inicio'];
+$p_final        = $_REQUEST['p_final'];
+$p_moeda        = $_REQUEST['p_moeda'];
 
 // Recupera a configuração do serviço
 $sql = new db_getMenuData; $RS_Menu = $sql->getInstanceOf($dbms,$w_menu);
@@ -130,7 +134,17 @@ $p_graf         = 'S'; // Inibe exibição do gráfico
 $O              = 'L'; // Executa a consulta ao invés de pedir os critérios de busca
 $p_tamanho      = 'S'; // Limita exibição do objeto
 $p_agrega       = 'GRCLCAPA'; // Agrega por unidade solicitante, retornando licitações do ano indicado.'
-$p_fase         = '3315,3316'; // Em execução e Concluída
+
+// Recupera as fases "Em execução" e "Concluída" das licitações
+$sql = new db_getTramiteList; $RS2 = $sql->getInstanceOf($dbms,$P2,null,null,null);
+$RS2 = SortArray($RS2,'ordem','asc');
+$w_fase='';
+foreach($RS2 as $row) {
+  if (strpos('EE,AT',f($row,sigla))!==false) {
+    $w_fase.=','.f($row,'sq_siw_tramite');
+  } 
+} 
+$p_fase      = substr($w_fase,1);
 
 // Trata o valor inicial da moeda, que deve ser Real.
 $sql = new db_getMoeda; $RS = $sql->getInstanceOf($dbms, $p_moeda, 'ATIVO', null, null, ((nvl($p_moeda,'')=='') ? 'BRL' : ''), null);
@@ -141,11 +155,10 @@ foreach($RS as $row) {
 
 // Verifica as datas inicial e final de existência de licitações
 $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
-    null,null,null,null,$p_atraso,$p_solicitante,
-    $p_unidade,null,$p_ativo,$p_proponente,
-    $p_chave, $p_assunto, $p_tipo_material, $p_seq_protocolo, $p_situacao, $p_ano_protocolo, $p_usu_resp,
-    $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,
-    $p_acao_ppa, null, $p_empenho, null, null,null,null,null,null,null,null,null,null);
+    null,null,null,null,$p_atraso,$p_solicitante,$p_unidade,null,$p_ativo,$p_proponente,$p_chave,
+    $p_assunto, $p_tipo_material,$p_seq_protocolo,$p_situacao,$p_ano_protocolo, $p_usu_resp,$p_uorg_resp, $p_palavra, 
+    $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,$p_acao_ppa, null, $p_empenho, null, null,
+    null,null,null,null, $p_pais, $p_regiao, $p_uf, $p_cidade);
 
 foreach($RS1 as $row) {
   if (nvl($p_inicio,'')=='') {
@@ -203,9 +216,9 @@ function Gerencial() {
     // Recupera os dados a partir do filtro
     $sql = new db_getSolicCL; $RS1 = $sql->getInstanceOf($dbms,$P2,$w_usuario,$p_agrega,3,
         $p_ini_i,$p_ini_f,$p_fim_i,$p_fim_f,$p_atraso,$p_solicitante,$p_unidade,null,$p_ativo,$p_proponente,
-        $p_chave, $p_assunto, $p_tipo_material, $p_seq_protocolo, $p_situacao, $p_ano_protocolo, $p_usu_resp,$p_uorg_resp, $p_palavra, $p_prazo, $p_fase, 
-        $p_sqcc, $p_projeto, $p_atividade,$p_acao_ppa, null, $p_empenho, null, $p_moeda, $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor,
-        $p_pais, $p_regiao, $p_uf, $p_cidade);
+        $p_chave, $p_assunto, $p_tipo_material,$p_seq_protocolo,$p_situacao,$p_ano_protocolo, $p_usu_resp,$p_uorg_resp, $p_palavra, 
+        $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade,$p_acao_ppa, null, $p_empenho, null, $p_moeda, 
+        $p_vencedor, $p_externo, $p_cnpj, $p_fornecedor,$p_pais, $p_regiao, $p_uf, $p_cidade);
     $RS1 = SortArray($RS1,'or_unidade_resp', 'asc', 'sg_unidade_resp','asc');
   } 
 
@@ -428,27 +441,27 @@ function Gerencial() {
     ShowHTML('</tr>');
     if ($t_totvalor > 0 && $t_totsolic > 0) {
       // Exibe tabelas com quantitativos
-      $w_filler = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+      $w_filler = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
       ShowHTML('<tr><td align="center"><br>');
-      ShowHTML('<table border="1" width="95%" cellspacing="15">');
+      ShowHTML('<table border="1" width="95%" cellspacing="10">');
       ShowHTML('  <tr valign="top">');
-      ShowHTML('    <td width="47%" align="center" bgcolor="#B8DFF5"><br><font size="3"><b>Status das Licitações (Quantidade)</b></font><br><br>');
+      ShowHTML('    <td width="45%" align="center" bgcolor="#B8DFF5"><br><font size="3"><b>Status das Licitações (Quantidade)</b></font><br><br>');
       ShowHTML('      <table border="1">');
-      ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Em andamento'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_tottram.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$t_tottram/$t_totsolic,1).'%'.$w_filler.'</tr>');
+      ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td nowrap><font size="2"><b>'.$w_filler.'Em andamento'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_tottram.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$t_tottram/$t_totsolic,1).'%'.$w_filler.'</tr>');
       ShowHTML('        <tr valign="top" bgcolor="'.$conTrBgColor.'"><td><font size="2"><b>'.$w_filler.'Cancelada'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_totatraso.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$t_totatraso/$t_totsolic,1).'%'.$w_filler.'</tr>');
       ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Concluída'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_totconc.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$t_totconc/$t_totsolic,1).'%'.$w_filler.'</tr>');
       ShowHTML('      </table><br>');
       ShowHTML('    </td>');
-      ShowHTML('    <td width="47%" align="center" bgcolor="#B8DFF5"><br><font size="3"><b>Status das Licitações (Valores '.$w_simbolo.')</b></font><br><br>');
+      ShowHTML('    <td width="45%" align="center" bgcolor="#B8DFF5"><br><font size="3"><b>Status das Licitações (Valores '.$w_simbolo.')</b></font><br><br>');
       ShowHTML('      <table border="1">');
-      ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Em andamento'.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v_tottram).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v_tottram/$t_totvalor,1).'%'.$w_filler.'</tr>');
+      ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td nowrap><font size="2"><b>'.$w_filler.'Em andamento'.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v_tottram).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v_tottram/$t_totvalor,1).'%'.$w_filler.'</tr>');
       ShowHTML('        <tr valign="top" bgcolor="'.$conTrBgColor.'"><td><font size="2"><b>'.$w_filler.'Cancelada'.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v_totatraso).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v_totatraso/$t_totvalor,1).'%'.$w_filler.'</tr>');
       ShowHTML('        <tr valign="top" bgcolor="'.$conTrAlternateBgColor.'"><td><font size="2"><b>'.$w_filler.'Concluída'.$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber($v_totconc).$w_filler.'<td align="right"><font size="2"><b>'.$w_filler.formatNumber(100*$v_totconc/$t_totvalor,1).'%'.$w_filler.'</tr>');
       ShowHTML('      </table><br>');
       ShowHTML('    </td>');
       ShowHTML('  </tr>');
       ShowHTML('  <tr valign="top">');
-      ShowHTML('    <td width="47%" align="center" bgcolor="#B8DFF5"><br><font size="3"><b>Quantidade de Licitações por Setor</b></font><br><br>');
+      ShowHTML('    <td width="45%" align="center" bgcolor="#B8DFF5"><br><font size="3"><b>Quantidade de Licitações por Setor</b></font><br><br>');
       ShowHTML('      <table border="1">');
       $w_cor = '';
       foreach($g_linha as $k=>$v) {
@@ -459,7 +472,7 @@ function Gerencial() {
       ShowHTML('        <tr valign="top" bgcolor="'.$w_cor.'"><td><font size="2"><b>'.$w_filler.'TOTAL'.$w_filler.'<td align="center"><font size="2"><b>'.$w_filler.$t_totsolic.$w_filler.'<td align="right">&nbsp;</tr>');
       ShowHTML('      </table><br>');
       ShowHTML('    </td>');
-      ShowHTML('    <td width="47%" align="center" bgcolor="#B8DFF5"><br><font size="3"><b>Valor das Licitações por Setor ('.$w_simbolo.')</b></font><br><br>');
+      ShowHTML('    <td width="45%" align="center" bgcolor="#B8DFF5"><br><font size="3"><b>Valor das Licitações por Setor ('.$w_simbolo.')</b></font><br><br>');
       ShowHTML('      <table border="1">');
       $w_cor = '';
       foreach($g_linha as $k=>$v) {
@@ -496,7 +509,7 @@ function ImprimeCabecalho() {
   ShowHTML('        <tr bgcolor="#DCDCDC" align="center">');
   ShowHTML('          <td><b>Unidade solicitante</td>');
   //ShowHTML('          <td><b>Cadastramento</td>');
-  ShowHTML('          <td><b>Em andamento</td>');
+  ShowHTML('          <td nowrap><b>Em andamento</td>');
   ShowHTML('          <td><b>Canceladas</td>');
   ShowHTML('          <td><b>Concluídas</td>');
   ShowHTML('          <td><b>Total</td>');

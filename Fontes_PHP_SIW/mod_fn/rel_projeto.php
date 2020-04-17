@@ -15,12 +15,10 @@ include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicFN.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRubrica.php');
-include_once($w_dir_volta.'classes/sp/db_getSolicApoioList.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoOrdenaRel.php');
-include_once($w_dir_volta.'funcoes/selecaoSolicApoio.php');
 
 // =========================================================================
 //  /rel_projeto.php
@@ -65,7 +63,6 @@ $w_troca = $_REQUEST['w_troca'];
 $w_embed = '';
 
 $p_projeto = $_REQUEST['p_projeto'];
-$p_solic_apoio = $_REQUEST['p_solic_apoio'];
 $p_inicio = $_REQUEST['p_inicio'];
 $p_fim = $_REQUEST['p_fim'];
 $p_nome = upper(trim($_REQUEST['p_nome']));
@@ -110,23 +107,6 @@ function Inicial() {
   global $w_embed;
   $w_tipo = $_REQUEST['w_tipo'];
   $w_sq_pessoa = upper(trim($_REQUEST['w_sq_pessoa']));
-  
-  // Verificar fontes de financiamento possíveis. Se apenas uma, atribui direto.
-  $sql = new db_getSolicApoioList; $RS_Fonte = $sql->getInstanceOf($dbms, nvl($p_projeto,0), null, null, null);
-  if (count($RS_Fonte)==0) {
-    $w_exibe_ff = false;
-  } else {
-    $w_exibe_ff = true;
-    if (count($RS_Fonte)==1 || nvl($p_solic_apoio,'')!='') {
-      foreach($RS_Fonte as $row) { 
-        if (nvl($p_solic_apoio,f($row,'sq_solic_apoio'))==f($row,'sq_solic_apoio')) {
-          $p_solic_apoio = f($row,'sq_solic_apoio'); 
-          break; 
-        }
-      }
-      if (count($RS_Fonte)==1) $w_exibe_ff = false;
-    }
-  }
 
   if ($O == 'L') {
     // Recupera os dados do projeto selecionado
@@ -136,21 +116,12 @@ function Inicial() {
     $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXEC'.$p_concluido);
 
     $sql = new db_getSolicRubrica; $RS1 = $sql->getInstanceOf($dbms,$p_projeto,null,null,null,null,null,$p_inicio,$p_fim,'PJFIN'.$p_concluido);
-    if ($p_solic_apoio) {
-      // Se filtrado por fonte de financiamento, descarta os demais registros
-      $rs = [];
-      foreach($RS1 as $row)  {
-        if ($p_solic_apoio==f($row,sq_fonte)) {
-          array_push($rs,$row);
-        }
-      }
-      $RS1 = $rs;
-      unset($rs);
-    }
     foreach($RS1 as $row)  {
       $Moeda[f($row,'sg_fn_moeda')]='1';
       $valor = f($row,'valor');
-      if (strpos(f($row,'descricao'),'FCTS')!==false) $valor = abs($valor);
+      
+      // Tratamento retirado em 09/11/2018, a pedido do Márcio
+      // if (strpos(f($row,'descricao'),'FCTS')!==false) $valor = abs($valor);
 
       if (f($row,'aplicacao_financeira')=='N') {
         if (!isset($Total[f($row,'sg_fn_moeda')])) {
@@ -200,7 +171,6 @@ function Inicial() {
       SaltaCampo();
       ValidateOpen('Validacao');
       Validate('p_projeto', 'Projeto', 'SELECT', '1', '1', '18', '', '0123456789');
-      if ($w_exibe_ff) Validate('p_solic_apoio','Fonte de financiamento', 'SELECT', '', 1, 18, '', '0123456789');
       Validate('p_inicio', 'Pagamento inicial', 'DATA', '', '10', '10', '', '0123456789/');
       Validate('p_fim', 'Pagamento final', 'DATA', '', '10', '10', '', '0123456789/');
       CompData('p_inicio', 'Pagamento inicial', '<=', 'p_fim', 'Pagamento final');
@@ -222,12 +192,6 @@ function Inicial() {
   if ($O == 'L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
     $w_filtro = '';
-    if ($p_solic_apoio>'') {
-      $sql = new db_getSolicApoioList; $rs = $sql->getInstanceOf($dbms, $p_projeto, $p_solic_apoio, null, null);
-      foreach($rs as $row) {
-        $w_filtro .= '<tr valign="top"><td align="right">Fonte de financiamento <td>[<b>'.f($row,'entidade').'</b>]';
-      }
-    }
     if ($p_inicio!='')      $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Pagamento realizado de <td><b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b>';
 
     if ($p_concluido=='S')  $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Relatório considera apenas lançamentos concluídos</b>';
@@ -322,13 +286,13 @@ function Inicial() {
               
               if (f($row,'aplicacao_financeira')=='S') $l_executado = -1*$l_executado;
               
-              $l_html.=chr(13).'          <td align="right">'.formatNumber($l_executado).'</td>';
-              $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'total_previsto')-$l_executado).'</td>';
-              $l_html.=chr(13).'          <td align="right">'.formatNumber($w_perc).' %</td>';
+              $l_html.=chr(13).'          <td align="right" nowrap>'.formatNumber($l_executado).'</td>';
+              $l_html.=chr(13).'          <td align="right" nowrap>'.formatNumber(f($row,'total_previsto')-$l_executado).'</td>';
+              $l_html.=chr(13).'          <td align="right" nowrap>'.formatNumber($w_perc).' %</td>';
               foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[f($row,'sq_projeto_rubrica')][$v]).'</td>';
             } else {
               $l_html.=chr(13).'          <td>&nbsp;</td>';
-              $l_html.=chr(13).'          <td align="right">'.formatNumber($l_saldo).'</td>';
+              $l_html.=chr(13).'          <td align="right" nowrap>'.formatNumber($l_saldo).'</td>';
               $l_html.=chr(13).'          <td align="right">0,00%</td>';
               foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td>&nbsp;</td>';
             }
@@ -360,13 +324,8 @@ function Inicial() {
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr>');
     $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST','onChange="document.Form.target=\'content\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"');
+    SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo);
     ShowHTML('      </tr>');
-    if ($w_exibe_ff) {
-        ShowHTML('      <tr>');
-        SelecaoSolicApoio('Fonte de financiamento:',null,null,$p_solic_apoio,$p_projeto,'p_solic_apoio',null,null,1);
-        ShowHTML('      </tr>');
-    }
     ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');
     ShowHTML('      <tr>');
     MontaRadioNS('<b>Considerar apenas lançamentos concluídos? <font color="red">("Sim" para computar apenas lançamentos concluídos. "Não" para computar lançamentos concluídos e/ou autorizados)</font>.</b>',$p_concluido,'p_concluido');
@@ -481,7 +440,10 @@ function Detalhe() {
       ShowHTML('        <td align="right" nowrap>'.f($row,'sb_moeda').' '.formatNumber(f($row,'valor')).'</td>');
       ShowHTML('      </tr>');
       $valor = f($row,'valor');
-      if (strpos(f($row,'descricao'),'FCTS')!==false) $valor = abs($valor);
+      
+      // Tratamento retirado em 09/11/2018, a pedido do Márcio
+      //if (strpos(f($row,'descricao'),'FCTS')!==false) $valor = abs($valor);
+      
       if (nvl($Total[f($row,'sb_moeda')],'')=='') $Total[f($row,'sb_moeda')] = $valor; else $Total[f($row,'sb_moeda')] += $valor;
     } 
     ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');

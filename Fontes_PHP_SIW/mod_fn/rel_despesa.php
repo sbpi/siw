@@ -11,16 +11,16 @@ include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkSubMenu.php');
+include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getMoedaCotacao.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicFN.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicRubrica.php');
-include_once($w_dir_volta.'classes/sp/db_getSolicApoioList.php');
 include_once($w_dir_volta.'classes/sp/db_getBenef.php');
 include_once($w_dir_volta.'classes/sp/db_getIndicador.php');
+include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoOrdenaRel.php');
-include_once($w_dir_volta.'funcoes/selecaoSolicApoio.php');
 
 // =========================================================================
 //  /rel_despesa.php
@@ -67,13 +67,16 @@ $w_embed = '';
 $p_projeto = $_REQUEST['p_projeto'];
 $p_inicio = $_REQUEST['p_inicio'];
 $p_fim = $_REQUEST['p_fim'];
-$p_solic_apoio = $_REQUEST['p_solic_apoio'];
 $p_nome = upper(trim($_REQUEST['p_nome']));
 $p_receita = upper(trim($_REQUEST['p_receita']));
 $p_financeiro = upper(trim($_REQUEST['p_financeiro']));
 $p_contabil = upper(trim($_REQUEST['p_contabil']));
 $p_moedas = $_REQUEST['p_moedas'];
 $p_ordena = lower($_REQUEST['p_ordena']);
+$p_rodape = $_REQUEST['p_rodape'];
+$p_elaboracao = $_REQUEST['p_elaboracao'];
+$p_conferencia = $_REQUEST['p_conferencia'];
+
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -106,24 +109,7 @@ function Inicial() {
   extract($GLOBALS);
   global $w_Disabled;
   global $w_embed;
-  $w_tipo         = $_REQUEST['w_tipo'];
-  
-  // Verificar fontes de financiamento possíveis. Se apenas uma, atribui direto.
-  $sql = new db_getSolicApoioList; $RS_Fonte = $sql->getInstanceOf($dbms, nvl($p_projeto,0), null, null, null);
-  if (count($RS_Fonte)==0) {
-    $w_exibe_ff = false;
-  } else {
-    $w_exibe_ff = true;
-    if (count($RS_Fonte)==1 || nvl($p_solic_apoio,'')!='') {
-      foreach($RS_Fonte as $row) { 
-        if (nvl($p_solic_apoio,f($row,'sq_solic_apoio'))==f($row,'sq_solic_apoio')) {
-          $p_solic_apoio = f($row,'sq_solic_apoio'); 
-          break; 
-        }
-      }
-      if (count($RS_Fonte)==1) $w_exibe_ff = false;
-    }
-  }
+  $w_tipo = $_REQUEST['w_tipo'];
 
   Cabecalho();
   head();
@@ -132,12 +118,38 @@ function Inicial() {
   CheckBranco();
   FormataData();
   SaltaCampo();
+  ShowHTML('function assinaturas() {');
+  ShowHTML('  theForm = document.Form;');
+  ShowHTML('  if (theForm.p_rodape[0].checked) { ');
+  ShowHTML('    theForm.p_elaboracao.disabled=false; ');
+  ShowHTML('    theForm.p_conferencia.disabled=false; ');
+  ShowHTML('    theForm.p_elaboracao.className="STIO";');
+  ShowHTML('    theForm.p_conferencia.className="STIO";');
+  ShowHTML('    theForm.p_elaboracao.focus(); ');
+  ShowHTML('  } else {');
+  ShowHTML('    theForm.p_elaboracao.disabled=true; ');
+  ShowHTML('    theForm.p_conferencia.disabled=true; ');
+  ShowHTML('    theForm.p_elaboracao.className="STI";');
+  ShowHTML('    theForm.p_conferencia.className="STI";');
+  ShowHTML('  }');
+  ShowHTML('}');
   ValidateOpen('Validacao');
   Validate('p_projeto', 'Projeto', 'SELECT', '1', '1', '18', '', '0123456789');
-  if ($w_exibe_ff) Validate('p_solic_apoio','Fonte de financiamento', 'SELECT', '', 1, 18, '', '0123456789');
   Validate('p_inicio', 'Pagamento inicial', 'DATA', '', '10', '10', '', '0123456789/');
   Validate('p_fim', 'Pagamento final', 'DATA', '', '10', '10', '', '0123456789/');
   CompData('p_inicio', 'Pagamento inicial', '<=', 'p_fim', 'Pagamento final');
+  ShowHTML('  if (theForm.p_rodape[0].checked) { ');
+  ShowHTML('    if (theForm.p_elaboracao.selectedIndex==0) { ');
+  ShowHTML('      alert("Favor informar um valor para o campo Elaborado por");');
+  ShowHTML('      theForm.p_elaboracao.focus();');
+  ShowHTML('      return false;');
+  ShowHTML('    }');
+  ShowHTML('    if (theForm.p_conferencia.selectedIndex==0) { ');
+  ShowHTML('      alert("Favor informar um valor para o campo Conferido por");');
+  ShowHTML('      theForm.p_conferencia.focus();');
+  ShowHTML('      return false;');
+  ShowHTML('    }');
+  ShowHTML('  }');
   ValidateClose();
   ScriptClose();
   ShowHTML('<BASE HREF="' . $conRootSIW . '">');
@@ -154,22 +166,21 @@ function Inicial() {
   ShowHTML('    <table width="99%" border="0">');
   ShowHTML('      <tr>');
   $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
-  SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST','onChange="document.Form.target=\'content\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_projeto\'; document.Form.submit();"');
+  SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo, null, 3);
   ShowHTML('      </tr>');
-  if ($w_exibe_ff) {
-      ShowHTML('      <tr>');
-      SelecaoSolicApoio('Fonte de financiamento:',null,null,$p_solic_apoio,$p_projeto,'p_solic_apoio',null,null,1);
-      ShowHTML('      </tr>');
-  }
-  ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');
+  ShowHTML('      <tr><td colspan="3"><b><u>P</u>agamento entre:</b><br><input ' . $w_Disabled . ' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');
   ShowHTML('      <tr>');
-  MontaRadioNS('<b>Exibe moeda do pagamento, além da moeda do projeto? <font color="red">("Sim" para exibir coluna com a moeda do pagamento. "Não" para omitir essa coluna)</font>.</b>',$p_moedas,'p_moedas');
+  MontaRadioNS('<b>Exibe moeda do pagamento, além da moeda do projeto? <font color="red">("Sim" para exibir coluna com a moeda do pagamento. "Não" para omitir essa coluna)</font>.</b>',$p_moedas,'p_moedas',null,null,null,3);
   ShowHTML('      <tr>');
-  MontaRadioNS('<b>Emite versão para contabilidade?</b>',$p_contabil,'p_contabil');
+  MontaRadioNS('<b>Emite versão para contabilidade?</b>',$p_contabil,'p_contabil',null,null,null,3);
   ShowHTML('      </tr><tr>');
-  MontaRadioNS('<b>Exibe também lançamentos de receita/devolução? </b>',$p_receita,'p_receita');
+  MontaRadioNS('<b>Exibe também lançamentos de receita/devolução? </b>',$p_receita,'p_receita',null,null,null,3);
   ShowHTML('      </tr>');
-  ShowHTML('      <tr><td align="center"><hr>');
+  ShowHTML('      <tr valign="top">');
+  MontaRadioNS('<b>Imprimir com assinaturas?</b>',$p_rodape,'p_rodape',null,null,'onClick="assinaturas()"');
+  SelecaoPessoa('<u>E</u>laborado por:','E','Selecione o responsável pela elaboração do relatório.',$p_elaboracao,null,'p_elaboracao','USUARIOS');
+  SelecaoPessoa('<u>C</u>onferido por:','E','Selecione o responsável pela conferência do relatório.',$p_conferencia,null,'p_conferencia','USUARIOS');
+  ShowHTML('      <tr><td align="center" colspan="3"><hr>');
   ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
   ShowHTML('            <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $w_pagina . $par . '&R=' . $R . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&O=P&SG=' . $SG) . '\';" name="Botao" value="Limpar campos">');
   ShowHTML('          </td>');
@@ -189,24 +200,13 @@ function Inicial() {
 // -------------------------------------------------------------------------
 function detalhamentoDespesa() {
   extract($GLOBALS);
-  $w_tipo         = $_REQUEST['w_tipo'];
+  $w_tipo = $_REQUEST['w_tipo'];
   
   // Recupera os dados do projeto selecionado
   $sql = new db_getSolicData; $RS_Projeto = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
 
   // Recupera as rubricas do projeto
-  $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_financeiro=='N') ? null : 'N'),$p_inicio,$p_fim,'PJEXECLS');
-  if ($p_solic_apoio) {
-    $RS = [];
-    foreach($RSQuery as $row)  {
-      if ($p_solic_apoio==f($row,sq_fonte)) {
-        array_push($RS,$row);
-      }
-    }
-    $RSQuery = $RS;
-    unset($RS);
-  }
-  
+  $sql = new db_getSolicRubrica; $RSQuery = $sql->getInstanceOf($dbms,$p_projeto,null,'S',null,null,(($p_receita=='S') ? null : 'N'),$p_inicio,$p_fim,'PJEXECLS');
 
   if ($p_moedas=='S') {
     foreach($RSQuery as $row)  {
@@ -258,12 +258,6 @@ function detalhamentoDespesa() {
 
   if ($w_tipo!='EXCEL') {
     $w_filtro = '';
-    if ($p_solic_apoio>'') {
-      $sql = new db_getSolicApoioList; $rs = $sql->getInstanceOf($dbms, $p_projeto, $p_solic_apoio, null, null);
-      foreach($rs as $row) {
-        $w_filtro .= '<tr valign="top"><td align="right">Fonte de financiamento <td>[<b>'.f($row,'entidade').'</b>]';
-      }
-    }
     if ($p_inicio!='')     $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Pagamento realizado de <td><b>' . $p_inicio . '</b> até <b>' . $p_fim . '</b>';
     if ($p_contabil=='S')  $w_filtro = $w_filtro . '<tr valign="top"><td align="right">Formato:<td><b>Versão para contabilidade</b>';
     //if ($p_sintetico=='S') $w_filtro = $w_filtro . '<tr valign="top"><td align="right"><b>Versão sintética (apenas rubricas de mais alto nível)</b>';
@@ -353,10 +347,14 @@ function detalhamentoDespesa() {
       $w_valor_contabil = 0;
       
       $fn_valor = f($row,'fn_valor');
-      if (strpos(f($row,'descricao'),'FCTS')!==false) $fn_valor = abs($fn_valor);
+      
+      // Tratamento retirado em 09/11/2018, a pedido do Márcio
+      //if (strpos(f($row,'descricao'),'FCTS')!==false) $fn_valor = abs($fn_valor);
       
       $valor = f($row,'valor');
-      if (strpos(f($row,'descricao'),'FCTS')!==false) $valor = abs($valor);
+      
+      // Tratamento retirado em 09/11/2018, a pedido do Márcio
+      // if (strpos(f($row,'descricao'),'FCTS')!==false) $valor = abs($valor);
       
       if ($p_moedas=='S') {
         foreach($Ordem as $k => $v) {
@@ -384,10 +382,10 @@ function detalhamentoDespesa() {
       $l_html.=chr(13).'          <td>'.f($row,'nm_forma_pagamento').' </td>';
       $l_html.=chr(13).'          <td nowrap>'.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo);
       $l_html.=chr(13).'          <td align="right">'.nvl(FormataDataEdicao(f($row,'quitacao'),5),'&nbsp;').'</td>';
-      $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'valor')).' </td>';
-      if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right">'.formatNumber($Valor[$v]).'</td>';
+      $l_html.=chr(13).'          <td align="right" nowrap>'.formatNumber(f($row,'valor')).' </td>';
+      if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right" nowrap>'.nvl(formatNumber($Valor[$v]),'&nbsp;').'</td>';
       if ($p_contabil=='S') {
-        $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'brl_valor_compra')).' </td>';
+        $l_html.=chr(13).'          <td align="right" nowrap>'.nvl(formatNumber(f($row,'brl_valor_compra')),'&nbsp;').' </td>';
         if (f($row,'exige_brl')=='N') {
           // Se já tem valor em BRL, não é necessário converter.
           // Apenas exibe a taxa de venda do BRL e compara com a informada na conclusão do lançamento.
@@ -411,9 +409,9 @@ function detalhamentoDespesa() {
   } 
   $l_html.=chr(13).'      <tr valign="top">';
   $l_html.=chr(13).'        <td colspan="'.$cs.'" align="right"><b>Total: </b></td>';
-  $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_previsto).' </b></td>';
-  if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right"><b>'.formatNumber($Total[$v]).'</b></td>';
-  if ($p_contabil=='S') $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_total_contabil).' </b></td><td colspan="2">&nbsp;</td>';
+  $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_total_previsto).' </b></td>';
+  if ($p_moedas=='S') foreach($Ordem as $k => $v) if ($k>0) $l_html.=chr(13).'          <td align="right" nowrap><b>'.formatNumber($Total[$v]).'</b></td>';
+  if ($p_contabil=='S') $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_total_contabil).' </b></td><td colspan="2">&nbsp;</td>';
   $l_html.=chr(13).'      </tr>';
   $l_html.=chr(13).'      </table></td></tr>';
 
@@ -421,6 +419,26 @@ function detalhamentoDespesa() {
   ShowHTML('    </table>');
   ShowHTML('  </td>');
   ShowHTML('</tr>');
+  if ($p_rodape=='S') {
+    ShowHTML('<table border=0 width="100%">');
+    ShowHTML('  <tr><td colspan="7">&nbsp;</td></tr>');
+    ShowHTML('  <tr valign="top">');
+    $sql = new db_getPersonData; 
+      
+    ShowHTML('  <td width="5%">&nbsp;</td>');
+    $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_elaboracao,null,null);
+    ShowHTML('  <td width="27%" align="center"><font size="2">Elaborado por <br><br><br><hr><b>'.f($RS,'nome').'</b></font></td>');
+
+    ShowHTML('  <td width="5%">&nbsp;</td>');
+    $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_conferencia,null,null);
+    ShowHTML('  <td width="27%" align="center"><font size="2">Conferido por <br><br><br><hr><b>'.f($RS,'nome').'</b></font></td>');
+
+    ShowHTML('  <td width="5%">&nbsp;</td>');
+    ShowHTML('  <td width="26%" align="center"><font size="2">Contabilidade <br><br><br><hr></font></td>');
+    ShowHTML('  <td width="5%">&nbsp;</td>');
+    ShowHTML('  </tr>');
+    ShowHTML('</table>');      
+  }
   ShowHTML('</table>');
   ShowHTML('</div>');
 

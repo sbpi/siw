@@ -57,9 +57,10 @@ select a3.sigla sg_menu, 'C' tipo,
          inner     join co_pessoa_conta   e  on (d.cliente             = e.sq_pessoa and
                                                  d.sq_agencia          = e.sq_agencia and
                                                  d.numero_conta        = e.numero and
+                                                 -- Só recupera entrada extraorçamentária e transferência bancária
                                                  ((a3.sigla = 'FNATRANSF' and d.sq_pessoa_conta <> e.sq_pessoa_conta) or
                                                   (a3.sigla = 'FNAAPLICA' and d.sq_pessoa_conta =  e.sq_pessoa_conta) or
-                                                  a3.sigla not in ('FNATRANSF','FNAAPLICA')
+                                                  a3.sigla  = 'FNDEVENT'
                                                  )
                                                 )
            inner   join co_moeda          e1 on (e.sq_moeda            = e1.sq_moeda)
@@ -70,6 +71,5 @@ select a3.sigla sg_menu, 'C' tipo,
        left        join siw_solic_cotacao f  on (a.sq_siw_solicitacao  = f.sq_siw_solicitacao and
                                                  e.sq_moeda            = f.sq_moeda
                                                 )
- where -- Se petty cash, não pode estar cancelado. Caso contrário, deve estar concluído
-       (a3.sigla = 'FNDFIXO' and a1.sigla != 'CA')
-    or (a3.sigla !='FNDFIXO' and a1.sigla = 'AT')
+ where -- Lançamento deve estar concluído
+       a1.sigla = 'AT';

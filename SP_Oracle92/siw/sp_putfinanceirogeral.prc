@@ -33,6 +33,8 @@ create or replace procedure SP_PutFinanceiroGeral
     p_data_autorizacao    in date     default null,
     p_texto_autorizacao   in varchar2 default null,
     p_moeda               in number   default null,
+    p_cc_debito           in varchar2 default null,
+    p_cc_credito          in varchar2 default null,
     p_chave_nova          out         number,
     p_codigo_interno      in out      varchar2
    ) is
@@ -95,14 +97,14 @@ begin
            sq_tipo_lancamento,   sq_tipo_pessoa,     emissao,             vencimento,
            observacao,           aviso_prox_conc,    dias_aviso,          tipo,
            processo,             referencia_inicio,  referencia_fim,      condicoes_pagamento,
-           sq_solic_vinculo,     sq_projeto_rubrica, sq_solic_apoio
+           sq_solic_vinculo,     sq_projeto_rubrica  --, sq_solic_apoio
          )
       values (
            w_chave,              p_cliente,         p_sq_acordo_parcela, p_sq_forma_pagamento,
            p_sq_tipo_lancamento, p_sq_tipo_pessoa,  sysdate,             p_vencimento,
            p_observacao,         p_aviso,           p_dias,              p_tipo_rubrica,
            p_numero_processo,    w_inicio,          w_fim,               p_condicao,
-           p_vinculo,            p_rubrica,         p_solic_apoio
+           p_vinculo,            p_rubrica          --,         p_solic_apoio
       );
 
       -- Insere log da solicitação
@@ -162,8 +164,8 @@ begin
           referencia_fim       = p_per_fim,
           condicoes_pagamento  = p_condicao,
           sq_solic_vinculo     = p_vinculo,
-          sq_projeto_rubrica   = p_rubrica,
-          sq_solic_apoio       = p_solic_apoio
+          sq_projeto_rubrica   = p_rubrica --,
+          --sq_solic_apoio       = p_solic_apoio
       where sq_siw_solicitacao = p_chave;
       
       If Nvl(p_forma_atual, p_sq_forma_pagamento) <> p_sq_forma_pagamento Then
@@ -191,6 +193,7 @@ begin
            and sq_projeto_rubrica is null;
       End If;
 
+      /*
       -- Se recebeu fonte de financiamento, atualiza os itens do lançamento que estão com esse campo nulo
       If p_solic_apoio is not null Then
          update fn_documento_item
@@ -198,6 +201,7 @@ begin
          where sq_lancamento_doc in (select sq_lancamento_doc from fn_lancamento_doc where sq_siw_solicitacao = p_chave)
            and p_solic_apoio is null;
       End If;
+      */
    Elsif p_operacao = 'E' Then -- Exclusão
       -- Verifica a quantidade de logs da solicitação
       select count(*) into w_log_sol from siw_solic_log      where sq_siw_solicitacao = p_chave;
@@ -274,18 +278,22 @@ begin
       End If;
    End If;
    
-   If p_operacao in ('I','A') and p_numero_processo is not null Then
-      -- Recupera a chave do protocolo
-      select sq_siw_solicitacao into w_protocolo_siw 
-        from pa_documento 
-       where p_numero_processo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2);
+   If p_operacao in ('I','A') Then      
+   
+      -- Grava informações contábeis
+      sp_putContaContabil(p_cadastrador, w_chave, p_cc_debito, p_cc_credito);
+   
+      If p_numero_processo is not null Then
+         -- Recupera a chave do protocolo
+         select sq_siw_solicitacao into w_protocolo_siw 
+           from pa_documento 
+          where p_numero_processo = prefixo||'.'||substr(1000000+numero_documento,2,6)||'/'||ano||'-'||substr(100+digito,2,2);
        
-      -- Grava a chave do protocolo na solicitação
-      update siw_solicitacao a set a.protocolo_siw = w_protocolo_siw where sq_siw_solicitacao = w_chave;
-   End If;
+         -- Grava a chave do protocolo na solicitação
+         update siw_solicitacao a set a.protocolo_siw = w_protocolo_siw where sq_siw_solicitacao = w_chave;
+      End If;
 
-   -- Coloca o projeto ao qual o lançamento está vinculado.
-   If p_operacao          in ('I','A') Then
+      -- Coloca o projeto ao qual o lançamento está vinculado.
       for crec in (select case when b2.sigla = 'PR' then b.sq_siw_solicitacao
                                when c2.sigla = 'PR' then c.sq_siw_solicitacao
                                when d2.sigla = 'PR' then d.sq_siw_solicitacao
@@ -307,55 +315,54 @@ begin
       loop
          update fn_lancamento set sq_solic_vinculo = crec.vinculo where sq_siw_solicitacao = w_chave;
       end loop;
-   End If;
 
-   -- O tratamento a seguir é relativo ao código interno do lançamento.
-   If p_operacao          in ('I','A') and 
-      (p_vencimento_atual is null or
-       to_char(p_vencimento,'yyyy') <> to_char(Nvl(p_vencimento_atual, p_vencimento),'yyyy') or
-       (to_char(p_vencimento,'yyyy') < to_char(sysdate,'yyyy') and p_codigo_interno like 'FN-0/%')
-      )
-   Then
-      
-      If w_menu.numeracao_automatica = 0 Then
-         -- Recupera os parâmetros do cliente informado
-         select * into w_reg from fn_parametro where cliente = p_cliente;
+      -- O tratamento a seguir é relativo ao código interno do lançamento.
+      If (p_vencimento_atual is null or
+          to_char(p_vencimento,'yyyy') <> to_char(Nvl(p_vencimento_atual, p_vencimento),'yyyy') or
+          (to_char(p_vencimento,'yyyy') < to_char(sysdate,'yyyy') and p_codigo_interno like 'FN-0/%')
+         )
+      Then
+        
+         If w_menu.numeracao_automatica = 0 Then
+            -- Recupera os parâmetros do cliente informado
+            select * into w_reg from fn_parametro where cliente = p_cliente;
+            
+            If to_char(p_vencimento,'yyyy') <  w_reg.ano_corrente Then
          
-         If to_char(p_vencimento,'yyyy') <  w_reg.ano_corrente Then
-      
-            -- Configura o ano do acordo para o ano informado na data de início.
-            w_ano := to_number(to_char(p_vencimento,'yyyy'));
-           
-            -- Verifica se já há algum lançamento no ano informado na data de início.
-            -- Se tiver, verifica o próximo sequencial. Caso contrário, usa 1.
-            select count(*) into w_existe 
-              from fn_lancamento a 
-             where to_char(a.vencimento,'yyyy') =  w_ano
-               and a.sq_siw_solicitacao         <> w_chave
-               and a.cliente                    =  p_cliente;
+               -- Configura o ano do acordo para o ano informado na data de início.
+               w_ano := to_number(to_char(p_vencimento,'yyyy'));
               
-            If w_existe = 0 Then
-               w_sequencial := 1;
-            Else
-               select Nvl(max(to_number(translate(replace(replace(replace(upper(b.codigo_interno),'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(null,''),''),'0123456789ABCDEFGHIJKLMNOPQRSTUVWXZ-:. ','0123456789'))),0)+1
-                 into w_sequencial
-                 from fn_lancamento              a
-                      inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-                where b.codigo_interno like '%/'||to_char(p_vencimento,'yyyy')
-                  and a.cliente        = p_cliente;
+               -- Verifica se já há algum lançamento no ano informado na data de início.
+               -- Se tiver, verifica o próximo sequencial. Caso contrário, usa 1.
+               select count(*) into w_existe 
+                 from fn_lancamento a 
+                 where to_char(a.vencimento,'yyyy') =  w_ano
+                  and a.sq_siw_solicitacao         <> w_chave
+                  and a.cliente                    =  p_cliente;
+                 
+               If w_existe = 0 Then
+                  w_sequencial := 1;
+               Else
+                  select Nvl(max(to_number(translate(replace(replace(replace(upper(b.codigo_interno),'/'||w_ano,''),Nvl(w_reg.prefixo,''),''),Nvl(null,''),''),'0123456789ABCDEFGHIJKLMNOPQRSTUVWXZ-:. ','0123456789'))),0)+1
+                    into w_sequencial
+                    from fn_lancamento              a
+                         inner join siw_solicitacao b on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+                   where b.codigo_interno like '%/'||to_char(p_vencimento,'yyyy')
+                     and a.cliente        = p_cliente;
+               End If;
+              
+               p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');
             End If;
-           
-            p_codigo_interno := Nvl(w_reg.prefixo,'')||w_sequencial||'/'||w_ano||Nvl(w_reg.sufixo,'');
+         Else
+            -- Gera código a partir da configuração do menu      
+            geraCodigoInterno(w_chave, to_number(to_char(p_vencimento,'yyyy')), p_codigo_interno);
          End If;
-      Else
-         -- Gera código a partir da configuração do menu      
-         geraCodigoInterno(w_chave, to_number(to_char(p_vencimento,'yyyy')), p_codigo_interno);
+ 
+         -- Atualiza o código interno para o sequencial encontrado
+         update siw_solicitacao a 
+            set codigo_interno = p_codigo_interno
+         where a.sq_siw_solicitacao = w_chave;
       End If;
-
-      -- Atualiza o código interno para o sequencial encontrado
-      update siw_solicitacao a 
-         set codigo_interno = p_codigo_interno
-      where a.sq_siw_solicitacao = w_chave;
    End If;
 
    -- Devolve a chave

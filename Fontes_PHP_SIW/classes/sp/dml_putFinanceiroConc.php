@@ -11,7 +11,7 @@ include_once($w_dir_volta.'classes/db/DatabaseQueriesFactory.php');
 
 class dml_putFinanceiroConc {
    function getInstanceOf($dbms, $p_menu, $p_chave, $p_pessoa, $p_tramite, $p_quitacao, $p_valor_real, $p_codigo_deposito, $p_conta,
-          $p_tipo_lancamento, $p_rubrica, $p_observacao, $p_caminho, $p_tamanho, $p_tipo, $p_nome_original) {
+          $p_tipo_lancamento, $p_rubrica, $p_observacao, $p_cc_debito, $p_cc_credito, $p_caminho, $p_tamanho, $p_tipo, $p_nome_original) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putFinanceiroConc';
      $params=array('p_menu'                      =>array($p_menu,                                          B_INTEGER,        32),
                    'p_chave'                     =>array($p_chave,                                         B_INTEGER,        32),
@@ -24,6 +24,8 @@ class dml_putFinanceiroConc {
                    'p_tipo_lancamento'           =>array(tvl($p_tipo_lancamento),                          B_INTEGER,        32),
                    'p_rubrica'                   =>array(tvl($p_rubrica),                                  B_INTEGER,        32),
                    'p_observacao'                =>array(tvl($p_observacao),                               B_VARCHAR,       500),
+                   'p_cc_debito'                 =>array(tvl($p_cc_debito),                                B_VARCHAR,        25),
+                   'p_cc_credito'                =>array(tvl($p_cc_credito),                               B_VARCHAR,        25),
                    'p_caminho'                   =>array(tvl($p_caminho),                                  B_VARCHAR,       255),
                    'p_tamanho'                   =>array(tvl($p_tamanho),                                  B_INTEGER,        32),
                    'p_tipo'                      =>array(tvl($p_tipo),                                     B_VARCHAR,       100),

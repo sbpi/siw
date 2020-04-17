@@ -60,6 +60,7 @@ create or replace procedure SP_PutViagemEnvio
              'Registro gerado automaticamente pelo sistema de viagens' as observacao, z.sq_lancamento, 
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
              x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, coalesce(x2.sg_tramite,'-') as sg_tramite,
+             x2.cc_debito, x2.cc_credito,
              x3.sq_tipo_pessoa,
              x4.sq_rubrica, x4.cd_rubrica, x4.nm_rubrica, x4.sq_moeda, x4.sg_moeda, x4.nm_moeda, x4.sb_moeda, x4.valor
         from siw_menu                          w
@@ -131,6 +132,7 @@ create or replace procedure SP_PutViagemEnvio
                              group by sq_siw_solicitacao, sq_projeto_rubrica, cd_rubrica, nm_rubrica, sq_moeda, sg_moeda, nm_moeda, sb_moeda
                             )                 x4 on (x.sq_siw_solicitacao  = x4.sq_siw_solicitacao)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc,
+                                    c.cc_debito, c.cc_credito,
                                     b.sigla as sg_tramite
                                from siw_solicitacao                a
                                     inner   join siw_tramite       b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
@@ -188,13 +190,14 @@ create or replace procedure SP_PutViagemEnvio
          and x4.valor             > 0;
 
    cursor c_ressarcimento_geral is
-      select x.codigo_interno as cd_interno, x.sq_moeda, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
+      select x.codigo_interno as cd_interno, x1.sq_moeda_ressarcimento, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
              'Devolução de valores da '||x.codigo_interno||'.' as descricao,
              soma_dias(w_cliente,trunc(sysdate),2,'U') as vencimento, 
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
              'Registro gerado automaticamente pelo sistema de viagens' as observacao,
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
              x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, z.sq_tipo_lancamento, z.nm_lancamento,
+             x2.cc_debito, x2.cc_credito,
              x3.sq_tipo_pessoa
         from siw_menu                          w
              inner     join siw_cliente        w1 on (w.sq_pessoa           = w1.sq_pessoa)
@@ -207,6 +210,7 @@ create or replace procedure SP_PutViagemEnvio
                                                     )
                inner   join co_pessoa         x3 on (x1.sq_pessoa          = x3.sq_pessoa)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, 
+                                    c.cc_debito, c.cc_credito,
                                     d.sq_lancamento_doc, e.nome as nm_lancamento
                                from siw_solicitacao                 a
                                     inner   join siw_tramite        b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
@@ -234,25 +238,24 @@ create or replace procedure SP_PutViagemEnvio
 
 
    cursor c_ressarcimento_item is
-      select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sq_moeda, sg_moeda, nm_moeda, sb_moeda, sum(valor) as valor,
+      select sq_projeto_rubrica as sq_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, sum(valor) as valor,
              case tp_despesa 
                   when 'DEV' then 'Devolução de valores'
                   else 'Não identificado' 
              end as nm_despesa
         from (select 'DEV' as tp_despesa, null as sq_diaria, a1.ressarcimento_valor as valor,
-                     c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica,
-                     b.sq_moeda, b.sigla as sg_moeda, b.nome as nm_moeda, b.simbolo as sb_moeda
+                     b.sigla sg_moeda, b.nome nm_moeda,
+                     c1.sq_projeto_rubrica, c1.codigo as cd_rubrica, c1.nome as nm_rubrica
                 from siw_solicitacao                      a
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao          = a1.sq_siw_solicitacao and
                                                                  a1.ressarcimento              = 'S'
                                                                 )
+                       left    join co_moeda              b  on (a1.sq_moeda_ressarcimento     = b.sq_moeda)
                        inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_ressarcimento = c.sq_pdvinculo_financeiro)
-                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica          = c1.sq_projeto_rubrica),
-                     co_moeda                             b
+                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica          = c1.sq_projeto_rubrica)
                where a.sq_siw_solicitacao = p_chave
-                 and b.sigla              = 'BRL'
               ) k
-      group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sq_moeda, sg_moeda, nm_moeda, sb_moeda, tp_despesa;
+      group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sg_moeda, nm_moeda, tp_despesa;
    
 begin
    -- Recupera os dados da solicitação. Se for contratado, a unidade solicitante aprova trâmites de chefia imediata. Caso contrário, será a unidade proponente.
@@ -453,24 +456,6 @@ Trâmite de cotação de passagens da OTCA foi removido em 22/03/2017, a pedido do 
             w_salto := w_salto + 3;
          End If;
 
-         -- Libera pagamentos pendentes de prestação de contas se não houver pendência
-         If w_pendencia = 0 Then
-            for crec in c_financeiro_pendente (w_cliente, w_beneficiario) loop
-               select sq_siw_tramite into w_ee from siw_tramite where sq_menu = crec.sq_menu and sigla='EE';
-               select sq_siw_tramite into w_pp from siw_tramite where sq_menu = crec.sq_menu and sigla='PP';
-                   
-               sp_putlancamentoenvio(
-                                p_menu          => crec.sq_menu,
-                                p_chave         => crec.sq_siw_solicitacao,
-                                p_pessoa        => p_pessoa,
-                                p_tramite       => w_pp,
-                                p_novo_tramite  => w_ee,
-                                p_devolucao     => 'N',
-                                p_despacho      => 'Pagamento desbloqueado em função da realização da prestação de contas '||crec.cd_viagem||'.'
-                               );
-            end loop;   
-         End If;
-
       Else
          w_salto := w_salto + 1;
       End If;
@@ -546,6 +531,28 @@ Trâmite de cotação de passagens da OTCA foi removido em 22/03/2017, a pedido do 
    End If;
    
    If p_devolucao = 'N' Then
+         
+      If w_sg_tramite in ('VP','EE') Then
+
+         -- Libera pagamentos pendentes de prestação de contas se não houver pendência
+         If w_pendencia = 0 Then
+            for crec in c_financeiro_pendente (w_cliente, w_beneficiario) loop
+               select sq_siw_tramite into w_ee from siw_tramite where sq_menu = crec.sq_menu and sigla='EE';
+               select sq_siw_tramite into w_pp from siw_tramite where sq_menu = crec.sq_menu and sigla='PP';
+                      
+               sp_putlancamentoenvio(
+                                p_menu          => crec.sq_menu,
+                                p_chave         => crec.sq_siw_solicitacao,
+                                p_pessoa        => p_pessoa,
+                                p_tramite       => w_pp,
+                                p_novo_tramite  => w_ee,
+                                p_devolucao     => 'N',
+                                p_despacho      => 'Pagamento desbloqueado em função da realização da prestação de contas '||crec.cd_viagem||'.'
+                               );
+            end loop;   
+         End If;
+      End If;
+
       If w_sg_tramite = 'PC' or (w_sg_tramite = 'EE' and (w_reembolso = 'S' or w_ressarcimento = 'S' or w_complemento > 0)) Then
          If w_sg_tramite = 'PC' or w_reembolso = 'S' or w_complemento > 0 Then
              -- Cria/atualiza lançamento financeiro para o reembolso
@@ -576,6 +583,8 @@ Trâmite de cotação de passagens da OTCA foi removido em 22/03/2017, a pedido do 
                                   p_per_ini            => crec.inicio,
                                   p_per_fim            => crec.fim,
                                   p_moeda              => crec.sq_moeda,
+                                  p_cc_debito          => crec.cc_debito,
+                                  p_cc_credito         => crec.cc_credito,
                                   p_chave_nova         => w_sq_financ,
                                   p_codigo_interno     => w_cd_financ
                                  );
@@ -686,7 +695,9 @@ Trâmite de cotação de passagens da OTCA foi removido em 22/03/2017, a pedido do 
                                   p_tipo_rubrica       => 4, -- receitas
                                   p_per_ini            => crec.inicio,
                                   p_per_fim            => crec.fim,
-                                  p_moeda              => crec.sq_moeda,
+                                  p_moeda              => crec.sq_moeda_ressarcimento,
+                                  p_cc_debito          => crec.cc_debito,
+                                  p_cc_credito         => crec.cc_credito,
                                   p_chave_nova         => w_sq_financ,
                                   p_codigo_interno     => w_cd_financ
                                  );
@@ -734,7 +745,7 @@ Trâmite de cotação de passagens da OTCA foi removido em 22/03/2017, a pedido do 
                                   p_numero             => nvl(crec.cd_interno,w_cd_financ),
                                   p_data               => trunc(sysdate),
                                   p_serie              => null,
-                                  p_moeda              => crec.sq_moeda,
+                                  p_moeda              => crec.sq_moeda_ressarcimento,
                                   p_valor              => 0,
                                   p_patrimonio         => 'N',
                                   p_retencao           => 'N',

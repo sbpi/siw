@@ -397,7 +397,7 @@ function Inicial() {
     cabecalho();
     head();
     ShowHTML('<base HREF="' . $conRootSIW . '">');
-    if ($P1 == 2 || $P1 == 3) ShowHTML('<meta http-equiv="Refresh" content="' . $conRefreshSec . '; URL=' . MontaURL('MESA') . '">');
+    if ($P1 == 2 || $P1 == 3) ShowHTML('<meta http-equiv="Refresh" content="' . $conRefreshSec . '; URL=' . $conRootSIW.MontaURL('MESA') . '">');
     ShowHTML('<title>' . $conSgSistema . ' - Listagem de Viagens</title>');
     ScriptOpen('Javascript');
     if ($O=='L' && count($RS) && $P1==2) {
@@ -1175,7 +1175,7 @@ function Geral() {
     ShowHTML('        <tr valign="top">');
     MontaRadioSN('<b>Bilhetes?</b>', $w_passagem, 'w_passagem', null, null, ' onClick="document.Form.action=\'' . $w_dir . $w_pagina . $par . '\'; document.Form.w_troca.value=\'w_passagem\'; document.Form.submit();"');
     SelecaoCategoriaDiaria('Categoria das d<u>i</u>árias:', 'I', 'Selecione a categoria das diárias.', $w_cliente, $w_diaria, null, 'w_diaria', 'S', null);
-    MontaRadioSN('<b>Hospedagem?</b>', $w_hospedagem, 'w_hospedagem');
+    MontaRadioSN('<b>Hospedagem no Brasil?</b>', $w_hospedagem, 'w_hospedagem');
     MontaRadioNS('<b>Locação de veículo?</b>', $w_veiculo, 'w_veiculo');
     if ($w_chave_pai > '' && $w_passagem == 'S') {
       if ($financ > 1) {
@@ -2145,8 +2145,6 @@ function Bilhetes() {
 
   // Recupera os dados da solicitação e do cliente
   $sql = new db_getSolicData; $RS_Solic = $sql->getInstanceOf($dbms, $w_chave, 'PDGERAL');
-
-  //exibeArray($RS_Solic);
 
   if (f($RS_Solic, 'sg_tramite') == 'AE')
     $w_tipo_reg = 'S'; else
@@ -4145,11 +4143,9 @@ function Diarias() {
     $w_chegada_internacional = $w_trechos[49];
     $w_origem_nacional = $w_trechos[50];
     $w_destino_nacional = $w_trechos[51];
-    $w_max_diaria = (toDate(formataDataEdicao($w_phpdt_saida)) - toDate(formataDataEdicao($w_phpdt_chegada))) / 86400;
-    $w_max_hosp = ($w_hos_out - $w_hos_in) / 86400;
-    $w_max_veiculo = ($w_vei_dev - $w_vei_ret) / 86400;
-
-
+    $w_max_diaria = round((toDate(formataDataEdicao($w_phpdt_saida)) - toDate(formataDataEdicao($w_phpdt_chegada))) / 86400,2);
+    $w_max_hosp = round(($w_hos_out - $w_hos_in) / 86400,2);
+    $w_max_veiculo = round(($w_vei_dev - $w_vei_ret) / 86400,2);
 
     // Reconfigura o máximo de diárias para o primeiro trecho
     $sql = new db_getPD_Deslocamento; $RS = $sql->getInstanceOf($dbms, $w_chave, null, $w_tipo_reg, $SG);
@@ -6336,7 +6332,7 @@ function SolicMail($p_solic, $p_tipo) {
 function relAnexo() {
   extract($GLOBALS);
   global $w_Disabled;
-  //exibeArray($_REQUEST);
+
   $w_chave       = $_REQUEST['w_chave'];
   $w_tipo_reg    = $_REQUEST['w_tipo_reg'];
   $w_cumprimento = $_REQUEST['w_cumprimento'];
@@ -6556,6 +6552,8 @@ function PrestarContas() {
   $w_nm_diaria = f($RS, 'nm_diaria');
   $w_cumprimento_bd = f($RS, 'cumprimento');
   $w_reembolso_bd = f($RS, 'reembolso');
+  
+  //exibearray($RS);
 
   // Recupera as possibilidades de vinculação financeira do reembolso
   $sql = new db_getPD_Financeiro; $RS_Financ = $sql->getInstanceOf($dbms, $w_cliente, null, $w_chave_pai, null, null, null, null, null, null, null, 'S', null, null);
@@ -6587,6 +6585,7 @@ function PrestarContas() {
     $w_observacao = $_REQUEST['w_observacao'];
     $w_ressarcimento = $_REQUEST['w_ressarcimento'];
     $w_ressarcimento_data = $_REQUEST['w_ressarcimento_data'];
+    $w_moeda_ressarcimento = $_REQUEST['w_moeda_ressarcimento'];
     $w_ressarcimento_valor = $_REQUEST['w_ressarcimento_valor'];
     $w_ressarcimento_observacao = $_REQUEST['w_ressarcimento_observacao'];
     $w_rub_dev = $_REQUEST['w_rub_dev'];
@@ -6606,6 +6605,7 @@ function PrestarContas() {
     $w_observacao = f($RS, 'reembolso_observacao');
     $w_ressarcimento = f($RS, 'ressarcimento');
     $w_ressarcimento_data = FormataDataEdicao(f($RS, 'ressarcimento_data'));
+    $w_moeda_ressarcimento = f($RS, 'sq_moeda_ressarcimento');
     $w_ressarcimento_valor = formatNumber(f($RS, 'ressarcimento_valor'));
     $w_ressarcimento_observacao = f($RS, 'ressarcimento_observacao');
     $w_rub_dev = f($RS, 'sq_rubrica_ressarc');
@@ -6631,6 +6631,7 @@ function PrestarContas() {
       if ($w_cumprimento == 'C' && $w_ressarcimento == 'S') {
         Validate('w_ressarcimento_data', 'Data de devolução', 'DATA', '1', 10, 10, '', '0123456789/');
         Validate('w_deposito', 'Código do depósito identificado', '', '', 1, 20, '1', 1);
+        Validate('w_moeda_ressarcimento', 'Moeda para pagamento do reembolso', 'SELECT', '1', 1, 18, '', '1');
         Validate('w_ressarcimento_valor', 'Valor da devolução', '', '1', 1, 18, '', '0123456789,.');
         CompValor('w_ressarcimento_valor', 'Valor da devolução', '>', '0,00', 'zero');
         if ($findev > 1) {
@@ -6651,6 +6652,7 @@ function PrestarContas() {
     if ($w_cumprimento != 'C' && $w_ressarcimento == 'S') {
       Validate('w_ressarcimento_data', 'Data de devolução', 'DATA', '1', 10, 10, '', '0123456789/');
       Validate('w_deposito', 'Código do depósito identificado', '', '', 1, 20, '1', 1);
+      Validate('w_moeda_ressarcimento', 'Moeda para pagamento do reembolso', 'SELECT', '1', 1, 18, '', '1');
       Validate('w_ressarcimento_valor', 'Valor da devolução', '', '1', 1, 18, '', '0123456789,.');
       CompValor('w_ressarcimento_valor', 'Valor da devolução', '>', '0,00', 'zero');
       if ($findev > 1) {
@@ -6777,10 +6779,13 @@ function PrestarContas() {
       if (nvl($contas, '') != '')
         ShowHTML('    <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> ' . $w_devolucao . '<br>' . $contas . '</font></td></tr>');
       ShowHTML('    <tr><td colspan="2"><blockquote><TABLE BORDER="0">');
-      ShowHTML('      <tr><td colspan="2"><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $w_ressarcimento_data . '" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $w_ressarcimento_data . '" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('        <td><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="' . $w_deposito . '" title="Informe o código do depósito identificado."></td>');
-      ShowHTML('        <td><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_ressarcimento_valor . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da devolução."></td>');
+      ShowHTML('      </tr>');
+      ShowHTML('      <tr valign="top">');
+      selecaoMoeda('<u>M</u>oeda:', 'U', 'Selecione a moeda na relação.', $w_moeda_ressarcimento, null, 'w_moeda_ressarcimento', 'ATIVO', null);
+      ShowHTML('        <td><b><u>V</u>alor:</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_ressarcimento_valor . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da devolução."></td>');
       ShowHTML('      </tr>');
       if ($findev > 1) {
         ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira</b></font></td></tr>');
@@ -6832,10 +6837,13 @@ function PrestarContas() {
       ShowHTML('    <tr><td colspan="2"><br><b>Dados da devolução<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
       ShowHTML('    <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> ' . $w_devolucao . '<br>' . $contas . '</font></td></tr>');
       ShowHTML('    <tr><td colspan="2"><blockquote><TABLE BORDER="0">');
-      ShowHTML('      <tr><td colspan="2"><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $w_ressarcimento_data . '" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('      <tr valign="top">');
+      ShowHTML('        <td><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $w_ressarcimento_data . '" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
       ShowHTML('        <td><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="' . $w_deposito . '" title="Informe o código do depósito identificado."></td>');
-      ShowHTML('        <td><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_ressarcimento_valor . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da devolução."></td>');
+      ShowHTML('      </tr>');
+      ShowHTML('      <tr valign="top">');
+      selecaoMoeda('<u>M</u>oeda:', 'U', 'Selecione a moeda na relação.', $w_moeda_ressarcimento, null, 'w_moeda_ressarcimento', 'ATIVO', null);
+      ShowHTML('        <td><b><u>V</u>alor:</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_ressarcimento_valor . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da devolução."></td>');
       ShowHTML('      </tr>');
       if ($findev > 1) {
         ShowHTML('    <tr><td colspan="2"><br><b>Vinculação orçamentária-financeira</b></font></td></tr>');
@@ -7185,6 +7193,7 @@ function Reembolso() {
     $w_valor = $_REQUEST['w_valor'];
     $w_observacao = $_REQUEST['w_observacao'];
     $w_ressarcimento = $_REQUEST['w_ressarcimento'];
+    $w_moeda_ressarcimento = $_REQUEST['w_moeda_ressarcimento'];
     $w_ressarcimento_valor = $_REQUEST['w_ressarcimento_valor'];
     $w_ressarcimento_observacao = $_REQUEST['w_ressarcimento_observacao'];
     $w_rub_dev = $_REQUEST['w_rub_dev'];
@@ -7202,6 +7211,7 @@ function Reembolso() {
     $w_valor = formatNumber(f($RS, 'reembolso_valor'));
     $w_observacao = f($RS, 'reembolso_observacao');
     $w_ressarcimento = f($RS, 'ressarcimento');
+    $w_moeda_ressarcimento = f($RS, 'sq_moeda_ressarcimento');
     $w_ressarcimento_valor = formatNumber(f($RS, 'ressarcimento_valor'));
     $w_ressarcimento_observacao = f($RS, 'ressarcimento_observacao');
     $w_rub_dev = f($RS, 'sq_rubrica_ressarc');
@@ -7229,6 +7239,7 @@ function Reembolso() {
   if ($w_ressarcimento == 'S') {
     Validate('w_ressarcimento_data', 'Data de devolução', 'DATA', '1', 10, 10, '', '0123456789/');
     Validate('w_deposito', 'Código do depósito identificado', '', '', 1, 20, '1', 1);
+    Validate('w_moeda_ressarcimento', 'Moeda para pagamento do reembolso', 'SELECT', '1', 1, 18, '', '1');
     Validate('w_ressarcimento_valor', 'Valor da devolução', '', '1', 1, 18, '', '0123456789,.');
     CompValor('w_ressarcimento_valor', 'Valor da devolução', '>', '0,00', 'zero');
     if ($findev > 1) {
@@ -7332,10 +7343,12 @@ function Reembolso() {
     }
     $w_ressarcimento_data = Nvl($w_ressarcimento_data, formataDataEdicao(Date('d/m/Y')));
     ShowHTML('    <tr><td colspan="2"><br><br><b>Dados da devolução<hr NOSHADE color=#000000 SIZE=1></b></font></td></tr>');
-    ShowHTML('      <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> ' . $w_devolucao . '<br>' . $contas . '</font></td></tr>');
+    ShowHTML('    <tr><td colspan=2 bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><b><font color="#BC3131" size=2>ATENÇÃO:</b> ' . $w_devolucao . '<br>' . $contas . '</font></td></tr>');
     ShowHTML('    <tr><td colspan="2"><b><u>D</u>ata:</b><br><input type="text" accesskey="I" name="w_ressarcimento_data" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $w_ressarcimento_data . '" title="Informe o a data da devolução." onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);"></td>');
     ShowHTML('    <tr><td colspan="2"><b>Código do depósito <u>i</u>dentificado:</b><br><input type="text" accesskey="I" name="w_deposito" class="sti" SIZE="20" MAXLENGTH="28" VALUE="' . $w_deposito . '" title="Informe o código do depósito identificado."></td>');
-    ShowHTML('    <tr><td colspan="2"><b><u>V</u>alor (R$):</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_ressarcimento_valor . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da devolução."></td>');
+    ShowHTML('    <tr valign="top">');
+    selecaoMoeda('<u>M</u>oeda:', 'U', 'Selecione a moeda na relação.', $w_moeda_ressarcimento, null, 'w_moeda_ressarcimento', 'ATIVO', null);
+    ShowHTML('      <td><b><u>V</u>alor:</b><br><input type="text" accesskey="V" name="w_ressarcimento_valor" class="sti" SIZE="10" MAXLENGTH="18" VALUE="' . $w_ressarcimento_valor . '" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor da devolução."></td>');
     if ($findev > 1) {
       ShowHTML('    <tr><td colspan="2"><br><br><b>Vinculação orçamentária-financeira</b></font></td></tr>');
       ShowHTML('      <tr valign="top">');
@@ -8106,8 +8119,9 @@ function Grava() {
                           $w_cliente, $_REQUEST['w_chave'], $_REQUEST['w_reembolso'], $_REQUEST['w_deposito'],
                           $_REQUEST['w_valor'], $_REQUEST['w_observacao'],
                           $_REQUEST['w_financeiro'], $_REQUEST['w_rubrica'], $_REQUEST['w_lancamento'], $_REQUEST['w_ressarcimento'],
-                          $_REQUEST['w_ressarcimento_data'], $_REQUEST['w_ressarcimento_valor'], $_REQUEST['w_ressarcimento_observacao'],
-                          $_REQUEST['w_fin_dev'], $_REQUEST['w_rub_dev'], $_REQUEST['w_lan_def'], null, null, null, null, null);
+                          $_REQUEST['w_ressarcimento_data'], $_REQUEST['w_moeda_ressarcimento'], $_REQUEST['w_ressarcimento_valor'], 
+                          $_REQUEST['w_ressarcimento_observacao'],
+                          $_REQUEST['w_fin_dev'], $_REQUEST['w_rub_dev'], $_REQUEST['w_lan_dev'], null, null, null, null, null);
 
           /*
             // Grava dados dos bilhetes
@@ -8306,8 +8320,9 @@ function Grava() {
           $SQL = new dml_putPD_Reembolso; $SQL->getInstanceOf($dbms,
                           $w_cliente, $_REQUEST['w_chave'], $_REQUEST['w_reembolso'], $_REQUEST['w_deposito'], $_REQUEST['w_valor'],
                           $_REQUEST['w_observacao'], $_REQUEST['w_financeiro'], $_REQUEST['w_rubrica'], $_REQUEST['w_lancamento'],
-                          $_REQUEST['w_ressarcimento'], $_REQUEST['w_ressarcimento_data'], $_REQUEST['w_ressarcimento_valor'],
-                          $_REQUEST['w_ressarcimento_observacao'], $_REQUEST['w_fin_dev'], $_REQUEST['w_rub_dev'], $_REQUEST['w_lan_dev'],
+                          $_REQUEST['w_ressarcimento'], $_REQUEST['w_ressarcimento_data'], $_REQUEST['w_ressarcimento_modeda'],
+                          $_REQUEST['w_ressarcimento_valor'],$_REQUEST['w_ressarcimento_observacao'], 
+                          $_REQUEST['w_fin_dev'], $_REQUEST['w_rub_dev'], $_REQUEST['w_lan_dev'],
                           $_REQUEST['w_exclui_arquivo'], $w_file, $w_tamanho, $w_tipo, $w_nome);
         } else {
           ScriptOpen('JavaScript');
@@ -8553,7 +8568,7 @@ function Grava() {
                             f($row,'sq_siw_solicitacao'),f($row,'sq_menu'), null, null, $w_usuario, null,
                             null,null,null,null,null,null,null,null,null,'Viagem foi cancelada.',null,
                             null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-                            $w_chave_nova, $w_cd_financeiro);
+                            null,null,$w_chave_nova, $w_cd_financeiro);
                   }
                 }
                 
@@ -8603,7 +8618,7 @@ function Grava() {
         $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms, $_REQUEST['w_chave'], $SG);
         if (f($RS, 'concluida') == 'S') {
           ScriptOpen('JavaScript');
-          ShowHTML('  alert("ATENÇÃO: Outro usuário já concluiu esta solicitação!");');
+          ShowHTML('  alert(\'ATENÇÃO: Outro usuário já concluiu esta solicitação!\');');
           ScriptClose();
           exit();
         } else {

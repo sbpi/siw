@@ -526,10 +526,11 @@ function FormaPagamento(){
   if ($O=='') $O='L';
   if ($w_troca>'' && $O!='E') {
     // Se for recarga da página
-    $w_chave    = $_REQUEST['w_chave'];
-    $w_nome     = $_REQUEST['w_nome'];
-    $w_sigla    = $_REQUEST['w_sigla'];
-    $w_ativo    = $_REQUEST['w_ativo'];
+    $w_chave          = $_REQUEST['w_chave'];
+    $w_nome           = $_REQUEST['w_nome'];
+    $w_sigla          = $_REQUEST['w_sigla'];
+    $w_codigo_externo = $_REQUEST['w_codigo_externo'];
+    $w_ativo          = $_REQUEST['w_ativo'];
   } elseif ($O=='L') {
     $sql = new db_getFormaPagamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,'REGISTRO',null,null);
     if (Nvl($p_ordena,'') > '') {
@@ -541,10 +542,11 @@ function FormaPagamento(){
   } elseif (!(strpos('AEVT',$O)===false && $w_troca=='')) {
     $sql = new db_getFormaPagamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_chave,null,'REGISTRO',$w_ativo,null);
     foreach ($RS as $row) {$RS=$row; break;}
-    $w_chave    = f($RS,'chave');
-    $w_nome     = f($RS,'nome');
-    $w_sigla    = f($RS,'sigla');
-    $w_ativo    = f($RS,'ativo');
+    $w_chave          = f($RS,'chave');
+    $w_nome           = f($RS,'nome');
+    $w_sigla          = f($RS,'sigla');
+    $w_ativo          = f($RS,'ativo');
+    $w_codigo_externo = f($RS,'codigo_externo');
   } 
   if (!(strpos('IAET',$O)===false)) {
     ScriptOpen('JavaScript');
@@ -553,6 +555,7 @@ function FormaPagamento(){
     if (strpos('IA',$O)!==false) {
       Validate('w_nome','Nome','1','1','3','30','1','1');
       Validate('w_sigla','Sigla','1','1','2','10','1','1');
+      Validate('w_codigo_externo','Código Externo','1','','','60','1','1');
       Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
@@ -585,6 +588,7 @@ function FormaPagamento(){
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
     ShowHTML('          <td><b>'.LinkOrdena('Nome','nome').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Sigla','sigla').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Código externo','codigo_externo').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Ativo','nm_ativo').'</td>');
     if ($w_libera_edicao=='S') {
       ShowHTML('          <td class="remover"><b> Operações </td>');
@@ -601,6 +605,7 @@ function FormaPagamento(){
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
         ShowHTML('        <td align="left">'.f($row,'nome').'</td>');
         ShowHTML('        <td align="center">'.f($row,'sigla').'</td>');
+        ShowHTML('        <td>'.nvl(f($row,'codigo_externo'),"&nbsp;").'</td>');
         ShowHTML('        <td align="center">'.f($row,'nm_ativo').'</td>');
         if ($w_libera_edicao=='S') {
           ShowHTML('        <td class="remover">');
@@ -630,6 +635,9 @@ function FormaPagamento(){
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><b><u>N</u>ome:</b><br><input '.$w_Disabled.' accesskey="N" type="text" name="w_nome" class="sti" SIZE="30" MAXLENGTH="30" VALUE="'.$w_nome.'"></td>');
     ShowHTML('        <td><b><u>S</u>igla:</b><br><input '.$w_Disabled.' accesskey="S" type="text" name="w_sigla" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_sigla.'"></td>');
+    ShowHTML('      </tr>');
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td colspan="2"><b><U>C</U>odigo externo:<br><INPUT ACCESSKEY="C" '.$w_Disabled.' class="STI" type="text" name="w_codigo_externo" size="60" maxlength="60" value="'.$w_codigo_externo.'"></td>');
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
     MontaRadioSN('<b>Ativo</b>?',$w_ativo,'w_ativo');
@@ -1845,7 +1853,7 @@ function Grava() {
       // Verifica se a Assinatura Eletrônica é válida
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {  
         $SQL = new dml_putFormaPagamento; $SQL->getInstanceOf($dbms,$O,Nvl($_REQUEST['w_chave'],''),$_REQUEST['w_cliente'],$_REQUEST['w_nome'],
-             $_REQUEST['w_sigla'],$_REQUEST['w_ativo'],$w_chave_nova);
+             $_REQUEST['w_sigla'],$_REQUEST['w_codigo_externo'],$_REQUEST['w_ativo'],$w_chave_nova);
 
         if ($O!='E') { 
            // Elimina todas as permissões existentes para depois incluir

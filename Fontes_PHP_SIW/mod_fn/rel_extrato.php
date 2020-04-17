@@ -8,9 +8,11 @@ include_once($w_dir_volta.'funcoes.php');
 include_once($w_dir_volta.'classes/db/abreSessao.php');
 include_once($w_dir_volta.'classes/sp/db_getLinkData.php');
 include_once($w_dir_volta.'classes/sp/db_getMenuData.php');
+include_once($w_dir_volta.'classes/sp/db_getPersonData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicData.php');
 include_once($w_dir_volta.'classes/sp/db_getContaBancoData.php');
 include_once($w_dir_volta.'classes/sp/db_getSolicFN.php');
+include_once($w_dir_volta.'funcoes/selecaoPessoa.php');
 include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
 
@@ -60,6 +62,9 @@ $p_inicio = $_REQUEST['p_inicio'];
 $p_fim = $_REQUEST['p_fim'];
 $p_conta = upper(trim($_REQUEST['p_conta']));
 $p_abertura = $_REQUEST['p_abertura'];
+$p_rodape = $_REQUEST['p_rodape'];
+$p_elaboracao = $_REQUEST['p_elaboracao'];
+$p_conferencia = $_REQUEST['p_conferencia'];
 
 // Declaração de variáveis
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -94,7 +99,7 @@ function Inicial() {
   global $w_embed;
   
   if ($O == 'L') {
-    // Recupera as rubricas do projeto
+    // Recupera os lançamentos financeiros
     $sql = new db_getSolicFN; $RSQuery = $sql->getInstanceOf($dbms,null, $w_usuario, 'EXTRATO', 7, 
         $p_ini_i, $p_ini_f, $p_inicio,$p_fim, $p_atraso, $p_solicitante, 
         $p_unidade, $p_prioridade, $p_ativo, $p_proponente, 
@@ -115,6 +120,21 @@ function Inicial() {
       FormataData();
       FormataValor();
       SaltaCampo();
+      ShowHTML('function assinaturas() {');
+      ShowHTML('  theForm = document.Form;');
+      ShowHTML('  if (theForm.p_rodape[0].checked) { ');
+      ShowHTML('    theForm.p_elaboracao.disabled=false; ');
+      ShowHTML('    theForm.p_conferencia.disabled=false; ');
+      ShowHTML('    theForm.p_elaboracao.className="STIO";');
+      ShowHTML('    theForm.p_conferencia.className="STIO";');
+      ShowHTML('    theForm.p_elaboracao.focus(); ');
+      ShowHTML('  } else {');
+      ShowHTML('    theForm.p_elaboracao.disabled=true; ');
+      ShowHTML('    theForm.p_conferencia.disabled=true; ');
+      ShowHTML('    theForm.p_elaboracao.className="STI";');
+      ShowHTML('    theForm.p_conferencia.className="STI";');
+      ShowHTML('  }');
+      ShowHTML('}');
       ValidateOpen('Validacao');
       Validate('p_projeto', 'Projeto', 'SELECT', '', '1', '18', '', '0123456789');
       Validate('p_conta', 'Conta bancária', 'SELECT', '', '1', '18', '', '0123456789');
@@ -122,6 +142,18 @@ function Inicial() {
       Validate('p_fim', 'Pagamento final', 'DATA', '1', '10', '10', '', '0123456789/');
       CompData('p_inicio', 'Pagamento inicial', '<=', 'p_fim', 'Pagamento final');
       Validate('p_abertura','Saldo de abertura','VALOR','1',4,18,'','0123456789.,-');
+      ShowHTML('  if (theForm.p_rodape[0].checked) { ');
+      ShowHTML('    if (theForm.p_elaboracao.selectedIndex==0) { ');
+      ShowHTML('      alert("Favor informar um valor para o campo Elaborado por");');
+      ShowHTML('      theForm.p_elaboracao.focus();');
+      ShowHTML('      return false;');
+      ShowHTML('    }');
+      ShowHTML('    if (theForm.p_conferencia.selectedIndex==0) { ');
+      ShowHTML('      alert("Favor informar um valor para o campo Conferido por");');
+      ShowHTML('      theForm.p_conferencia.focus();');
+      ShowHTML('      return false;');
+      ShowHTML('    }');
+      ShowHTML('  }');
       ValidateClose();
       ScriptClose();
     }
@@ -136,6 +168,7 @@ function Inicial() {
     }
     ShowHTML('<HR>');
   }
+  
   ShowHTML('<div align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O == 'L') {
     // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem
@@ -153,15 +186,18 @@ function Inicial() {
 
     $l_html .= chr(13).'<table border="0" cellpadding="0" cellspacing="0" width="99%" align="center">';
     $w_conta = 0;
+    $w_mes = '';
+    $w_inicio = $p_inicio;
     foreach ($RSQuery as $row) {
-      if ($w_conta!==f($row,'sq_conta_debito')) {
+      if ($w_conta!==f($row,'sq_conta_debito') || $w_mes!==formataDataEdicao(f($row,'dt_pagamento'),9)) {
         $w_sg_moeda = ((f($row,'sg_moeda_cc')!='') ? ' ('.f($row,'sg_moeda_cc').')' : '');
         if ($w_conta!==0) {
           $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-          $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.$p_fim.$w_sg_moeda.'&nbsp;</b></td>';
-          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_credito).'</b></td>';
-          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_debito).'</b></td>';
-          $l_html.=chr(13).'        <td align="right"><b>'.formatNumber($w_atual).'</b></td>';
+          $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.formataDataEdicao(last_day($w_inicio)).$w_sg_moeda.'&nbsp;</b></td>';
+          $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
+          $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
+          $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_atual).'</b></td>';
+          $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
           $l_html.=chr(13).'      </tr>';
           $l_html.=chr(13).'      </table></td></tr>';
         }
@@ -208,14 +244,28 @@ function Inicial() {
         $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Crédito'.$w_sg_moeda.'</td>';
         $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Débito'.$w_sg_moeda.'</td>';
         $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Saldo'.$w_sg_moeda.'</td>';
+        $l_html.=chr(13).'            <td colspan="2" width="6%"><b>Conta Contábil</td>';
         $l_html.=chr(13).'          </tr>';
         $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
         $cs++; $l_html.=chr(13).'            <td><b>Data</td>';
         $cs++; $l_html.=chr(13).'            <td><b>Tipo e Número</td>';
+        $l_html.=chr(13).'            <td><b>Débito</td>';
+        $l_html.=chr(13).'            <td><b>Crédito</td>';
         $l_html.=chr(13).'          </tr>';
         
+        if ($w_conta!==f($row,'sq_conta_debito')) {
+          // Mudou a conta, usa o saldo de abertura informado pelo usuário.
+          // Se mudou o mês, mas a conta é a mesma, não altera o valor da variável.
+          $w_atual   = floatVal(str_replace(',','.',str_replace('.','',$p_abertura)));
+          // Se mudou a conta, a data de abertura é a informada pelo usuário na tela de filtragem.
+          $w_inicio = $p_inicio;
+        } else {
+          // Se mudou apenas o mês, atualiza a data de abertura para o primeiro dia do mês seguinte.
+          $w_inicio  = '01'.substr(formataDataEdicao(f($row,'dt_pagamento')),2);
+        }
+        
         $w_conta   = f($row,'sq_conta_debito');
-        $w_atual   = floatVal(str_replace(',','.',str_replace('.','',$p_abertura)));
+        $w_mes     = formataDataEdicao(f($row,'dt_pagamento'),9);
         $w_credito = 0;
         $w_debito  = 0;
         $i         = 0;
@@ -223,7 +273,8 @@ function Inicial() {
 
       if ($i==0) {
         $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td align="right" colspan="'.($cs+3).'"><b>Saldo de abertura em '.$p_inicio.': &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>'.$p_abertura.'</b></td>';
+        $l_html.=chr(13).'        <td align="right" colspan="'.($cs+3).'"><b>Saldo de abertura em '.$w_inicio.': &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>'.formatNumber($w_atual).'</b></td>';
+        $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
       }
       $i++;
       $l_html.=chr(13).'      <tr valign="top">';
@@ -275,16 +326,39 @@ function Inicial() {
         $w_atual  -= Nvl(f($row,'cb_valor'),0);
       }
       $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber($w_atual).'</td>';
+      $l_html.=chr(13).'        <td>'.nvl(f($row,'cc_debito'),'&nbsp;').'</td>';
+      $l_html.=chr(13).'        <td>'.nvl(f($row,'cc_credito'),'&nbsp;').'</td>';
     } 
     $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
     $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.$p_fim.$w_sg_moeda.'&nbsp;</b></td>';
     $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
     $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
     $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_atual).'</b></td>';
+    $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
     $l_html.=chr(13).'      </tr>';
     $l_html.=chr(13).'      </table></td></tr>';
     ShowHTML($l_html);
     ShowHTML('    </table>');
+    if ($p_rodape=='S') {
+      ShowHTML('<table border=0 width="100%">');
+      ShowHTML('  <tr><td colspan="7">&nbsp;</td></tr>');
+      ShowHTML('  <tr valign="top">');
+      $sql = new db_getPersonData; 
+        
+      ShowHTML('  <td width="5%">&nbsp;</td>');
+      $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_elaboracao,null,null);
+      ShowHTML('  <td width="27%" align="center"><font size="2">Elaborado por <br><br><br><hr><b>'.f($RS,'nome').'</b></font></td>');
+
+      ShowHTML('  <td width="5%">&nbsp;</td>');
+      $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_conferencia,null,null);
+      ShowHTML('  <td width="27%" align="center"><font size="2">Conferido por <br><br><br><hr><b>'.f($RS,'nome').'</b></font></td>');
+
+      ShowHTML('  <td width="5%">&nbsp;</td>');
+      ShowHTML('  <td width="26%" align="center"><font size="2">Contabilidade <br><br><br><hr></font></td>');
+      ShowHTML('  <td width="5%">&nbsp;</td>');
+      ShowHTML('  </tr>');
+      ShowHTML('</table>');      
+    }
     ShowHTML('  </td>');
     ShowHTML('</tr>');
   } elseif ($O == 'P') {
@@ -293,17 +367,19 @@ function Inicial() {
     ShowHTML('<tr bgcolor="' . $conTrBgColor . '"><td>');
     ShowHTML('    <table width="99%" border="0">');
     ShowHTML('      <tr valign="top">');
-    SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$p_conta,null,'p_conta',null,null);
+    SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$p_conta,null,'p_conta',null,null,3);
     ShowHTML('      </tr>');
     ShowHTML('      <tr>');
     $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoProjeto('Se preferir emtir todas as contas de um pro<u>j</u>eto, deixe o campo acima em branco e selecione o projeto desejado:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo);
+    SelecaoProjeto('Se preferir emtir todas as contas de um pro<u>j</u>eto, deixe o campo acima em branco e selecione o projeto desejado:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo, null, 3);
     ShowHTML('      </tr>');
-    ShowHTML('      <tr><td><b><u>P</u>agamento entre:</b><br><input accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td>');    ShowHTML('      <tr>');
+    ShowHTML('      <tr><td colspan="3"><b><u>P</u>agamento entre:</b><br><input accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_inicio . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_inicio') . ' e <input ' . $w_Disabled . ' type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="' . $p_fim . '" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">' . ExibeCalendario('Form', 'p_fim') . '</td><tr>');
+    ShowHTML('      <tr><td colspan="3"><b><u>S</u>aldo de abertura do período:</b><br><input accesskey="S" type="text" name="p_abertura" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.nvl($p_abertura,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o saldo de abertura da conta."></td></tr>');
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b><u>S</u>aldo de abertura do período:</b><br><input accesskey="S" type="text" name="p_abertura" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.nvl($p_abertura,'0,00').'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o saldo de abertura da conta."></td>');
-    ShowHTML('      </tr>');
-    ShowHTML('      <tr><td align="center"><hr>');
+    MontaRadioNS('<b>Imprimir com assinaturas?</b>',$p_rodape,'p_rodape',null,null,'onClick="assinaturas()"');
+    SelecaoPessoa('<u>E</u>laborado por:','E','Selecione o responsável pela elaboração do relatório.',$p_elaboracao,null,'p_elaboracao','USUARIOS');
+    SelecaoPessoa('<u>C</u>onferido por:','E','Selecione o responsável pela conferência do relatório.',$p_conferencia,null,'p_conferencia','USUARIOS');
+    ShowHTML('      <tr><td align="center" colspan="3"><hr>');
     ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
     ShowHTML('            <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $w_pagina . $par . '&R=' . $R . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&O=P&SG=' . $SG) . '\';" name="Botao" value="Limpar campos">');
     ShowHTML('          </td>');

@@ -10,6 +10,8 @@ create or replace procedure SP_PutFinanceiroConc
     p_tipo_lancamento     in number    default null,
     p_rubrica             in number    default null,
     p_observacao          in varchar2  default null,
+    p_cc_debito           in varchar2  default null,
+    p_cc_credito          in varchar2  default null,
     p_caminho             in varchar2  default null,
     p_tamanho             in number    default null,
     p_tipo                in varchar2  default null,
@@ -121,6 +123,9 @@ begin
          End Loop;
       End If;
    End If;
+   
+   -- Grava informações contábeis
+   sp_putContaContabil(p_pessoa, p_chave, p_cc_debito, p_cc_credito);
    
    -- Executa a rotina de criação e envio de protocolo do lançamento para a contabilidade
    sp_enviaProtocoloFinanceiro(w_cliente, p_chave, null);

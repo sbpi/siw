@@ -67,13 +67,14 @@ create or replace procedure SP_PutDemandaConc
       select * from pd_missao where sq_siw_solicitacao = p_chave;
 
    cursor c_ressarcimento_geral is
-      select x.codigo_interno as cd_interno, x.sq_moeda, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
+      select x.codigo_interno as cd_interno, x1.sq_moeda_ressarcimento, w.sq_pessoa as cliente, w.sq_menu, w.sq_unid_executora, 
              'Devolução de valores da '||x.codigo_interno||'.' as descricao,
              soma_dias(w_cliente,trunc(sysdate),2,'U') as vencimento, 
              w1.sq_cidade_padrao as sq_cidade, x.sq_siw_solicitacao as sq_solic_pai, 
              'Registro gerado automaticamente pelo sistema de viagens' as observacao,
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
              x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, z.sq_tipo_lancamento, z.nm_lancamento,
+             x2.cc_debito, x2.cc_credito,
              x3.sq_tipo_pessoa
         from siw_menu                          w
              inner     join siw_cliente        w1 on (w.sq_pessoa           = w1.sq_pessoa)
@@ -86,6 +87,7 @@ create or replace procedure SP_PutDemandaConc
                                                     )
                inner   join co_pessoa         x3 on (x1.sq_pessoa          = x3.sq_pessoa)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, 
+                                    c.cc_debito, c.cc_credito,
                                     d.sq_lancamento_doc, e.nome as nm_lancamento
                                from siw_solicitacao                 a
                                     inner   join siw_tramite        b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
@@ -125,11 +127,10 @@ create or replace procedure SP_PutDemandaConc
                      inner     join pd_missao             a1 on (a.sq_siw_solicitacao          = a1.sq_siw_solicitacao and
                                                                  a1.ressarcimento              = 'S'
                                                                 )
+                       left    join co_moeda              b  on (a1.sq_moeda_ressarcimento     = b.sq_moeda)
                        inner   join pd_vinculo_financeiro c  on (a1.sq_pdvinculo_ressarcimento = c.sq_pdvinculo_financeiro)
-                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica          = c1.sq_projeto_rubrica),
-                     co_moeda                             b
+                         inner join pj_rubrica            c1 on (c.sq_projeto_rubrica          = c1.sq_projeto_rubrica)
                where a.sq_siw_solicitacao = p_chave
-                 and b.sigla              = 'BRL'
               ) k
       group by sq_projeto_rubrica, cd_rubrica, nm_rubrica, sq_moeda, sg_moeda, nm_moeda, sb_moeda, tp_despesa;
 
@@ -141,6 +142,7 @@ create or replace procedure SP_PutDemandaConc
              'Registro gerado automaticamente pelo sistema de viagens' as observacao, z.sq_lancamento, 
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
              x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, coalesce(x2.sg_tramite,'-') as sg_tramite,
+             x2.cc_debito, x2.cc_credito,
              x3.sq_tipo_pessoa,
              x4.sq_rubrica, x4.cd_rubrica, x4.nm_rubrica, x4.sq_moeda, x4.sg_moeda, x4.nm_moeda, x4.sb_moeda, x4.valor
         from siw_menu                          w
@@ -169,7 +171,7 @@ create or replace procedure SP_PutDemandaConc
                              group by sq_siw_solicitacao, sq_projeto_rubrica, cd_rubrica, nm_rubrica, sq_moeda, sg_moeda, nm_moeda, sb_moeda
                             )                 x4 on (x.sq_siw_solicitacao  = x4.sq_siw_solicitacao)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc,
-                                    b.sigla as sg_tramite
+                                    b.sigla as sg_tramite, c.cc_debito, c.cc_credito
                                from siw_solicitacao                a
                                     inner   join siw_tramite       b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
                                     inner   join fn_lancamento     c on (a.sq_siw_solicitacao = c.sq_siw_solicitacao)
@@ -371,6 +373,8 @@ begin
                                p_per_ini            => crec.inicio,
                                p_per_fim            => crec.fim,
                                p_moeda              => crec.sq_moeda,
+                               p_cc_debito          => crec.cc_debito,
+                               p_cc_credito         => crec.cc_credito,
                                p_chave_nova         => w_sq_financ,
                                p_codigo_interno     => w_cd_financ
                               );
@@ -477,7 +481,9 @@ begin
                                p_tipo_rubrica       => 4, -- receitas
                                p_per_ini            => crec.inicio,
                                p_per_fim            => crec.fim,
-                               p_moeda              => crec.sq_moeda,
+                               p_moeda              => crec.sq_moeda_ressarcimento,
+                               p_cc_debito          => crec.cc_debito,
+                               p_cc_credito         => crec.cc_credito,
                                p_chave_nova         => w_sq_financ,
                                p_codigo_interno     => w_cd_financ
                               );
@@ -525,7 +531,7 @@ begin
                                p_numero             => nvl(crec.cd_interno,w_cd_financ),
                                p_data               => trunc(sysdate),
                                p_serie              => null,
-                               p_moeda              => crec.sq_moeda,
+                               p_moeda              => crec.sq_moeda_ressarcimento,
                                p_valor              => 0,
                                p_patrimonio         => 'N',
                                p_retencao           => 'N',

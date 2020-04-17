@@ -470,6 +470,8 @@ function Geral() {
     $w_fim                  = $_REQUEST['w_fim'];
     $w_conta_debito         = $_REQUEST['w_conta_debito'];
     $w_sq_forma_pagamento   = $_REQUEST['w_sq_forma_pagamento'];
+    $w_cc_debito            = $_REQUEST['w_cc_debito'];
+    $w_cc_credito           = $_REQUEST['w_cc_credito'];
 } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
     $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,nvl($w_copia,$w_chave),$SG);
@@ -482,6 +484,8 @@ function Geral() {
       $w_fim                  = formataDataEdicao(f($RS,'fim'));
       $w_valor                = formatNumber(f($RS,'valor'));
       $w_sq_forma_pagamento   = f($RS,'sq_forma_pagamento');
+      $w_cc_debito            = f($RS,'cc_debito');
+      $w_cc_credito           = f($RS,'cc_credito');
     }
   }
 
@@ -569,6 +573,14 @@ function Geral() {
     Validate('w_fim','Data da operação', 'DATA', '1', '10', '10', '', '0123456789/');
     Validate('w_valor','Valor total do documento','VALOR','1',4,18,'','0123456789.,-');
     Validate('w_descricao','Observação','1','',5,2000,'1','1');
+    
+    Validate('w_cc_debito','Conta Débito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
+    Validate('w_cc_credito','Conta Crédito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');    
+    ShowHTML('  if ((theForm.w_cc_debito.value != "" && theForm.w_cc_credito.value == "") || (theForm.w_cc_debito.value == "" && theForm.w_cc_credito.value != "")) {');
+    ShowHTML('     alert ("Informe ambas as contas contábeis ou nenhuma delas!");');
+    ShowHTML('     theForm.w_cc_debito.focus();');
+    ShowHTML('     return false;');
+    ShowHTML('  }');
   } 
   Validate('w_assinatura',$_SESSION['LABEL_ALERTA'], '1', '1', '3', '30', '1', '1');
   ValidateClose();
@@ -632,14 +644,18 @@ function Geral() {
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
     if ($w_exibe_dc) {
-      SelecaoTipoDocumento('<u>T</u>ipo do documento:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,$w_menu,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_numero\'; document.Form.submit();"');
+      SelecaoTipoDocumento('<u>T</u>ipo do documento:','T', 'Selecione o tipo de documento.', $w_sq_tipo_documento,$w_cliente,$w_menu,'w_sq_tipo_documento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_fim\'; document.Form.submit();"');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_sq_tipo_documento" value="'.$w_sq_tipo_documento.'">');
     }
     ShowHTML('        <td><b><u>D</u>ata da operação:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_fim').'</td>');
     ShowHTML('        <td><b><u>V</u>alor:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_valor" class="sti" SIZE="18" MAXLENGTH="18" VALUE="'.$w_valor.'" style="text-align:right;" onKeyDown="FormataValor(this,18,2,event);" title="Informe o valor total do documento."></td>');
     ShowHTML('      <tr><td colspan=3><b><u>O</u>bservação:</b><br><textarea '.$w_Disabled.' accesskey="O" name="w_descricao" class="sti" ROWS=3 cols=75 title="Observação sobre a aplicação.">'.$w_descricao.'</TEXTAREA></td>');
-    
+
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>C</u>onta contábil de débito:</b></br><input type="text" name="w_cc_debito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_debito.'"></td>');
+    ShowHTML('        <td><b><u>C</u>onta contábil de crédito:</b></br><input type="text" name="w_cc_credito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_credito.'"></td>');
+        
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000"></TD></TR>');
     // Verifica se poderá ser feito o envio da solicitação, a partir do resultado da validação
     ShowHTML('      <tr><td align="LEFT" colspan=4><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -1131,7 +1147,7 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$w_moeda,$w_chave_nova, $w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$w_moeda,$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
       
       if ($O!='E') {
         // Reembolso sempre é para o usuário logado
@@ -1178,7 +1194,7 @@ function Grava() {
 
         $SQL = new dml_putFinanceiroConc; $SQL->getInstanceOf($dbms,$w_menu,$w_chave_nova,$w_usuario,$_REQUEST['w_tramite'],
           $_REQUEST['w_fim'],Nvl($_REQUEST['w_valor'],0),null,$_REQUEST['w_conta_debito'],Nvl($_REQUEST['w_sq_tipo_lancamento'],''),
-          null,'Conclusão automática.',null,null,null,null);
+          null,'Conclusão automática.',$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],null,null,null,null);
       }
     
       $w_html = VisualTarifa(nvl($_REQUEST['w_chave'],$w_chave_nova),'L',$w_usuario,1,'1');

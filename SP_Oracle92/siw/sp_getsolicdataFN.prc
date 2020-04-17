@@ -88,7 +88,9 @@ begin
                 d.informacoes,        d.codigo_deposito,             d.condicoes_pagamento,
                 d.valor_imposto,      d.valor_retencao,              d.valor_liquido,
                 d.referencia_inicio,  d.referencia_fim,              d.sq_rubrica_cronograma,
-                d.sq_pessoa_conta,
+                d.sq_pessoa_conta,    d.cc_debito,                   d.cc_credito,
+                d.cc_pessoa,          dj.nome cc_pessoa_nome,        dj.nome_resumido cc_pessoa_nome_res,
+                d.cc_data,            to_char(d.cc_data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_cc_data,
                 case d.tipo when 1 then 'Dotação incial' when 2 then 'Transferência entre rubricas' when 3 then 'Atualização de aplicação' when 4 then 'Entradas' when 5 then 'Saídas' end nm_tipo_rubrica,
                 d1.receita,           d1.despesa,                    d1.nome as nm_tipo_lancamento,
                 d2.nome as nm_pessoa, d2.nome_resumido as nm_pessoa_resumido,
@@ -193,6 +195,7 @@ begin
                        left       join co_agencia          di1 on (di.sq_agencia              = di1.sq_agencia)
                          left     join co_banco           di11 on (di1.sq_banco               = di11.sq_banco)
                        left       join co_moeda            di2 on (di.sq_moeda                = di2.sq_moeda)
+                     left         join co_pessoa            dj on (d.cc_pessoa                = dj.sq_pessoa)
                      left         join (select y.sq_siw_solicitacao, x1.sq_siw_solicitacao as solic_origem, x.sq_imposto
                                           from fn_imposto_doc                x
                                                inner join fn_lancamento_doc x1 on (x.sq_lancamento_doc = x1.sq_lancamento_doc)

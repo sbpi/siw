@@ -1,0 +1,48 @@
+DECLARE
+
+  CURSOR registros IS
+    select a.sq_siw_solicitacao chave, f.sq_pessoa responsavel, a.sq_siw_tramite tramite_atual,
+           sysdate data_atual, 
+           e.sq_siw_tramite tramite_cancelamento
+      from siw_solicitacao          a
+           inner join siw_menu      b on a.sq_menu            = b.sq_menu
+           inner join siw_tramite   c on a.sq_siw_tramite     = c.sq_siw_tramite
+           inner join fn_lancamento d on a.sq_siw_solicitacao = d.sq_siw_solicitacao
+           inner join siw_tramite   e on a.sq_menu            = e.sq_menu and e.sigla = 'CA',
+           sg_autenticacao          f
+     where b.sigla    in ('FNDEVENT','FNDREEMB')       -- Pagamentos diversos e Reembolsos
+       and c.ativo    = 'S'                            -- Não concluídos
+       and (a.inclusao < to_date('01012019','ddmmyyyy') or -- Anteriores a 2019
+            (instr(a.codigo_interno,'2019') = 0 and instr(a.codigo_interno,'2020') = 0)
+           )
+       and f.username = 'marcio.cabral'
+    order by a.codigo_interno;
+
+BEGIN
+  FOR r IN registros LOOP
+     -- Insere log de cancelamento
+     Insert Into siw_solic_log 
+        (sq_siw_solic_log,          sq_siw_solicitacao,   sq_pessoa, 
+         sq_siw_tramite,            data,                 devolucao, 
+         observacao
+        )
+     Values (
+         sq_siw_solic_log.nextval,  r.chave,              r.responsavel,
+         r.tramite_atual,           r.data_atual,         'N',
+         'Cancelamento dos registros anteriores a 2019, conforme pedido do Maurício Silva feito por e-mail em 28/01/2020.'
+     );
+         
+     -- Atualiza a situação da solicitação
+     update siw_solicitacao set sq_siw_tramite = r.tramite_cancelamento, conclusao = r.data_atual where sq_siw_solicitacao = r.chave;
+         
+     -- Remove vínculo quando o lançamento é de imposto
+     delete fn_imposto_doc where solic_imposto = r.chave;
+
+  END LOOP;
+  
+  -- Efetiva as alterações
+  COMMIT;
+
+END;
+
+/

@@ -936,7 +936,7 @@ function BuscaCompra() {
   // Recupera certames passíveis de contratação
   $sql = new db_getSolicCL; $RS = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$_SESSION['SQ_PESSOA'],'CONTRATO',3,
       null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-      null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null, null,null,null,null);
+      null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
       
   Cabecalho();
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
@@ -1190,7 +1190,7 @@ function Geral() {
     $sql = new db_getSolicCL; $RS_Solic = $sql->getInstanceOf($dbms,null,$_SESSION['SQ_PESSOA'],'CLLCCAD',3,
         null,null,null,null,null,null,null,null,null,null,(($w_herda) ? substr($w_herda,0,strpos($w_herda,'|')) :$w_chave_pai),
         null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-        null, null,null,null,null);
+        null,null,null,null,null);
     if (count($RS_Solic)>0) $RS_Solic = $RS_Solic[0];
     
     $w_cd_compra            = f($RS_Solic,'codigo_interno');
@@ -4780,7 +4780,7 @@ function Grava() {
             if(count($RS_Aditivo)>0) {
               $SQL = new dml_putFinanceiroGeral; $SQL->getInstanceOf($dbms,'EXCLUSAO',$w_cliente,f($row,'sq_siw_solicitacao'),
                         f($row,'sq_menu'),null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-                        null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+                        null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
             } 
           }
         }       

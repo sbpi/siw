@@ -4,6 +4,7 @@ create or replace procedure SP_PutFormaPagamento
     p_cliente                  in  varchar2,
     p_nome                     in  varchar2,
     p_sigla                    in  varchar2,
+    p_codigo_externo           in  varchar2,
     p_ativo                    in  varchar2,
     p_chave_nova               out number
    ) is
@@ -16,14 +17,16 @@ begin
       select sq_forma_pagamento.nextval into w_chave from dual;
       
       -- Insere registro
-      insert into co_forma_pagamento (sq_forma_pagamento, cliente, nome, sigla, ativo) values (w_chave, p_cliente, p_nome, p_sigla, p_ativo);
+      insert into co_forma_pagamento (sq_forma_pagamento, cliente, nome, sigla, ativo, codigo_externo) 
+      values (w_chave, p_cliente, p_nome, p_sigla, p_ativo, p_codigo_externo);
    Elsif p_operacao = 'A' Then
       -- Altera registro
       update co_forma_pagamento
-         set cliente       = p_cliente,
-             nome          = p_nome,
-             sigla         = p_sigla,
-             ativo         = p_ativo
+         set cliente        = p_cliente,
+             nome           = p_nome,
+             sigla          = p_sigla,
+             ativo          = p_ativo,
+             codigo_externo = p_codigo_externo
        where sq_forma_pagamento = p_chave;
    Elsif p_operacao = 'E' Then
       -- Exclui registro

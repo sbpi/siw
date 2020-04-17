@@ -100,6 +100,22 @@ function VisualTransferencia($v_chave,$l_O,$w_usuario,$l_P1,$l_tipo) {
       }
     }
     $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.CRLF2BR(Nvl(f($RS,'descricao'),'---')).' </td></tr>';
+    
+    // Exibida apenas para gestores
+    if (RetornaGestor($v_chave,$w_usuario)=='S') {
+      
+      $l_html.=chr(13).'      <tr bgColor="'.$conTrBgColor.'"><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Informações Contábeis</td>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Conta Contábil de Débito:</b></td><td>'.nvl(f($RS,'cc_debito'),'---').'</td></tr>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Conta Contábil de Crédito:</b></td><td>'.nvl(f($RS,'cc_credito'),'---').'</td></tr>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Última atualização:</b></td><td>'.nvl(FormataDataEdicao(f($RS,'phpdt_cc_data'),3),'---').'</td></tr>';
+      $l_html.=chr(13).'          <tr valign="top"><td><b>Responsável pela atualização:</b></td>';
+      if (Nvl(f($RS,'cc_pessoa'),'nulo')!='nulo') {
+        if ($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($RS,'cc_pessoa'),$TP,f($RS,'cc_pessoa_nome_res')).'</td>';
+        else                 $l_html.=chr(13).'        <td>'.f($RS,'cc_pessoa_nome_res').'</td>';
+      } else {
+        $l_html.=chr(13).'        <td>---<td>';
+      }
+    }
   }  
   // Encaminhamentos
   include_once($w_dir_volta.'funcoes/exibeLog.php');

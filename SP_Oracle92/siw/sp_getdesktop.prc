@@ -32,7 +32,6 @@ begin
                            where c.sq_pessoa = p_cliente
                              and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
                              and e.ordem     > 1         -- Esta construção é 5 vezes mais rápida que NOT IN ('CI','CA')
-                             and e.sigla     <> 'CA'
                              and (e.ativo    = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                              and (('N'       = c.consulta_opiniao and d.conclusao is null) or
                                   ('S'       = c.consulta_opiniao and d.opiniao is null)
@@ -53,7 +52,6 @@ begin
                              and (c1.sigla   <> 'FN' or (c1.sigla = 'FN' and e.sigla <> 'EE') or (c1.sigla = 'AC' and d.conclusao is null))
                              and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
                              and e.ordem     > 1         -- Esta construção é 5 vezes mais rápida que NOT IN ('CI','CA')
-                             and e.sigla     <> 'CA'
                              and c.ativo     = 'S'
                              and (e.ativo    = 'S' or (e.sigla = 'AT' and d.solicitante = p_usuario and c.consulta_opiniao = 'S' and d.opiniao is null))
                              and (c.controla_ano = 'N' or (c.controla_ano = 'S' and d.ano = p_ano))
