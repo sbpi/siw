@@ -60,7 +60,6 @@ create or replace procedure SP_PutViagemEnvio
              'Registro gerado automaticamente pelo sistema de viagens' as observacao, z.sq_lancamento, 
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
              x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, coalesce(x2.sg_tramite,'-') as sg_tramite,
-             x2.cc_debito, x2.cc_credito,
              x3.sq_tipo_pessoa,
              x4.sq_rubrica, x4.cd_rubrica, x4.nm_rubrica, x4.sq_moeda, x4.sg_moeda, x4.nm_moeda, x4.sb_moeda, x4.valor
         from siw_menu                          w
@@ -132,7 +131,6 @@ create or replace procedure SP_PutViagemEnvio
                              group by sq_siw_solicitacao, sq_projeto_rubrica, cd_rubrica, nm_rubrica, sq_moeda, sg_moeda, nm_moeda, sb_moeda
                             )                 x4 on (x.sq_siw_solicitacao  = x4.sq_siw_solicitacao)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, d.sq_lancamento_doc,
-                                    c.cc_debito, c.cc_credito,
                                     b.sigla as sg_tramite
                                from siw_solicitacao                a
                                     inner   join siw_tramite       b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
@@ -197,7 +195,6 @@ create or replace procedure SP_PutViagemEnvio
              'Registro gerado automaticamente pelo sistema de viagens' as observacao,
              coalesce(x1.sq_forma_pagamento, w2.sq_forma_pagamento) as sq_forma_pagamento, x.inicio, x.fim, y.sq_tipo_documento,
              x2.sq_financeiro, x2.sq_lancamento_doc  as sq_documento, z.sq_tipo_lancamento, z.nm_lancamento,
-             x2.cc_debito, x2.cc_credito,
              x3.sq_tipo_pessoa
         from siw_menu                          w
              inner     join siw_cliente        w1 on (w.sq_pessoa           = w1.sq_pessoa)
@@ -210,7 +207,6 @@ create or replace procedure SP_PutViagemEnvio
                                                     )
                inner   join co_pessoa         x3 on (x1.sq_pessoa          = x3.sq_pessoa)
              left      join (select a.sq_siw_solicitacao as sq_financeiro, a.sq_solic_pai, a.descricao, c.sq_tipo_lancamento, 
-                                    c.cc_debito, c.cc_credito,
                                     d.sq_lancamento_doc, e.nome as nm_lancamento
                                from siw_solicitacao                 a
                                     inner   join siw_tramite        b on (a.sq_siw_tramite     = b.sq_siw_tramite and b.sigla <> 'CA')
@@ -583,8 +579,6 @@ Trâmite de cotação de passagens da OTCA foi removido em 22/03/2017, a pedido do 
                                   p_per_ini            => crec.inicio,
                                   p_per_fim            => crec.fim,
                                   p_moeda              => crec.sq_moeda,
-                                  p_cc_debito          => crec.cc_debito,
-                                  p_cc_credito         => crec.cc_credito,
                                   p_chave_nova         => w_sq_financ,
                                   p_codigo_interno     => w_cd_financ
                                  );
@@ -696,8 +690,6 @@ Trâmite de cotação de passagens da OTCA foi removido em 22/03/2017, a pedido do 
                                   p_per_ini            => crec.inicio,
                                   p_per_fim            => crec.fim,
                                   p_moeda              => crec.sq_moeda_ressarcimento,
-                                  p_cc_debito          => crec.cc_debito,
-                                  p_cc_credito         => crec.cc_credito,
                                   p_chave_nova         => w_sq_financ,
                                   p_codigo_interno     => w_cd_financ
                                  );

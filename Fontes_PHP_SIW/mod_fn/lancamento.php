@@ -59,6 +59,7 @@ include_once($w_dir_volta.'classes/sp/dml_putLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoValor.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoPais.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'funcoes/retornaContasContabeis.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoUnidade.php');
 include_once($w_dir_volta.'funcoes/selecaoFaseCheck.php');
@@ -1063,8 +1064,6 @@ function Geral() {
     $w_modulo_pai           = $_REQUEST['w_modulo_pai'];
     $w_cd_compra            = $_REQUEST['w_cd_compra'];
     $w_ds_compra            = $_REQUEST['w_ds_compra'];
-    $w_cc_debito            = $_REQUEST['w_cc_debito'];
-    $w_cc_credito           = $_REQUEST['w_cc_credito'];
     
     
     // Recarrega dados para pagamento/recebimento
@@ -1175,8 +1174,6 @@ function Geral() {
       $w_solic_apoio          = f($RS,'sq_solic_apoio');
       $w_data_autorizacao     = FormataDataEdicao(f($RS,'data_autorizacao'));
       $w_texto_autorizacao    = f($RS,'texto_autorizacao');
-      $w_cc_debito            = f($RS,'cc_debito');
-      $w_cc_credito           = f($RS,'cc_credito');
       
 
       // Recupera dados de pagamento/recebimento
@@ -1489,15 +1486,6 @@ function Geral() {
       Validate('w_texto_pagamento','Condições de pagamento','1','','2','4000','1','0123456789');
     }
     
-    Validate('w_cc_debito','Conta Débito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
-    Validate('w_cc_credito','Conta Crédito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
-    
-    ShowHTML('  if ((theForm.w_cc_debito.value != "" && theForm.w_cc_credito.value == "") || (theForm.w_cc_debito.value == "" && theForm.w_cc_credito.value != "")) {');
-    ShowHTML('     alert ("Informe ambas as contas contábeis ou nenhuma delas!");');
-    ShowHTML('     theForm.w_cc_debito.focus();');
-    ShowHTML('     return false;');
-    ShowHTML('  }');
-    
     if (nvl($w_forma_pagamento,'')!='') {
       if ($w_forma_pagamento=='CREDITO') {
         if (substr(f($RS_Menu,'sigla'),2,1)=='R') {
@@ -1788,10 +1776,6 @@ function Geral() {
     ShowHTML('          </table>');
     if (substr(f($RS_Menu,'sigla'),2,1)!='R') ShowHTML('        <tr><td colspan=3><b><u>C</u>ondições de pagamento:</b><br><textarea '.$w_Disabled.'accesskey="T" name="w_texto_pagamento" class="sti" ROWS="3" COLS="75" title="Relacione as condições para pagamento deste lançamento.">'.nvl($w_texto_pagamento,$w_padrao_pagamento).'</textarea></td>');
 
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b><u>C</u>onta contábil de débito:</b></br><input type="text" name="w_cc_debito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_debito.'"></td>');
-    ShowHTML('        <td><b><u>C</u>onta contábil de crédito:</b></br><input type="text" name="w_cc_credito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_credito.'"></td>');
-    
     if (nvl($w_forma_pagamento,'')!='' && strpos('ESPECIE,DINHEIRO',nvl(upper($w_forma_pagamento),'-'))===false && (substr(f($RS_Menu,'sigla'),2,1)!='R' || (substr(f($RS_Menu,'sigla'),2,1)=='R' && ($w_forma_pagamento=='DEPOSITO' || $w_exige_conta)))) {
       ShowHTML('      <tr><td colspan="3" align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td colspan="3" align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -4675,6 +4659,9 @@ function Concluir() {
     $w_inicio = formataDataEdicao(f($RS_Viagem,'inicio'));
   }
   
+  // Retorna as contas contábeis do lançamento
+  retornaContasContabeis($RS_Menu, $w_cliente, $w_sq_tipo_lancamento, f($RS_Solic,'sq_forma_pagamento'), $w_conta_debito, $w_cc_debito, $w_cc_credito);
+  
   // Se for envio, executa verificações nos dados da solicitação
   $w_erro = ValidaLancamento($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
   Cabecalho();
@@ -4784,7 +4771,7 @@ function Concluir() {
     ShowHTML('      <tr><td colspan="4" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
     ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     ShowHTML('      <tr>');
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,3);
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.f_O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_quitacao\'; document.Form.submit();"',3);
     ShowHTML('      </tr>');
     if(count($RS_Rub)>0) {
       If (count($RS_Item)>1) {
@@ -5277,7 +5264,7 @@ function Grava() {
               $_REQUEST['w_numero_processo']),$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],
               $_REQUEST['w_solic_vinculo'],$_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],
               $_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],
-              $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
+              $w_chave_nova, $w_codigo);
 
       if ($O!='E') {
 
@@ -5952,7 +5939,7 @@ function Grava() {
                 $w_tipo,f($RS1,'protocolo_completo'),$_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],
                 $_REQUEST['w_texto_pagamento'],f($RS1,'sq_solic_pai'),$_REQUEST['w_sq_projeto_rubrica'],
                 $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],f($RS1,'sq_moeda'),
-                $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
+                $w_chave_nova, $w_codigo);
 
             //Grava os dados da pessoa
             $SQL2->getInstanceOf($dbms,$O,$SG,$w_chave_nova,$w_cliente,$_REQUEST['w_outra_parte'][$i],f($RS,'cpf'),f($RS,'cnpj'),
@@ -5997,7 +5984,7 @@ function Grava() {
             $_REQUEST['w_tipo_pessoa'],$_REQUEST['w_forma_atual'],$_REQUEST['w_vencimento_atual'],null,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
             $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],$_REQUEST['w_sq_projeto_rubrica'],
             $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],
-            $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
+            $w_chave_nova, $w_codigo);
 
         if ($O!='E') {
 

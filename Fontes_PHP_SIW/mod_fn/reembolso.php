@@ -56,6 +56,7 @@ include_once($w_dir_volta.'classes/sp/dml_putLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoValor.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoPais.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'funcoes/retornaContasContabeis.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoFormaPagamento.php');
 include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
@@ -842,8 +843,6 @@ function Geral() {
     $w_informacoes          = $_REQUEST['w_informacoes'];
     $w_codigo_deposito      = $_REQUEST['w_codigo_deposito'];
     $w_moeda                = $_REQUEST['w_moeda'];
-    $w_cc_debito            = $_REQUEST['w_cc_debito'];
-    $w_cc_credito           = $_REQUEST['w_cc_credito'];
 
   } elseif(strpos('AEV',$O)!==false || $w_copia>'') {
     // Recupera os dados do lançamento
@@ -922,8 +921,6 @@ function Geral() {
       $w_informacoes          = f($RS,'informacoes');
       $w_codigo_deposito      = f($RS,'codigo_deposito');
       $w_moeda                = f($RS,'sq_moeda');
-      $w_cc_debito            = f($RS,'cc_debito');
-      $w_cc_credito           = f($RS,'cc_credito');
     } 
   }
   
@@ -1102,14 +1099,6 @@ function Geral() {
   Validate('w_sq_tipo_lancamento','Tipo do lançamento','SELECT',1,1,18,'','0123456789');
   Validate('w_descricao','Discriminação das despesas','1',1,5,2000,'1','1');
     
-  Validate('w_cc_debito','Conta Débito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
-  Validate('w_cc_credito','Conta Crédito','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789');
-  
-  ShowHTML('  if ((theForm.w_cc_debito.value != "" && theForm.w_cc_credito.value == "") || (theForm.w_cc_debito.value == "" && theForm.w_cc_credito.value != "")) {');
-  ShowHTML('     alert ("Informe ambas as contas contábeis ou nenhuma delas!");');
-  ShowHTML('     theForm.w_cc_debito.focus();');
-  ShowHTML('     return false;');
-  ShowHTML('  }');
   
   if ($w_cliente==10135) { 
     Validate('w_per_ini','Mês de Referência','DATAMA',1,7,7,'','0123456789/');
@@ -1258,10 +1247,6 @@ function Geral() {
       ShowHTML('      <tr><td colspan=2><b><u>D</u>iscriminação das despesas:</b><br><textarea '.$w_Disabled.' accesskey="D" name="w_descricao" class="sti" ROWS=3 cols=75 title="Discrimine as despesas para as quais deseja ser reembolsado.">'.$w_descricao.'</TEXTAREA></td>');
     }    
 
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b><u>C</u>onta contábil de débito:</b></br><input type="text" name="w_cc_debito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_debito.'"></td>');
-    ShowHTML('        <td><b><u>C</u>onta contábil de crédito:</b></br><input type="text" name="w_cc_credito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_credito.'"></td>');
-    
     if (nvl($w_forma_pagamento,'')!='' && strpos('CREDITO,DEPOSITO,ORDEM,EXTERIOR',$w_forma_pagamento)!==false) {
       ShowHTML('      <tr><td colspan=3 align="center" height="2" bgcolor="#000000"></td></tr>');
       ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
@@ -2084,8 +2069,6 @@ function Encaminhamento() {
     $w_despacho         = $_REQUEST['w_despacho'];
     $w_justificativa    = $_REQUEST['w_justificativa'];
     $w_justif_dia_util  = $_REQUEST['w_justif_dia_util'];
-    $w_cc_debito            = $_REQUEST['w_cc_debito'];
-    $w_cc_credito           = $_REQUEST['w_cc_credito'];
   } else {
     $w_chave_pai        = f($RS_Solic,'sq_solic_pai');
     $w_dados_pai        = explode('|@|',f($RS_Solic,'dados_pai'));
@@ -2105,8 +2088,6 @@ function Encaminhamento() {
     $w_antecedencia     = f($RS_Solic,'dias_antecedencia');
     $w_justif_dia_util  = f($RS_Solic,'justificativa_dia_util');
     $w_fim_semana       = f($RS_Solic,'fim_semana');
-    $w_cc_debito        = f($RS_Solic,'cc_debito');
-    $w_cc_credito       = f($RS_Solic,'cc_credito');
   }
 
   // Recupera a sigla do trâmite desejado, para verificar a lista de possíveis destinatários.
@@ -2217,8 +2198,6 @@ function Encaminhamento() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
     ShowHTML('<INPUT type="hidden" name="w_tramite" value="'.$w_tramite.'">');
-    ShowHTML('<INPUT type="hidden" name="w_cc_debito" value="'.$w_cc_debito.'">');
-    ShowHTML('<INPUT type="hidden" name="w_cc_credito" value="'.$w_cc_credito.'">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td align="center">');
     ShowHTML('  <table width="97%" border="0">');
     ShowHTML('    <tr><td valign="top" colspan="2"><table border=0 width="100%">');
@@ -2475,6 +2454,9 @@ function Concluir() {
     }
   }
   
+  // Retorna as contas contábeis do lançamento
+  retornaContasContabeis($RS_Menu, $w_cliente, $w_sq_tipo_lancamento, f($RS_Solic,'sq_forma_pagamento'), $w_conta_debito, $w_cc_debito, $w_cc_credito);
+  
   // Se for envio, executa verificações nos dados da solicitação
   $w_erro = ValidaReembolso($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
   Cabecalho();
@@ -2576,7 +2558,7 @@ function Concluir() {
     ShowHTML('      <tr><td colspan="4" align="center" bgcolor="#D0D0D0" style="border: 2px solid rgb(0,0,0);"><font size="2"><b><font color="#BC3131">ATENÇÃO</font>: o tamanho máximo aceito para o arquivo é de '.(f($RS,'upload_maximo')/1024).' KBytes</b>.</font></td>');
     ShowHTML('<INPUT type="hidden" name="w_upload_maximo" value="'.f($RS,'upload_maximo').'">');
     ShowHTML('      <tr>');
-    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,3);
+    SelecaoTipoLancamento('<u>T</u>ipo de lancamento:','T','Selecione na lista o tipo de lançamento adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.f_O.value=\''.$O.'\'; document.Form.w_troca.value=\''.((count($RS_Rub)) ? 'w_sq_projeto_rubrica' : 'w_quitacao').'\'; document.Form.submit();"',3);
     ShowHTML('      </tr>');
     if(count($RS_Rub)>0) {
       ShowHTML('      <tr>');
@@ -2904,7 +2886,7 @@ function Grava() {
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $w_data,$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],
           $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],
-          $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
+          $w_chave_nova, $w_codigo);
 
       if ($O!='E') {
 
@@ -3083,7 +3065,7 @@ function Grava() {
                 f($RS,'processo'),$w_data,
                 FormataDataEdicao(f($RS,'referencia_fim')),f($RS,'condicoes_pagamento'),null,f($RS,'sq_projeto_rubrica'),
                 f($RS,'sq_solic_apoio'),FormataDataEdicao(f($RS,'data_autorizacao')),f($RS,'texto_autorizacao'),f($RS,'sq_moeda'),
-                $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
+                $w_chave_nova, $w_codigo);
           }
           
           $SQL = new dml_putLancamentoEnvio;
@@ -3152,7 +3134,7 @@ function Grava() {
                 f($RS,'processo'),$w_data,
                 FormataDataEdicao(f($RS,'referencia_fim')),f($RS,'condicoes_pagamento'),null,f($RS,'sq_projeto_rubrica'),
                 f($RS,'sq_solic_apoio'),FormataDataEdicao(f($RS,'data_autorizacao')),f($RS,'texto_autorizacao'),f($RS,'sq_moeda'),
-                $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
+                $w_chave_nova, $w_codigo);
 
             // Recupera dados do comprovante
             $sql = new db_getLancamentoDoc; $RSC = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null,null,null,null,'DOCS');

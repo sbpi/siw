@@ -52,6 +52,7 @@ include_once($w_dir_volta.'classes/sp/dml_putFinanceiroConc.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoValor.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'funcoes/retornaContasContabeis.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoFormaPagamento.php');
 include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
@@ -964,7 +965,7 @@ function Geral() {
     }
   }
 
- if (nvl($w_chave,'')!='') {
+  if (nvl($w_chave,'')!='') {
     // Recupera acréscimos e supressões possíveis para o lançamento financeiro
     $sql = new db_getLancamentoValor; $RS_Valores = $sql->getInstanceOf($dbms,$w_cliente,$w_menu,$w_chave,$w_sq_lancamento_doc,null,'EDICAO');
     $RS_Valores = SortArray($RS_Valores,'tp_valor','desc','ordenacao','asc');
@@ -977,8 +978,11 @@ function Geral() {
       $w_valores[$i]['tipo']  = f($row,'tp_valor');
       $w_valores[$i]['valor'] = formatNumber(nvl(f($row,'valor'),0));
     }
- }
+  }
   
+  // Retorna as contas contábeis do lançamento
+  retornaContasContabeis($RS_Menu, $w_cliente, $w_sq_tipo_lancamento, $w_sq_forma_pagamento, $w_conta_debito, $w_cc_debito, $w_cc_credito);
+
   Cabecalho();
   head();
   Estrutura_CSS($w_cliente);
@@ -1210,12 +1214,12 @@ function Geral() {
       }
     }
     ShowHTML('      <tr>');
-    SelecaoTipoLancamento('<u>T</u>ipo de pagamento:','T','Selecione na lista o tipo de pagamento adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,2);
+    SelecaoTipoLancamento('<u>T</u>ipo de pagamento:','T','Selecione na lista o tipo de pagamento adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_descricao\'; document.Form.submit();"',2);
     ShowHTML('      </tr>');
     ShowHTML('      <tr><td colspan=2><b><u>F</u>inalidade:</b><br><textarea '.$w_Disabled.' accesskey="F" name="w_descricao" class="sti" ROWS=3 cols=75 title="Finalidade do lançamento.">'.$w_descricao.'</TEXTAREA></td>');
     ShowHTML('      <tr><td colspan="2"><table border=0 width="100%">');
     ShowHTML('        <tr valign="top">');
-    SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma de pagamento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
+    SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma de pagamento para este lançamento.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_vencimento\'; document.Form.submit();"');
     ShowHTML('              <td><b><u>D</u>ata de pagamento:</b><br><input '.$w_Disabled.' accesskey="C" type="text" name="w_vencimento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_vencimento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','w_vencimento').'</td>');
 
     ShowHTML('      <tr valign="top">');
@@ -2516,7 +2520,7 @@ function Grava() {
           nvl($w_protocolo_nr,nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo'])),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda'],$w_chave_nova, $w_codigo);
 
       
       if ($O!='E') {

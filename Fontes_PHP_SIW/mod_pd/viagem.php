@@ -8568,7 +8568,7 @@ function Grava() {
                             f($row,'sq_siw_solicitacao'),f($row,'sq_menu'), null, null, $w_usuario, null,
                             null,null,null,null,null,null,null,null,null,'Viagem foi cancelada.',null,
                             null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-                            null,null,$w_chave_nova, $w_cd_financeiro);
+                            $w_chave_nova, $w_cd_financeiro);
                   }
                 }
                 

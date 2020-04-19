@@ -33,8 +33,6 @@ create or replace procedure SP_PutFinanceiroGeral
     p_data_autorizacao    in date     default null,
     p_texto_autorizacao   in varchar2 default null,
     p_moeda               in number   default null,
-    p_cc_debito           in varchar2 default null,
-    p_cc_credito          in varchar2 default null,
     p_chave_nova          out         number,
     p_codigo_interno      in out      varchar2
    ) is
@@ -279,9 +277,6 @@ begin
    End If;
    
    If p_operacao in ('I','A') Then      
-   
-      -- Grava informações contábeis
-      sp_putContaContabil(p_cadastrador, w_chave, p_cc_debito, p_cc_credito);
    
       If p_numero_processo is not null Then
          -- Recupera a chave do protocolo

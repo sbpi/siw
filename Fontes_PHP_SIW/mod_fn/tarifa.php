@@ -50,6 +50,7 @@ include_once($w_dir_volta.'classes/sp/dml_putLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoValor.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'funcoes/retornaContasContabeis.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoFormaPagamento.php');
 include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
@@ -548,6 +549,9 @@ function Geral() {
     }
     if (count($RS)==1) $w_exibe_dc = false;
   }
+  
+  // Retorna as contas contábeis do lançamento
+  retornaContasContabeis($RS_Menu, $w_cliente, $w_sq_tipo_lancamento, $w_sq_forma_pagamento, $w_conta_debito, $w_cc_debito, $w_cc_credito);
 
   Cabecalho();
   head();
@@ -633,14 +637,14 @@ function Geral() {
     ShowHTML('      <tr><td colspan=3 align="center" height="1" bgcolor="#000000"></td></tr>');
 
     ShowHTML('          <tr valign="top">');
-    selecaoTipoLancamento('Tipo de lançamento:',null,null,$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',$SG,null,3);
+    selecaoTipoLancamento('Tipo de lançamento:',null,null,$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',$SG,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\''.(($w_exibe_fp) ? 'w_sq_forma_pagamento' : 'w_conta_debito').'\'; document.Form.submit();"',3);
     ShowHTML('      <tr valign="top">');
     if ($w_exibe_fp) {
-      SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma desejada para esta aplicação.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null);
+      SelecaoFormaPagamento('<u>F</u>orma de pagamento:','F','Selecione na lista a forma desejada para esta aplicação.',$w_sq_forma_pagamento,$SG,'w_sq_forma_pagamento',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_conta_debito\'; document.Form.submit();"');
     } else {
       ShowHTML('<INPUT type="hidden" name="w_sq_forma_pagamento" value="'.$w_sq_forma_pagamento.'">');
     }
-    SelecaoContaBanco('<u>C</u>onta bancária:','C','Selecione a conta bancária envolvida no lançamento.',$w_conta_debito,null,'w_conta_debito',null,null);
+    SelecaoContaBanco('<u>C</u>onta bancária:','C','Selecione a conta bancária envolvida no lançamento.',$w_conta_debito,null,'w_conta_debito',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\''.(($w_exibe_dc) ? 'w_sq_tipo_documento' : 'w_fim').'\'; document.Form.submit();"');
     ShowHTML('      </tr>');
     ShowHTML('      <tr valign="top">');
     if ($w_exibe_dc) {
@@ -1147,7 +1151,7 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$w_moeda,$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$w_moeda,$w_chave_nova, $w_codigo);
       
       if ($O!='E') {
         // Reembolso sempre é para o usuário logado

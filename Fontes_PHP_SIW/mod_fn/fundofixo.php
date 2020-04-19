@@ -43,6 +43,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
 include_once($w_dir_volta.'classes/sp/db_getCronograma.php'); 
 include_once($w_dir_volta.'classes/sp/db_getSolicCotacao.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'classes/sp/dml_putContaContabil.php');
 include_once($w_dir_volta.'classes/sp/dml_putFinanceiroGeral.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoOutra.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoDoc.php');
@@ -52,6 +53,7 @@ include_once($w_dir_volta.'classes/sp/dml_putFinanceiroConc.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoItem.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/dml_putSolicCotacao.php');
+include_once($w_dir_volta.'funcoes/retornaContasContabeis.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoFormaPagamento.php');
 include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
@@ -1026,6 +1028,9 @@ function Geral() {
       }
     }
   }
+  
+  // Retorna as contas contábeis do lançamento
+  retornaContasContabeis($RS_Menu, $w_cliente, $w_sq_tipo_lancamento, $w_sq_forma_pagamento, $w_conta, $w_cc_debito, $w_cc_credito);
 
   Cabecalho();
   head();
@@ -1159,7 +1164,7 @@ function Geral() {
       }
     }
     ShowHTML('      <tr valign="top">');
-    SelecaoTipoLancamento('<u>T</u>ipo de pagamento:','T','Selecione na lista o tipo de pagamento adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC',null,5);
+    SelecaoTipoLancamento('<u>T</u>ipo de pagamento:','T','Selecione na lista o tipo de pagamento adequado.',$w_sq_tipo_lancamento,$w_menu,$w_cliente,'w_sq_tipo_lancamento',substr($SG,0,3).'VINC','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_solicitante\'; document.Form.submit();"',5);
     ShowHTML('        <tr valign="top">');
     if ($w_mod_pa=='S') {
       SelecaoProtocolo('N<u>ú</u>mero do processo:','U','Selecione o processo da compra/licitação.',$w_protocolo,null,'w_protocolo','JUNTADA',null);
@@ -1186,7 +1191,7 @@ function Geral() {
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><b><u>C</u>onta contábil de débito:</b></br><input type="text" name="w_cc_debito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_debito.'"></td>');
     ShowHTML('        <td><b><u>C</u>onta contábil de crédito:</b></br><input type="text" name="w_cc_credito" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_credito.'"></td>');
-    
+
     ShowHTML('      <tr><td colspan="5" align="center" height="2" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" align="center" height="1" bgcolor="#000000"></td></tr>');
     ShowHTML('      <tr><td colspan="5" valign="top" align="center" bgcolor="#D0D0D0"><b>Documento de despesa</td></td></tr>');
@@ -1840,6 +1845,9 @@ function Concluir() {
             null, null, null, null, null, $w_chave, null, null, null, null);
   foreach ($RS1 as $row)  $w_saldo -= Nvl(f($row,'valor'),0);
   
+  // Retorna as contas contábeis do lançamento
+  retornaContasContabeis($RS_Menu, $w_cliente, $w_sq_tipo_lancamento, f($RS_Solic,'sq_forma_pagamento'), $w_conta, $w_cc_debito, $w_cc_credito);
+  
   // Se for envio, executa verificações nos dados da solicitação
   $w_erro = ValidaFundoFixo($w_cliente,$w_chave,$SG,null,null,null,$w_tramite);
   Cabecalho();
@@ -2163,9 +2171,12 @@ function Grava() {
           $_REQUEST['w_vencimento_atual'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],null,$_REQUEST['w_sq_projeto_rubrica'],
           $_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],$_REQUEST['w_texto_autorizacao'],$w_moeda,
-          $_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],$w_chave_nova, $w_codigo);
+          $w_chave_nova, $w_codigo);
         
       if ($O!='E') {
+        // Grava contas contábeis
+        $sql = new dml_putContaContabil; $sql->getInstanceOf($dbms,$w_usuario,$w_chave_nova,$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito']);
+
         // Recupera o beneficiário do fundo fixo (chamado de "Suprido")
         $sql = new db_getBenef; $RS = $sql->getInstanceOf($dbms,$w_cliente,$_REQUEST['w_solicitante'],null,null,null,null,null,null,null,null,null,null,null,null, null, null, null, null);
         foreach ($RS as $row) {$RS=$row; break;}

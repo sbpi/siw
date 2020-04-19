@@ -14,7 +14,7 @@ class dml_putFinanceiroGeral {
           $p_descricao, $p_vencimento, $p_valor, $p_data_hora, $p_aviso, $p_dias, $p_cidade, $p_projeto, $p_sq_acordo_parcela, 
           $p_observacao, $p_sq_tipo_lancamento, $p_sq_forma_pagamento, $p_sq_tipo_pessoa, $p_forma_atual, $p_vencimento_atual, 
           $p_tipo_rubrica, $p_numero_processo, $p_per_ini, $p_per_fim, $p_condicao, $p_vinculo, $p_rubrica, $p_solic_apoio,
-          $p_data_autorizacao, $p_texto_autorizacao, $p_moeda, $p_cc_debito, $p_cc_credito, &$p_chave_nova, &$p_codigo_interno) {
+          $p_data_autorizacao, $p_texto_autorizacao, $p_moeda, &$p_chave_nova, &$p_codigo_interno) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putFinanceiroGeral';
      $params=array('p_operacao'                 =>array($operacao,                                        B_VARCHAR,         1),
                    'p_cliente'                  =>array($p_cliente,                                       B_INTEGER,        32),
@@ -50,8 +50,6 @@ class dml_putFinanceiroGeral {
                    'p_data_autorizacao'         =>array(tvl($p_data_autorizacao),                         B_DATE,           32),
                    'p_texto_autorizacao'        =>array(tvl($p_texto_autorizacao),                        B_VARCHAR,       500),
                    'p_moeda'                    =>array(tvl($p_moeda),                                    B_INTEGER,        32),
-                   'p_cc_debito'                =>array(tvl($p_cc_debito),                                B_VARCHAR,        25),
-                   'p_cc_credito'               =>array(tvl($p_cc_credito),                               B_VARCHAR,        25),
                    'p_chave_nova'               =>array(&$p_chave_nova,                                   B_INTEGER,        32),
                    'p_codigo_interno'           =>array(&$p_codigo_interno,                               B_VARCHAR,        60)
                   );

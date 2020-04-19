@@ -52,6 +52,7 @@ include_once($w_dir_volta.'classes/sp/dml_putLancamentoRubrica.php');
 include_once($w_dir_volta.'classes/sp/dml_putLancamentoValor.php');
 include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
 include_once($w_dir_volta.'classes/sp/db_verificaAssinatura.php');
+include_once($w_dir_volta.'funcoes/retornaContasContabeis.php');
 include_once($w_dir_volta.'funcoes/selecaoTipoLancamento.php');
 include_once($w_dir_volta.'funcoes/selecaoFormaPagamento.php');
 include_once($w_dir_volta.'funcoes/selecaoContaBanco.php');
@@ -592,6 +593,7 @@ function Geral() {
     $sql = new db_getContaBancoList; $RS_Debito = $sql->getInstanceOf($dbms,$w_cliente,$w_conta_debito,'FINANCEIRO');
     foreach($RS_Debito as $row) { $RS_Debito = $row; break; }
     $w_moeda_debito = f($RS_Debito,'sq_moeda');
+    $w_cc_credito   = f($RS_Debito,'codigo_externo');
   }
   
   // Recupera os dados da conta crédito
@@ -599,6 +601,7 @@ function Geral() {
     $sql = new db_getContaBancoList; $RS_Credito = $sql->getInstanceOf($dbms,$w_cliente,$w_conta_credito,'FINANCEIRO');
     foreach($RS_Credito as $row) { $RS_Credito = $row; break; }
     $w_moeda_credito = f($RS_Credito,'sq_moeda');
+    $w_cc_debito     = f($RS_Credito,'codigo_externo');
   }
   
   Cabecalho();
@@ -1212,8 +1215,7 @@ function Grava() {
           $_REQUEST['w_fim'],$_REQUEST['w_tipo_rubrica'],nvl($_REQUEST['w_protocolo'],$_REQUEST['w_numero_processo']),
           $_REQUEST['w_per_ini'],$_REQUEST['w_per_fim'],$_REQUEST['w_texto_pagamento'],$_REQUEST['w_solic_vinculo'],
           $_REQUEST['w_sq_projeto_rubrica'],$_REQUEST['w_solic_apoio'],$_REQUEST['w_data_autorizacao'],
-          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda_debito'],$_REQUEST['w_cc_debito'],$_REQUEST['w_cc_credito'],
-          $w_chave_nova, $w_codigo);
+          $_REQUEST['w_texto_autorizacao'],$_REQUEST['w_moeda_debito'],$w_chave_nova, $w_codigo);
       
       if ($O!='E') {
         // Reembolso sempre é para o usuário logado
