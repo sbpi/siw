@@ -934,12 +934,12 @@ function Lancamento() {
       ShowHTML('     alert ("Não pode existir tipo de lançamento com valores negativos para os campos recebimento e pagamento ao mesmo tempo!");');
       ShowHTML('     return false;');
       ShowHTML('  }');
-      Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
+      /* Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
     } elseif ($O=='E') {
       Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       ShowHTML('  if (confirm("Confirma a exclusão deste registro?")) ');
       ShowHTML('     { return (true); }; ');
-      ShowHTML('     { return (false); }; ');
+      ShowHTML('     { return (false); }; '); */
     } 
     ShowHTML('  theForm.Botao[0].disabled=true;');
     ShowHTML('  theForm.Botao[1].disabled=true;');
@@ -955,7 +955,8 @@ function Lancamento() {
   } elseif ($O=='L') {
     BodyOpen('onLoad="this.focus()";');
   } else {
-    BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
+	BodyOpen('onLoad="this.focus()";');
+    //BodyOpen('onLoad="document.Form.w_assinatura.focus()";');
   } 
   Estrutura_Topo_Limpo();
   Estrutura_Menu();
@@ -1075,7 +1076,7 @@ function Lancamento() {
       }
     }
     
-    ShowHTML('      <tr><td align="LEFT" colspan=3><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
+    //ShowHTML('      <tr><td align="LEFT" colspan=3><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=3><hr>');
     if ($O == 'E') {
       ShowHTML('   <input class="stb" type="submit" name="Botao" value="Excluir">');

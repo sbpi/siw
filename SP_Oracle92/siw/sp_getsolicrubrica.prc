@@ -185,7 +185,7 @@ begin
    Elsif p_restricao = 'PJEXECLS' or p_restricao = 'PJEXECLN' Then
       open p_result for
          select a.tipo, a.sq_projeto, a.cd_projeto, a.sq_pj_moeda, a.sg_pj_moeda,
-                a.sq_projeto_rubrica, a.nm_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
+                a.sq_projeto_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
                 a.sq_financeiro, a.cd_financeiro, a.cd_financeiro_externo,
                 case when substr(a.sg_menu,1,3) = 'FNR' then trunc(-1*a.valor,2) else trunc(a.valor,2) end valor,
                 a.sq_fn_moeda, a.sg_fn_moeda, d1.simbolo sb_fn_moeda,
@@ -210,7 +210,7 @@ begin
                 nvl(g5.nome, f111.nome) nm_pais,
                 cast(d.fim as date)-cast(g.dias_aviso as integer) as aviso,
                 g1.nome nm_forma_pagamento,
-                g2.sq_pessoa, g2.nome nm_pessoa, coalesce(g3.cpf, g4.cnpj) cd_pessoa,
+                g2.sq_pessoa, g2.nome nm_pessoa, coalesce(g3.cpf, g6.cnpj) cd_pessoa,
                 h.data dt_emissao, h.numero, h.valor valor_doc,
                 i.sigla sg_tipo_documento, i.nome nm_tipo_documento
            from vw_projeto_financeiro              a
@@ -236,7 +236,7 @@ begin
                                                          g43.sq_moeda         = g4.sq_moeda and
                                                          g43.valor            > 0
                                                         )
-                    left  join co_pessoa_juridica g4 on (g.pessoa             = g4.sq_pessoa)
+                    left  join co_pessoa_juridica g6 on (g.pessoa             = g6.sq_pessoa)
                     left  join co_pais            g5 on (g.sq_pais_estrang    = g5.sq_pais)
                   left    join fn_lancamento_doc   h on (d.sq_siw_solicitacao = h.sq_siw_solicitacao)
                     left join fn_tipo_documento    i on (h.sq_tipo_documento  = i.sq_tipo_documento)

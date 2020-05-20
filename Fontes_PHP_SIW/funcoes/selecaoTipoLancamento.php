@@ -6,7 +6,7 @@ include_once($w_dir_volta.'classes/sp/db_getTipoLancamento.php');
 function selecaoTipoLancamento($label,$accesskey,$hint,$chave,$chaveAux,$cliente,$campo,$restricao,$atributo,$colspan=1) {
   extract($GLOBALS);
   $sql = new db_getTipoLancamento; $l_RS = $sql->getInstanceOf($dbms,null,$chaveAux,$cliente,$restricao);
-  $l_RS = SortArray($l_RS,'nm_tipo','asc');
+  $l_RS = SortArray($l_RS,'or_tipo','asc');
 
   if (Nvl($label,'')>'') $l_label.='<br>'; else $l_label='';
   ShowHTML('          <td colspan="'.$colspan.'" '.((!isset($hint)) ? '' : 'TITLE="'.$hint.'"').'><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="sts" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');

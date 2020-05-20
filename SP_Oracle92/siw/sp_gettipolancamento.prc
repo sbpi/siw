@@ -52,6 +52,7 @@ begin
                 case a.reembolso when 'S' Then 'Sim' Else 'Não' end as nm_reembolso,
                 case a.ativo   when 'S' Then 'Sim' Else 'Não' end as nm_ativo,
                 coalesce(b.qtd,0) as qt_lancamentos, coalesce(c.qtd,0) as qt_filhos,
+                MontaOrdemtipoLancamento(a.sq_tipo_lancamento) ordem,
                 level
            from fn_tipo_lancamento   a
                 left  join (select x.sq_tipo_lancamento, count(x.sq_siw_solicitacao) qtd 
@@ -75,7 +76,7 @@ begin
             and (p_chave_aux is null or (p_chave_aux is not null and a.sq_tipo_lancamento <> p_chave_aux))
          connect by prior a.sq_tipo_lancamento = a.sq_tipo_lancamento_pai
          start with coalesce(a.sq_tipo_lancamento_pai,0) = coalesce(p_chave_aux,0)
-         order by montanomeTipoLancamento(a.sq_tipo_lancamento);
+         order by ordem;
    Elsif upper(p_restricao) = 'REEMBOLSO' Then
      -- Se reembolso, recupera classificação inicial
       open p_result for
@@ -105,7 +106,8 @@ begin
       -- Recupera os tipos de lançamento financeiro do cliente
       open p_result for 
          select a.sq_tipo_lancamento as chave, a.nome, a.descricao, a.codigo_externo, a.receita, a.despesa, a.reembolso, a.ativo,
-                montanomeTipoLancamento(a.sq_tipo_lancamento) as nm_tipo,
+                montaNomeTipoLancamento(a.sq_tipo_lancamento) as nm_tipo,
+                montaOrdemTipoLancamento(a.sq_tipo_lancamento) as or_tipo,
                 a.sq_tipo_lancamento_pai,
                 case a.receita   when 'S' Then 'Sim' Else 'Não' end as nm_receita,
                 case a.despesa   when 'S' Then 'Sim' Else 'Não' end as nm_despesa,
@@ -130,7 +132,7 @@ begin
             and ((p_chave     is null) or (p_chave     is not null and a.sq_tipo_lancamento = p_chave))
             and (p_restricao is null or 
                  (p_restricao is not null and 
-                  (instr(p_restricao,'VINC') = 0 or (instr(p_restricao,'VINC') > 0 and 0 = (select count(*) from fn_tipo_lancamento where sq_tipo_lancamento_pai = a.sq_tipo_lancamento))) and
+                  (instr(p_restricao,'VINC') > 0) and
                   (coalesce(b.vinculo,0)     = 0 or 0 < (select count(*) from fn_tipo_lanc_vinc where sq_tipo_lancamento = a.sq_tipo_lancamento and sq_menu = p_chave_aux)) and
                   ((substr(p_restricao,3,1) = 'R' and a.receita   = 'S') or 
                    (substr(p_restricao,3,1) = 'D' and a.despesa   = 'S') or
