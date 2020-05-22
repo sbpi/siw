@@ -132,7 +132,6 @@ begin
             and ((p_chave     is null) or (p_chave     is not null and a.sq_tipo_lancamento = p_chave))
             and (p_restricao is null or 
                  (p_restricao is not null and 
-                  (instr(p_restricao,'VINC') > 0) and
                   (coalesce(b.vinculo,0)     = 0 or 0 < (select count(*) from fn_tipo_lanc_vinc where sq_tipo_lancamento = a.sq_tipo_lancamento and sq_menu = p_chave_aux)) and
                   ((substr(p_restricao,3,1) = 'R' and a.receita   = 'S') or 
                    (substr(p_restricao,3,1) = 'D' and a.despesa   = 'S') or
