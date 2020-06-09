@@ -1122,8 +1122,8 @@ function ContasBancarias() {
     $w_codigo_externo = f($RS,'codigo_externo');
   } 
   // Recupera informação do campo operação do banco selecionado
-  if (nvl($w_sq_banco,'')>'') {
-    $SQL = new db_getBankData; $RS_Banco = $SQL->getInstanceOf($dbms, $w_sq_banco);
+  if ($w_banco) {
+    $SQL = new db_getBankData; $RS_Banco = $SQL->getInstanceOf($dbms, $w_banco);
     $w_exige_operacao = f($RS_Banco,'exige_operacao');
   }
   Cabecalho();
@@ -1249,7 +1249,7 @@ function ContasBancarias() {
     ShowHTML('    <table width="97%" border="0">');
     ShowHTML('      <tr><td valign="top" colspan="2">');
     ShowHTML('      <tr valign="top">');
-    selecaoBanco('<u>B</u>anco:','B','Informe o valor padrão para o campo "Banco".',$w_banco,null,'w_banco',null,(($O=='A') ? ' DISABLED ' : ''),2);
+    selecaoBanco('<u>B</u>anco:','B','Selecione o banco.',$w_banco,null,'w_banco',null,(($O=='A') ? ' DISABLED ' : '').'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_agencia\'; document.Form.submit();"',(($w_exige_operacao=='S') ? 1 : 2));
     ShowHTML('        <td><b><u>A</u>gência:</b><br><input '.$w_Disabled.(($O=='A') ? ' DISABLED ' : '').' accesskey="B" type="text" name="w_agencia" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_agencia.'" title="Informe o número da agência, com quatro posições, sem dígito verificador. Preencha com zeros à esquerda, se necessário. Exempo: para agência 3592-0, informe 3592; para agência 206, informe 0206."></td>');
     if ($w_exige_operacao=='S') ShowHTML('              <td><b><u>O</u>peração:</b><br><input '.$w_Disabled.(($O=='A') ? ' DISABLED ' : '').' accesskey="O" type="text" name="w_operacao" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_operacao.'" title="Informe um valor apenas se o seu banco trabalhar com o campo Operação."></td>');
     ShowHTML('              <td><b><u>C</u>onta corrente:</b><br><input '.$w_Disabled.(($O=='A') ? ' DISABLED ' : '').' accesskey="C" type="text" name="w_numero_conta" class="sti" SIZE="12" MAXLENGTH="12" VALUE="'.$w_numero_conta.'" title="Informe o número da conta corrente. Se a conta tiver dígito verificador (DV), informe-o separado por hífen (-). Exemplo sem DV: 0391039. Exemplos com DV: 9301-3, 91093-X, 01934-P."></td>');
@@ -1954,7 +1954,9 @@ function Grava() {
     case 'CLCONTA':
       if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
         if ($O=='I' || $O=='A') {
+
           $w_mensagem = '';
+
           // Só pode haver uma conta padrão para a pessoa
           if ($_REQUEST['w_padrao']=='S') {
             $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'],$_REQUEST['w_sq_pessoa_conta'],'CONTASBANCARIAS');
@@ -1963,18 +1965,38 @@ function Grava() {
                 if (f($row,'sq_pessoa_conta')!=Nvl($_REQUEST['w_sq_pessoa_conta'],0)) {
                   $w_mensagem='ATENÇÃO: Só pode haver uma conta padrão. Favor verificar.';
                   $w_volta = 'w_assinatura';
+                  break;
                 }
               }
             } 
           } 
+
+          // Não pode haver duas contas com o mesmo banco/agência/operação/número
+          $SQL = new db_getContaBancoList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_sq_pessoa'], null, null);
+          if (count($RS)>0) {
+             foreach($RS as $row) {
+                if (f($row,'sq_pessoa_conta')!=Nvl($_REQUEST['w_sq_pessoa_conta'],0) && 
+                    f($row,'sq_banco')==$_REQUEST['w_banco'] &&
+                    f($row,'cd_agencia')==$_REQUEST['w_agencia'] &&
+                    nvl(f($row,'operacao'),'-')==nvl($_REQUEST['w_operacao'],'-') &&
+                    f($row,'numero')==$_REQUEST['w_numero_conta'])
+                {
+                   $w_mensagem='ATENÇÃO: Só pode haver uma conta com o mesmo banco/agência/operação/número. Favor verificar.';
+                   $w_volta = 'w_assinatura';
+                   break;
+                }
+            }
+          } 
+
           // Verifica se a agência informada existe para o banco selecionado
           $SQL = new db_getBankHouseList; $RS = $SQL->getInstanceOf($dbms,$_REQUEST['w_banco'],null,null,$_REQUEST['w_agencia']);
-          if (count($RS)<=0) {
+          if (!count($RS)) {
             $w_mensagem='Agência inexistente para o banco informado. Favor verificar.';
             $w_volta = 'w_agencia';
           } else {
             foreach ($RS as $row) { $w_chave = f($row,'sq_agencia'); }
           }
+          
           // Se algum erro for detectado, apresenta mensagem e aborta a gravação
           if ($w_mensagem>'') {
             ScriptOpen('JavaScript');

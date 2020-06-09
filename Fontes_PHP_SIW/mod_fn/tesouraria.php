@@ -237,7 +237,6 @@ function Inicial() {
             $p_unidade,$p_prioridade,$p_ativo,$p_proponente,
             $p_chave, $p_objeto, $p_pais, $p_regiao, $p_uf, $p_cidade, $p_usu_resp,
             $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, null, $p_sq_acao_ppa, $p_sq_orprior, $p_empenho);
-      //echo FormataDataEdicao(time(),2);
     }
     if ($p_ordena>'') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));

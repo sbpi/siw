@@ -8,8 +8,8 @@ begin
       -- Recupera as contas bancárias do cliente
       open p_result for 
          select a.sq_pessoa,             b.sq_pessoa_conta,                  b.saldo_inicial,   
-                d.sq_banco,              d.codigo||' - '||d.nome as banco, 
-                e.sq_agencia,            e.codigo||' - '||e.nome as agencia,  
+                d.sq_banco,              d.codigo||' - '||d.nome as banco,   d.codigo cd_banco,
+                e.sq_agencia,            e.codigo||' - '||e.nome as agencia, e.codigo  cd_agencia,
                 b.operacao,              b.numero,                           b.ativo,                  b.padrao, 
                 b.devolucao_valor,       b.sq_pais_estrang,                  b.aba_code,               b.swift_code,
                 b.endereco_estrang,      b.banco_estrang,                    b.agencia_estrang,        b.cidade_estrang,

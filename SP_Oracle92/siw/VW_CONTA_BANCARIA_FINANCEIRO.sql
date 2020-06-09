@@ -56,6 +56,7 @@ select a3.sigla sg_menu, 'C' tipo,
        inner       join fn_lancamento     d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          inner     join co_pessoa_conta   e  on (d.cliente             = e.sq_pessoa and
                                                  d.sq_agencia          = e.sq_agencia and
+                                                 coalesce(d.operacao_conta,'-') = coalesce(e.operacao,'-') and
                                                  d.numero_conta        = e.numero and
                                                  -- Só recupera entrada extraorçamentária e transferência bancária
                                                  ((a3.sigla = 'FNATRANSF' and d.sq_pessoa_conta <> e.sq_pessoa_conta) or
