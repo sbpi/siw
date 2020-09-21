@@ -528,6 +528,17 @@ begin
                 ((a.sg_menu = 'FNDFIXO' and a.sg_tramite != 'CA') or 
                  (a.sg_menu !='FNDFIXO' and a.sg_tramite = 'AT')
                 )
+            and (p_pais           is null or (p_pais        is not null and (a.sq_pessoa_conta   = p_pais or 
+                                                                             p_pais = (select w.sq_pessoa_conta 
+                                                                                         from co_pessoa_conta w 
+                                                                                        where w.sq_pessoa       = a.cliente 
+                                                                                          and w.sq_agencia      = a.sq_agencia 
+                                                                                          and w.numero          = a.numero_conta
+                                                                                          and w.sq_pessoa_conta <> a.sq_pessoa_conta
+                                                                                      )
+                                                                            )
+                                             )
+                )
             and a.quitacao   between p_fim_i and p_fim_f;
    Elsif p_restricao = 'INFEXECLANC' Then
       -- Informe executivo da OTCA - Detalhamento dos lançamentos
