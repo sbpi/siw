@@ -550,6 +550,7 @@ function Dexion() {
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('      <tr><td><table border=0 width="100%">');
     ShowHTML('      <tr valign="top">');
+    SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$p_pais,null,'p_pais',null,null);
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Paga<u>m</u>ento entre:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="p_fim_i" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_i.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_i').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim_f" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim_f.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim_f').'</td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
