@@ -132,13 +132,24 @@ function checkIni($arrayIni){
 }
 
 function checkBanco() {
+  if ($_SERVER['SERVER_PORT']==8372) { // Container Docker SBPI
+    $DB_USERID = ORAHM_DB_USERID;
+    $DB_PASSWORD = ORAHM_DB_PASSWORD;
+    $DATABASE_NAME = ORAHM_DATABASE_NAME;
+    $SERVER_NAME = ORAHM_SERVER_NAME;
+  } else {
+    $DB_USERID = ORA9_DB_USERID;
+    $DB_PASSWORD = ORA9_DB_PASSWORD;
+    $DATABASE_NAME = ORA9_DATABASE_NAME;
+    $SERVER_NAME = ORA9_SERVER_NAME;
+  }
   $saida = '<table border="1"><caption><b>Acesso a Banco de Dados</b></caption>';
   $saida .= '<tr valign="top"><td><b>Server name</b></td><td><b>Username</b></td><td><b>Password</b></td><td><b>Database name</b></td></tr>';
-  $saida .= '<tr valign="top"><td rowspan="2"> ' . ORA9_SERVER_NAME . '</td><td>' . ORA9_DB_USERID . '</td><td>' . ORA9_DB_PASSWORD . ' </td><td>' . ORA9_DATABASE_NAME . ' </td></tr>';
+  $saida .= '<tr valign="top"><td rowspan="2"> ' . $SERVER_NAME . '</td><td>' . $DB_USERID . '</td><td>' . $DB_PASSWORD . ' </td><td>' . $DATABASE_NAME . ' </td></tr>';
   ob_start();
   $l_error_reporting = error_reporting(); error_reporting(E_ALL);
 
-  $ret = oci_new_connect(ORA9_DB_USERID,ORA9_DB_PASSWORD,ORA9_SERVER_NAME);
+  $ret = oci_new_connect($DB_USERID,$DB_PASSWORD,$SERVER_NAME);
   var_dump($ret);
   $texto .= ob_get_contents();
   error_reporting($l_error_reporting);

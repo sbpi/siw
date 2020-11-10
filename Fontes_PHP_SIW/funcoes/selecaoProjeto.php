@@ -24,11 +24,11 @@ function selecaoProjeto($label,$accesskey,$hint,$chave,$chaveAux,$chaveAux2,$cha
     ShowHTML('          <option value="">---');
     foreach($RS as $row) {
       if (nvl(f($row,'sq_siw_solicitacao'),0)==nvl($chave,0)) {
-        if($formato==1)     ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'" SELECTED>'.f($row,'titulo'));
+        if($formato==1)     ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'" SELECTED>'.f($row,'titulo').' ('.f($row,'codigo_interno').')');
         elseif($formato==2) ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'" SELECTED>'.f($row,'codigo_interno').' - '.f($row,'titulo'));
         else                ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'" SELECTED>'.f($row,'titulo').' ('.FormataDataEdicao(f($row,'inicio')).' - '.FormataDataEdicao(f($row,'fim')).')');
       } else {
-        if($formato==1)     ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'">'.f($row,'titulo'));
+        if($formato==1)     ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'">'.f($row,'titulo').' ('.f($row,'codigo_interno').')');
         elseif($formato==2) ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'">'.f($row,'codigo_interno').' - '.f($row,'titulo'));
         else                ShowHTML('          <option value="'.f($row,'sq_siw_solicitacao').'">'.f($row,'titulo').' ('.FormataDataEdicao(f($row,'inicio')).' - '.FormataDataEdicao(f($row,'fim')).')');
       }
