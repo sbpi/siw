@@ -1,4 +1,66 @@
 <?php
+/*
+select p.sq_permanente chave_siw, p.numero_rgp rfid,
+       c.nome as grupo,
+       a.nome||case when p.marca is not null then ' '||p.marca end||
+       case when p.modelo is not null then ' '||p.modelo end||
+       case when p.numero_serie is not null then ' Série: '||p.numero_serie end||' '||
+       p.descricao_complementar bem, 
+       to_char(p.data_tombamento,'dd/mm/yyyy') tombamento,
+       p.cc_patrimonial, 
+       brl.valor_atual vl_aquisicao,
+       p.vida_util,
+       p.vida_util * 365 vida_util_dias,
+       --(brl.valor_atual/(p.vida_util*365) * 30) deprec_mensal,
+       --(brl.valor_atual/(p.vida_util*365)) deprec_diaria,
+       case when p.data_tombamento > to_date('31/12/2018','dd/mm/yyyy') then 0
+            when to_date('31/12/2018','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 then p.vida_util * 365
+            else to_date('31/12/2018','dd/mm/yyyy') - p.data_tombamento 
+       end dias_inicio_periodo,
+       case when p.data_tombamento > to_date('31/12/2018','dd/mm/yyyy') then 0
+            when p.data_tombamento + (p.vida_util * 365) <=  to_date('31/12/2018','dd/mm/yyyy') then 100
+            else round((to_date('31/12/2018','dd/mm/yyyy') - p.data_tombamento) / (365*p.vida_util) * 100,2) 
+       end percentual_inicio_periodo,
+       case when to_date('31/12/2018','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, null, to_date('31/12/2018','dd/mm/yyyy')) end deprec_inicio_periodo,
+       case when to_date('01/01/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/01/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/01/2019','dd/mm/yyyy'), to_date('31/01/2019','dd/mm/yyyy')) end mes_1,
+       case when to_date('01/02/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('28/02/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/02/2019','dd/mm/yyyy'), to_date('28/02/2019','dd/mm/yyyy')) end mes_2,
+       case when to_date('01/03/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/03/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/03/2019','dd/mm/yyyy'), to_date('31/03/2019','dd/mm/yyyy')) end mes_3,
+       case when to_date('01/04/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('30/04/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/04/2019','dd/mm/yyyy'), to_date('30/04/2019','dd/mm/yyyy')) end mes_4,
+       case when to_date('01/05/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/05/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/05/2019','dd/mm/yyyy'), to_date('31/05/2019','dd/mm/yyyy')) end mes_5,
+       case when to_date('01/06/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('30/06/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/06/2019','dd/mm/yyyy'), to_date('30/06/2019','dd/mm/yyyy')) end mes_6,
+       case when to_date('01/07/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/07/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/07/2019','dd/mm/yyyy'), to_date('31/07/2019','dd/mm/yyyy')) end mes_7,
+       case when to_date('01/08/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/08/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/08/2019','dd/mm/yyyy'), to_date('31/08/2019','dd/mm/yyyy')) end mes_8,
+       case when to_date('01/09/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('30/09/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/09/2019','dd/mm/yyyy'), to_date('30/09/2019','dd/mm/yyyy')) end mes_9,
+       case when to_date('01/10/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/10/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/10/2019','dd/mm/yyyy'), to_date('31/10/2019','dd/mm/yyyy')) end mes_10,
+       case when to_date('01/11/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('30/11/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/11/2019','dd/mm/yyyy'), to_date('30/11/2019','dd/mm/yyyy')) end mes_11,
+       case when to_date('01/12/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/12/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/12/2019','dd/mm/yyyy'), to_date('31/12/2019','dd/mm/yyyy')) end mes_12,
+       p.cc_depreciacao,
+       case when to_date('01/01/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/01/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/01/2019','dd/mm/yyyy'), to_date('31/12/2019','dd/mm/yyyy')) end deprec_ano,
+       calculaDepreciacao(p.sq_permanente, brl.sq_moeda, p.data_tombamento, to_date('31/12/2019','dd/mm/yyyy')) deprec_total,
+       case when p.data_tombamento > to_date('31/12/2019','dd/mm/yyyy') then 0
+            when p.data_tombamento + (p.vida_util * 365) <=  to_date('31/12/2019','dd/mm/yyyy') then 100
+            else round((to_date('31/12/2019','dd/mm/yyyy') - p.data_tombamento) / (365*p.vida_util) * 100,2) 
+       end percentual_fim_periodo,
+       brl.valor_atual - calculaDepreciacao(p.sq_permanente, brl.sq_moeda, p.data_tombamento, to_date('31/12/2019','dd/mm/yyyy')) valor_fim_periodo
+  from mt_permanente p
+       inner           join cl_material         a  on (p.sq_material         = a.sq_material)
+         inner         join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
+         inner         join mt_almoxarifado     x  on (p.sq_almoxarifado     = x.sq_almoxarifado)
+       left            join (select cot.sq_permanente, cot.sq_moeda, cot.valor_aquisicao, cot.valor_atual, cot.data_valor_atual
+                               from mt_bem_cotacao      cot
+                                    inner join co_moeda moe on (cot.sq_moeda = moe.sq_moeda)
+                              where moe.sigla = 'BRL'
+                            )                brl  on (p.sq_permanente       = brl.sq_permanente)
+ where p.ativo = 'S'
+   and x.nome = 'Imobilizado Contabilidade'
+   and p.data_tombamento <= to_date('31/12/2019','dd/mm/yyyy')
+   --and p.data_tombamento + (p.vida_util * 365) >= to_date('01/01/2019','dd/mm/yyyy')
+   --and p.numero_rgp = 6016
+   --and p.data_tombamento + (p.vida_util * 365) between to_date('01/01/2019','dd/mm/yyyy') and to_date('31/12/2019','dd/mm/yyyy')
+   --and p.data
+order by 3,2
+*/
+
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -362,16 +424,21 @@ function Inicial() {
       //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Detalhamento','descricao_complementar').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Tombamento','data_tombamento').'</td>');
       ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Vida Útil (Anos)','vida_util').'</td>');
-      ShowHTML('          <td colspan=3><b>Valor Aquisição</b></td>');
-      ShowHTML('          <td colspan=3><b>Valor Depreciado</b></td>');
+      //ShowHTML('          <td colspan=3><b>Valor Aquisição</b></td>');
+      ShowHTML('          <td rowspan=2><b>Valor Aquisição (BRL)</b></td>');
+      //ShowHTML('          <td colspan=3><b>Valor Depreciado</b></td>');
+      ShowHTML('          <td colspan=3><b>Depreciação (BRL)</b></td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><b>'.LinkOrdena('BRL','vl_atual_brl').'</b></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('USD','vl_atual_usd').'</b></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('EUR','vl_atual_eur').'</b></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('BRL','vl_depreciado_brl').'</b></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('USD','vl_depreciado_usd').'</b></td>');
-      ShowHTML('          <td><b>'.LinkOrdena('EUR','vl_depreciado_eur').'</b></td>');
+      //ShowHTML('          <td><b>'.LinkOrdena('BRL','vl_atual_brl').'</b></td>');
+      //ShowHTML('          <td><b>'.LinkOrdena('USD','vl_atual_usd').'</b></td>');
+      //ShowHTML('          <td><b>'.LinkOrdena('EUR','vl_atual_eur').'</b></td>');
+      ShowHTML('          <td><b>Mensal</b></td>');
+      ShowHTML('          <td><b>Acumulada</b></td>');      
+      ShowHTML('          <td><b>Valor em '.nvl($p_fim, date('d/m/Y',time())).'</b></td>');
+      //ShowHTML('          <td><b>'.LinkOrdena('BRL','vl_depreciado_brl').'</b></td>');
+      //ShowHTML('          <td><b>'.LinkOrdena('USD','vl_depreciado_usd').'</b></td>');
+      //ShowHTML('          <td><b>'.LinkOrdena('EUR','vl_depreciado_eur').'</b></td>');
       ShowHTML('        </tr>');
     } else {
       ShowHTML('          <td rowspan=2><b>Tipo</td>');
@@ -384,16 +451,21 @@ function Inicial() {
       //ShowHTML('          <td rowspan=2><b>Detalhamento</td>');
       ShowHTML('          <td rowspan=2><b>Tombamento</td>');
       ShowHTML('          <td rowspan=2><b>Vida Útil (Anos)</td>');
-      ShowHTML('          <td colspan=3><b>Valor Aquisição</b></td>');
-      ShowHTML('          <td colspan=3><b>Valor Depreciado</b></td>');
+      //ShowHTML('          <td colspan=3><b>Valor Aquisição</b></td>');
+      ShowHTML('          <td rowspan=2><b>Valor Aquisição (BRL)</b></td>');
+      //ShowHTML('          <td colspan=3><b>Valor Depreciado</b></td>');
+      ShowHTML('          <td colspan=3><b>Depreciação (BRL)</b></td>');
       ShowHTML('        </tr>');
       ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      ShowHTML('          <td><b>BRL</b></td>');
-      ShowHTML('          <td><b>USD</b></td>');
-      ShowHTML('          <td><b>EUR</b></td>');
-      ShowHTML('          <td><b>BRL</b></td>');
-      ShowHTML('          <td><b>USD</b></td>');
-      ShowHTML('          <td><b>EUR</b></td>');
+      //ShowHTML('          <td><b>BRL</b></td>');
+      //ShowHTML('          <td><b>USD</b></td>');
+      //ShowHTML('          <td><b>EUR</b></td>');
+      ShowHTML('          <td><b>Mensal</b></td>');
+      ShowHTML('          <td><b>Acumulada</b></td>');      
+      ShowHTML('          <td><b>Valor em '.nvl($p_fim, date('d/m/Y',time())).'</b></td>');
+      //ShowHTML('          <td><b>BRL</b></td>');
+      //ShowHTML('          <td><b>USD</b></td>');
+      //ShowHTML('          <td><b>EUR</b></td>');
       ShowHTML('        </tr>');
     }  
     if (count($RS)<=0) {
@@ -411,17 +483,23 @@ function Inicial() {
         //ShowHTML('        <td>'.nvl(f($row,'nm_localizacao'),'---').'</td>');
         //ShowHTML('        <td title="'.f($row,'nm_projeto').'">'.nvl(f($row,'cd_projeto'),'---').'</td>');
         ShowHTML('        <td align="center"'.((nvl(f($row,'observacao'),'')!='') ? ' title="'.  CRLF2BR(f($row,'observacao')).'"' : '').'>'.f($row,'numero_rgp').'</td>');
-        if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibePermanente($w_dir_volta,$w_cliente,f($row,'nome_completo'),f($row,'chave'),$TP,null,((nvl(f($row,'descricao_complementar'),'')!='') ? f($row,'descricao_complementar') : null)).'</td>');
+        if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibePermanente($w_dir_volta,$w_cliente,f($row,'nome_completo').((nvl(f($row,'descricao_complementar'),'')!='') ? ' '.f($row,'descricao_complementar') : ''),f($row,'chave'),$TP,null,null).'</td>');
         else                 ShowHTML('        <td>'.f($row,'nome_completo').'</td>');
         //ShowHTML('        <td>'.f($row,'descricao_complementar').'</td>');
         ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'data_tombamento'),5).'</td>');
         ShowHTML('        <td align="center">'.f($row,'vida_util').'</td>');
         ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_brl'),2),'---').'</td>');
+        /*
         ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_usd'),2),'---').'</td>');
         ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_eur'),2),'---').'</td>');
-        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_brl'),2),'---').'</td>');
+        */
+        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_deprec_mensal_brl'),2),'---').'</td>'); // Depreciação mensal
+        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_brl'),2),'---').'</td>'); // Depreciação acumulada
+        ShowHTML('        <td align="right">'.nvl(formatNumber((f($row,'vl_atual_brl') - f($row,'vl_depreciado_brl')),2),'---').'</td>');
+        /*
         ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_usd'),2),'---').'</td>');
         ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_eur'),2),'---').'</td>');
+        */
       }
     } 
     ShowHTML('      </center>');

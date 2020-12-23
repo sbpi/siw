@@ -220,6 +220,8 @@ function Inicial() {
     $w_valor_eur       = formatNumber($_REQUEST['w_valor_eur']);
     $w_data_eur        = FormataDataEdicao($_REQUEST['w_data_eur']);
     $w_ativo           = $_REQUEST['w_ativo'];
+    $w_cc_patrimonial  = $_REQUEST['w_cc_patrimonial'];
+    $w_cc_depreciacao  = $_REQUEST['w_cc_depreciacao'];
   } elseif ($O=='L') {
     if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) {
       $w_filtro='';
@@ -308,6 +310,8 @@ function Inicial() {
     $w_valor_eur       = formatNumber(f($RS,'vl_atual_eur'));
     $w_data_eur        = FormataDataEdicao(f($RS,'dt_vl_atual_eur'));
     $w_ativo           = f($RS,'ativo');
+    $w_cc_patrimonial  = f($RS,'cc_patrimonial');
+    $w_cc_depreciacao  = f($RS,'cc_depreciacao');
   } 
 
   // Recupera informações sobre o tipo do material ou serviço
@@ -379,6 +383,16 @@ function Inicial() {
         ShowHTML('    return false;');
         ShowHTML('  }');
         Validate('w_observacao','Observação','','',1,2000,'1','1');
+
+        Validate('w_cc_patrimonial','Conta Contábil Patrimonial','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789.');
+        Validate('w_cc_depreciacao','Conta Contábil de Depreciação','','','2','25','ABCDEFGHIJKLMNOPQRSTUVWXYZ','0123456789.');    
+        ShowHTML('  if ((theForm.w_cc_patrimonial.value != "" && theForm.w_cc_depreciacao.value == "") || (theForm.w_cc_patrimonial.value == "" && theForm.w_cc_depreciacao.value != "")) {');
+        ShowHTML('     alert ("Informe ambas as contas contábeis ou nenhuma delas!");');
+        ShowHTML('     theForm.w_cc_patrimonial.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
+
+
         Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
       } elseif ($O=='P') {
         Validate('p_rgp','RGP Atual','1','','1','18','','0123456789');
@@ -543,7 +557,7 @@ function Inicial() {
     ShowHTML('    <table width="97%" border="0"><tr>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td><b><u>R</u>GP:</b><br><input '.$w_Disabled.' accesskey="R" type="text" name="w_rgp" class="sti" SIZE="20" MAXLENGTH="20" VALUE="'.$w_rgp.'"></td>');
-    ShowHTML('        <td><b><u>T</u>ombamento:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_tombamento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_tombamento.'"></td>');
+    ShowHTML('        <td><b><u>T</u>ombamento:</b><br><input '.$w_Disabled.' accesskey="T" type="text" name="w_tombamento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_tombamento.'" onKeyDown="FormataData(this,event);"ss></td>');
     ShowHTML('        <td><b><u>V</u>ida útil (em anos):</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="w_vida_util" class="sti" SIZE="2" MAXLENGTH="2" VALUE="'.$w_vida_util.'"></td>');
     ShowHTML('      <tr>');
     selecaoUnidade('<U>U</U>nidade:','U',null,$w_unidade,null,'w_unidade',null,'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'w_localizacao\'; document.Form.submit();"',3);
@@ -590,6 +604,11 @@ function Inicial() {
     ShowHTML('          <td><input '.$w_Disabled.' type="text" name="w_data_eur" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_data_eur.'" onKeyDown="FormataData(this,event);"></td>');
     ShowHTML('      </table>');
     ShowHTML('      <tr title="Informações que julgar relevantes para o bem."><td colspan=3><b><U>O</U>bservação:<br><TEXTAREA ACCESSKEY="O" class="sti" name="w_observacao" rows=5 cols=80." '.$w_Disabled.'>'.$w_observacao.'</textarea></td>');
+
+    ShowHTML('      <tr valign="top">');
+    ShowHTML('        <td><b><u>C</u>onta Contábil Patrimonial:</b></br><input '.$w_Disabled.' type="text" name="w_cc_patrimonial" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_patrimonial.'"></td>');
+    ShowHTML('        <td><b><u>C</u>onta Contábil de Depreciação:</b></br><input '.$w_Disabled.' type="text" name="w_cc_depreciacao" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_depreciacao.'"></td>');
+
     ShowHTML('      <tr valign="top">');
     MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td colspan=3><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
@@ -1321,9 +1340,9 @@ function visualPermanente($l_chave,$l_navega=true,$l_solic) {
           ((nvl(f($l_rs,'vl_aquisicao_eur'),'0,00')!='0,00') ? ' EUR '.formatNumber(f($l_rs,'vl_aquisicao_eur')) : '').
           '</b></td>';
   $l_html.=chr(13).'          <td>Valor contábil em '.formataDataEdicao(time()).'<br><b>'.
-          ((nvl(f($l_rs,'vl_depreciado_brl'),'0,00')!='0,00') ? ' BRL '.formatNumber(f($l_rs,'vl_depreciado_brl')) : '').
-          ((nvl(f($l_rs,'vl_depreciado_usd'),'0,00')!='0,00') ? ' USD '.formatNumber(f($l_rs,'vl_depreciado_usd')) : '').
-          ((nvl(f($l_rs,'vl_depreciado_eur'),'0,00')!='0,00') ? ' EUR '.formatNumber(f($l_rs,'vl_depreciado_eur')) : '').
+          ((nvl(f($l_rs,'vl_depreciado_brl'),'0,00')!='0,00') ? ' BRL '.formatNumber(f($row,'vl_atual_brl') - f($row,'vl_depreciado_brl')) : formatNumber(f($row,'vl_atual_brl'))).
+          ((nvl(f($l_rs,'vl_depreciado_usd'),'0,00')!='0,00') ? ' USD '.formatNumber(f($row,'vl_atual_usd') - f($row,'vl_depreciado_usd')) : formatNumber(f($row,'vl_atual_usd'))).
+          ((nvl(f($l_rs,'vl_depreciado_eur'),'0,00')!='0,00') ? ' EUR '.formatNumber(f($row,'vl_atual_eur') - f($row,'vl_depreciado_eur')) : formatNumber(f($row,'vl_atual_eur'))).
           '</b></td>';
   if (nvl(f($l_rs,'vl_aquisicao_brl'),'0,00')!=nvl(f($l_rs,'vl_atual_brl'),'0,00') ||
       nvl(f($l_rs,'vl_aquisicao_usd'),'0,00')!=nvl(f($l_rs,'vl_atual_usd'),'0,00') ||
@@ -1357,6 +1376,18 @@ function visualPermanente($l_chave,$l_navega=true,$l_solic) {
   $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Vida útil:<b></td><td>'.nvl(f($l_rs,'vida_util'),'---').' Anos</td></tr>';
   $l_html.=chr(13).'      <tr valign="top"><td><b>Observação:</b></td><td>'.CRLF2BR(nvl(f($l_rs,'observacao'),'---')).' </td></tr>';
   
+  $l_html.=chr(13).'      <tr bgColor="'.$conTrBgColor.'"><td colspan=2 style="border: 1px solid rgb(0,0,0);"><b>Informações Contábeis</td>';
+  $l_html.=chr(13).'          <tr valign="top"><td><b>Conta Contábil Patrimonial:</b></td><td>'.nvl(f($l_rs,'cc_patrimonial'),'---').'</td></tr>';
+  $l_html.=chr(13).'          <tr valign="top"><td><b>Conta Contábil de Depreciação:</b></td><td>'.nvl(f($l_rs,'cc_depreciacao'),'---').'</td></tr>';
+  $l_html.=chr(13).'          <tr valign="top"><td><b>Última atualização:</b></td><td>'.nvl(FormataDataEdicao(f($l_rs,'phpdt_cc_data'),3),'---').'</td></tr>';
+  $l_html.=chr(13).'          <tr valign="top"><td><b>Responsável pela atualização:</b></td>';
+  if (Nvl(f($l_rs,'cc_pessoa'),'nulo')!='nulo') {
+    if ($l_tipo!='WORD') $l_html.=chr(13).'        <td>'.ExibePessoa($w_dir_volta,$w_cliente,f($l_rs,'cc_pessoa'),$TP,f($l_rs,'cc_pessoa_nome_res')).'</td>';
+    else                 $l_html.=chr(13).'        <td>'.f($l_rs,'cc_pessoa_nome_res').'</td>';
+  } else {
+    $l_html.=chr(13).'        <td>---<td>';
+  }
+
   /*
 
   if (f($RS_Cliente,'ata_registro_preco')=='S') {
@@ -1610,6 +1641,7 @@ function Grava() {
             $_REQUEST['w_rgp'], $_REQUEST['w_tombamento'], $_REQUEST['w_descricao'], $_REQUEST['w_codigo_externo'], 
             $_REQUEST['w_numero_serie'], $_REQUEST['w_marca'], $_REQUEST['w_modelo'], $_REQUEST['w_fim_garantia'], 
             $_REQUEST['w_vida_util'], $_REQUEST['w_observacao'], $_REQUEST['w_ativo'],
+            $_REQUEST['w_cc_patrimonial'],$_REQUEST['w_cc_depreciacao'],
             $_REQUEST['w_valor_brl'], $_REQUEST['w_valor_usd'], $_REQUEST['w_valor_eur'],
             $_REQUEST['w_data_brl'], $_REQUEST['w_data_usd'], $_REQUEST['w_data_eur'],
             $w_chave_nova);

@@ -23,6 +23,8 @@ create or replace procedure sp_putMTPermanente
     p_vida_util       in  number   default null,
     p_observacao      in  varchar2 default null,
     p_ativo           in  varchar2 default null,
+    p_cc_patrimonial  in varchar2  default null,
+    p_cc_depreciacao  in varchar2  default null,
     p_valor_brl       in  number   default null,
     p_valor_usd       in  number   default null,
     p_valor_eur       in  number   default null,
@@ -97,7 +99,7 @@ begin
           select case i when 1 then p_data_brl  when 2 then p_data_usd  when 3 then p_data_eur  end into w_data  from dual;
           
           If w_valor > 0 Then
-              select count(*) into w_existe from mt_bem_cotacao where sq_permanente = p_chave and sq_moeda = w_moeda;
+              select count(*) into w_existe from mt_bem_cotacao where sq_permanente = w_chave and sq_moeda = w_moeda;
               If w_existe = 0 Then
                   insert into mt_bem_cotacao (sq_bem_cotacao, sq_permanente, sq_moeda, valor_aquisicao, valor_atual, data_valor_atual)
                   select sq_bem_cotacao.nextval, w_chave, a.sq_moeda, 
@@ -110,7 +112,7 @@ begin
                   update mt_bem_cotacao w
                      set valor_atual      = w_valor, 
                          data_valor_atual = w_data
-                   where sq_permanente = p_chave
+                   where sq_permanente = w_chave
                      and sq_bem_cotacao = (select a.sq_bem_cotacao
                                              from mt_bem_cotacao a
                                             where a.sq_bem_cotacao = w.sq_bem_cotacao
@@ -118,8 +120,8 @@ begin
                                           );
               End If;
           Else
-              delete mt_bem_cotacao W
-              where sq_permanente = p_chave
+              delete mt_bem_cotacao w
+              where sq_permanente = w_chave
                 and sq_bem_cotacao = (select sq_bem_cotacao
                                         from mt_bem_cotacao a
                                        where a.sq_bem_cotacao = w.sq_bem_cotacao
@@ -128,6 +130,9 @@ begin
           End If;
       End Loop;
       
+      -- Grava informações contábeis
+      SP_PutContaPatrimonio(p_usuario, w_chave, p_cc_patrimonial, p_cc_depreciacao);
+   
    End If;
 
    -- Devolve a chave

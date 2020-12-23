@@ -31,8 +31,10 @@ begin
                 p.sq_cc, p.sq_material, p.sq_entrada_item, p.sq_mtsituacao, p.sq_projeto,
                 p.fornecedor_garantia, p.numero_rgp, p.data_tombamento, p.codigo_externo,
                 p.descricao_complementar, p.numero_serie, p.marca, p.modelo, p.data_fim_garantia, 
-                p.vida_util, p.observacao, p.ativo,
-                case p.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
+                p.vida_util, p.observacao, 
+                p.cc_patrimonial, p.cc_depreciacao, p.cc_data, p.cc_pessoa, 
+                to_char(p.cc_data, 'DD/MM/YYYY, HH24:MI:SS') phpdt_cc_data,
+                p.ativo, case p.ativo when 'S' then 'Sim' else 'Não' end nm_ativo,
                 a.nome||case when p.marca is not null then ' '||p.marca end||
                         case when p.modelo is not null then ' '||p.modelo end||
                         case when p.numero_serie is not null then ' Série: '||p.numero_serie end nome_completo,
@@ -49,12 +51,16 @@ begin
                 x.nome nm_almoxarifado,
                 g.nome nm_cc, g.sigla sg_cc,
                 h.titulo nm_projeto, h.codigo_interno cd_projeto,
+                o.nome cc_pessoa_nome, o.nome_resumido cc_pessoa_nome_res,
                 brl.valor_aquisicao vl_aquisicao_brl, brl.valor_atual vl_atual_brl, brl.data_valor_atual dt_vl_atual_brl,
-                case when brl.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, brl.sq_moeda) else null end vl_depreciado_brl,
+                case when brl.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, brl.sq_moeda, null, p_fim) else null end vl_depreciado_brl,
+                case when brl.valor_aquisicao is not null then round(brl.valor_atual/(p.vida_util*365) * 30,2) else null end vl_deprec_mensal_brl,
                 usd.valor_aquisicao vl_aquisicao_usd, usd.valor_atual vl_atual_usd, usd.data_valor_atual dt_vl_atual_usd,
-                case when usd.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, usd.sq_moeda) else null end vl_depreciado_usd,
+                case when usd.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, usd.sq_moeda, null, p_fim) else null end vl_depreciado_usd,
+                case when usd.valor_aquisicao is not null then round(usd.valor_atual/(p.vida_util*12),2) else null end vl_deprec_mensal_usd,
                 eur.valor_aquisicao vl_aquisicao_eur, eur.valor_atual vl_atual_eur, eur.data_valor_atual dt_vl_atual_eur,
-                case when eur.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, eur.sq_moeda) else null end vl_depreciado_eur
+                case when eur.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, eur.sq_moeda, null, p_fim) else null end vl_depreciado_eur,
+                case when eur.valor_aquisicao is not null then round(eur.valor_atual/(p.vida_util*12),2) else null end vl_deprec_mensal_eur
            from mt_permanente                            p
                 inner           join cl_material         a  on (p.sq_material         = a.sq_material)
                   inner         join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
@@ -70,6 +76,7 @@ begin
                     left        join fn_lancamento_doc   k  on (j.sq_lancamento_doc   = k.sq_lancamento_doc)
                       left      join fn_lancamento       l  on (k.sq_siw_solicitacao  = l.sq_siw_solicitacao)
                         left    join siw_solicitacao     m  on (l.sq_siw_solicitacao  = m.sq_siw_solicitacao)
+                left            join co_pessoa           o on (p.cc_pessoa            = o.sq_pessoa)
                 left            join (select cot.sq_permanente, cot.sq_moeda, cot.valor_aquisicao, cot.valor_atual, cot.data_valor_atual
                                         from mt_bem_cotacao      cot
                                              inner join co_moeda moe on (cot.sq_moeda = moe.sq_moeda)
