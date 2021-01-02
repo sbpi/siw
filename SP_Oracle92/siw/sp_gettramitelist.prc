@@ -15,6 +15,7 @@ begin
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'D' then 'Chefia das unidades decisórias e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
                    when 'I' then 'Todos os usuários internos'
                 end nm_chefia,
@@ -33,6 +34,7 @@ begin
                 case b.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'D' then 'Chefia das unidades decisórias e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
                    when 'I' then 'Todos os usuários internos'
                 end nm_chefia
@@ -48,6 +50,7 @@ begin
                 case b.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'D' then 'Chefia das unidades decisórias e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
                    when 'I' then 'Todos os usuários internos'
                 end nm_chefia
@@ -65,6 +68,7 @@ begin
                  case b.chefia_imediata
                     when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
                     when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'D' then 'Chefia das unidades decisórias e usuários com  permissão'
                     when 'N' then 'Apenas usuários com permissão'
                     when 'I' then 'Todos os usuários internos'
                  end nm_chefia
@@ -89,6 +93,7 @@ begin
                  case b.chefia_imediata
                     when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
                     when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                    when 'D' then 'Chefia das unidades decisórias e usuários com  permissão'
                     when 'N' then 'Apenas usuários com permissão'
                     when 'I' then 'Todos os usuários internos'
                  end nm_chefia
@@ -113,6 +118,7 @@ begin
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'D' then 'Chefia das unidades decisórias e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
                    when 'I' then 'Todos os usuários internos'
                 end nm_chefia
@@ -129,6 +135,7 @@ begin
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'D' then 'Chefia das unidades decisórias e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
                    when 'I' then 'Todos os usuários internos'
                 end nm_chefia
@@ -149,6 +156,7 @@ begin
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'D' then 'Chefia das unidades decisórias e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
                    when 'I' then 'Todos os usuários internos'
                 end nm_chefia
@@ -166,6 +174,7 @@ begin
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'D' then 'Chefia das unidades decisórias e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
                    when 'I' then 'Todos os usuários internos'
                 end nm_chefia
@@ -183,6 +192,7 @@ begin
                 case a.chefia_imediata
                    when 'S' then 'Chefia da unidade solicitante e usuários com  permissão'
                    when 'U' then 'Chefia da unidade responsável e usuários com  permissão'
+                   when 'D' then 'Chefia das unidades decisórias e usuários com  permissão'
                    when 'N' then 'Apenas usuários com permissão'
                    when 'I' then 'Todos os usuários internos'
                 end nm_chefia
