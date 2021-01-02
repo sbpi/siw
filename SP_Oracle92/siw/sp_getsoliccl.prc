@@ -499,7 +499,7 @@ begin
                                              inner join siw_solicitacao   y on x.sq_siw_solicitacao = y.sq_siw_solicitacao
                                              inner join siw_tramite       z on y.sq_siw_tramite     = z.sq_siw_tramite
                                        where z.sigla <> 'CA'
-                                         and (p_sq_acao_ppa is null or (p_sq_acao_ppa is not null and y.sq_siw_solicitacao <> p_sq_acao_ppa))
+                                         and (p_sq_acao_ppa is null or (p_sq_acao_ppa is not null and y.sq_siw_solicitacao <> to_number(p_sq_acao_ppa)))
                                       group by y.sq_siw_solicitacao, w.sq_solicitacao_item
                                      )                        c2 on (c.sq_solicitacao_item = c2.sq_solicitacao_item)
                     left        join (select x.sq_siw_solicitacao, w.sq_documento_item, w.sq_solicitacao_item, 
@@ -509,7 +509,7 @@ begin
                                              inner join siw_solicitacao   y on x.sq_siw_solicitacao = y.sq_siw_solicitacao
                                              inner join siw_tramite       z on y.sq_siw_tramite     = z.sq_siw_tramite
                                        where z.sigla <> 'CA'
-                                         and x.sq_siw_solicitacao = p_sq_acao_ppa
+                                         and x.sq_siw_solicitacao = to_number(p_sq_acao_ppa)
                                      )                        c3 on (c.sq_solicitacao_item = c3.sq_solicitacao_item)
                     inner       join cl_item_fornecedor       d  on (c.sq_solicitacao_item = d.sq_solicitacao_item and
                                                                      d.pesquisa            = 'N' and
