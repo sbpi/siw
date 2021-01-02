@@ -34,7 +34,7 @@ begin
            from fn_lancamento_doc                a
                 inner    join fn_lancamento      a1 on (a.sq_siw_solicitacao  = a1.sq_siw_solicitacao)
                 inner    join siw_solicitacao    a2 on (a.sq_siw_solicitacao  = a2.sq_siw_solicitacao)
-                  inner  join siw_tramite       a23 on (a2.sq_siw_tramite     = a23.sq_siw_tramite)
+                  inner  join siw_tramite       a23 on (a2.sq_siw_tramite     = a23.sq_siw_tramite and a23.sigla <> 'CA')
                 inner    join fn_tipo_documento  b  on (a.sq_tipo_documento   = b.sq_tipo_documento)
                 left     join (select x.sq_lancamento_doc, sum(x.valor_total) total_item
                                from fn_documento_item x
