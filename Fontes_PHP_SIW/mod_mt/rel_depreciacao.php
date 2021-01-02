@@ -372,14 +372,13 @@ function Inicial() {
       ShowHTML('     return false;');
       ShowHTML('  }');
       CompData('p_inicio','Tombamento inicial','<=','p_fim','Tombamento final');
-      ShowHTML('  theForm.Botao[0].disabled=true;');
-      ShowHTML('  theForm.Botao[1].disabled=true;');
       ValidateClose();
       ScriptClose();
     } 
+  
+    ShowHTML('<BASE HREF="'.$conRootSIW.'">');
     ShowHTML('</HEAD>');
   }
-  ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   if ($w_troca>'') {
     BodyOpen('onLoad="document.Form.'.$w_troca.'.focus();"');
   } elseif ($w_tipo=='WORD'){
@@ -395,196 +394,68 @@ function Inicial() {
   Estrutura_Menu();
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
-  if ($w_filtro > '') ShowHTML($w_filtro);
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
-  if ($O=='L') {
-    if ($w_tipo!='WORD') {
-      ShowHTML('<tr>');
-      ShowHTML('  <td>');
-      if ($w_libera_edicao=='S') {
-        if($P1!=1) ShowHTML('        <a accesskey="I" class="ss" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'"><u>I</u>ncluir</a>&nbsp;');
-      }  
-      if (strpos(str_replace('p_ordena','w_ordena',MontaFiltro('GET')),'p_')) ShowHTML('        <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u><font color="#BC5100">F</u>iltrar (Ativo)</font></a>');
-      else                       ShowHTML('        <a accesskey="F" class="SS" href="'.$w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=P&P1='.$P1.'&P2='.$P2.'&P3=1&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'"><u>F</u>iltrar (Inativo)</a>');
-    }
-    ShowHTML('    <td align="right">');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
+  ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td valign="top"><table border=0 width="90%" cellspacing=0>');
+  if ($SG=='MTDEPREC') $rel = 'depreciacao';
+  else $rel = 'detDesp';
+  AbreForm('Form',$w_dir.$w_pagina.$rel,'POST','return(Validacao(this));','Depreciação',$P1,'',$P3,null,$TP,$SG,$R,'L');
+  ShowHTML(montaFiltro('POST',true));
+  ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
+  ShowHTML('      <tr><td colspan=2><table border=0 width="100%" cellspacing=0><tr valign="top">');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('          <td><b><u>R</u>GP Atual:</b><br><input '.$p_Disabled.' accesskey="R" type="text" name="p_rgp" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$p_rgp.'"></td>');
+  ShowHTML('          <td><b><u>B</u>em:</b><br><input '.$p_Disabled.' accesskey="B" type="text" name="p_material" class="sti" SIZE="40" MAXLENGTH="40" VALUE="'.$p_material.'"></td>');
+  ShowHTML('          <td><b><u>C</u>ódigo do lançamento financeiro:</b><br><input '.$p_Disabled.' accesskey="C" type="text" name="p_financeiro" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$p_financeiro.'"></td>');
 
-    ShowHTML('    '.exportaOffice().'<b>Registros: '.count($RS));        
-    ShowHTML('<tr><td align="center" colspan=3>');  
-    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    if ($w_tipo!='WORD') {
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Tipo','nm_tipo_material').'</td>');
-      //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Almoxarifado','nm_almoxarifado').'</td>');
-      //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Unidade','nm_unidade').'</td>');
-      //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Localização','nm_localizacao').'</td>');
-      //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Projeto','cd_projeto').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('RGP','numero_rgp').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Bem','nome').'</td>');
-      //ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Detalhamento','descricao_complementar').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Tombamento','data_tombamento').'</td>');
-      ShowHTML('          <td rowspan=2><b>'.LinkOrdena('Vida Útil (Anos)','vida_util').'</td>');
-      //ShowHTML('          <td colspan=3><b>Valor Aquisição</b></td>');
-      ShowHTML('          <td rowspan=2><b>Valor Aquisição (BRL)</b></td>');
-      //ShowHTML('          <td colspan=3><b>Valor Depreciado</b></td>');
-      ShowHTML('          <td colspan=3><b>Depreciação (BRL)</b></td>');
-      ShowHTML('        </tr>');
-      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      //ShowHTML('          <td><b>'.LinkOrdena('BRL','vl_atual_brl').'</b></td>');
-      //ShowHTML('          <td><b>'.LinkOrdena('USD','vl_atual_usd').'</b></td>');
-      //ShowHTML('          <td><b>'.LinkOrdena('EUR','vl_atual_eur').'</b></td>');
-      ShowHTML('          <td><b>Mensal</b></td>');
-      ShowHTML('          <td><b>Acumulada</b></td>');      
-      ShowHTML('          <td><b>Valor em '.nvl($p_fim, date('d/m/Y',time())).'</b></td>');
-      //ShowHTML('          <td><b>'.LinkOrdena('BRL','vl_depreciado_brl').'</b></td>');
-      //ShowHTML('          <td><b>'.LinkOrdena('USD','vl_depreciado_usd').'</b></td>');
-      //ShowHTML('          <td><b>'.LinkOrdena('EUR','vl_depreciado_eur').'</b></td>');
-      ShowHTML('        </tr>');
-    } else {
-      ShowHTML('          <td rowspan=2><b>Tipo</td>');
-      //ShowHTML('          <td rowspan=2><b>Almoxarifado</td>');
-      //ShowHTML('          <td rowspan=2><b>Unidade</td>');
-      //ShowHTML('          <td rowspan=2><b>Localização</td>');
-      //ShowHTML('          <td rowspan=2><b>Projeto</td>');
-      ShowHTML('          <td rowspan=2><b>RGP</td>');
-      ShowHTML('          <td rowspan=2><b>Bem</td>');
-      //ShowHTML('          <td rowspan=2><b>Detalhamento</td>');
-      ShowHTML('          <td rowspan=2><b>Tombamento</td>');
-      ShowHTML('          <td rowspan=2><b>Vida Útil (Anos)</td>');
-      //ShowHTML('          <td colspan=3><b>Valor Aquisição</b></td>');
-      ShowHTML('          <td rowspan=2><b>Valor Aquisição (BRL)</b></td>');
-      //ShowHTML('          <td colspan=3><b>Valor Depreciado</b></td>');
-      ShowHTML('          <td colspan=3><b>Depreciação (BRL)</b></td>');
-      ShowHTML('        </tr>');
-      ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-      //ShowHTML('          <td><b>BRL</b></td>');
-      //ShowHTML('          <td><b>USD</b></td>');
-      //ShowHTML('          <td><b>EUR</b></td>');
-      ShowHTML('          <td><b>Mensal</b></td>');
-      ShowHTML('          <td><b>Acumulada</b></td>');      
-      ShowHTML('          <td><b>Valor em '.nvl($p_fim, date('d/m/Y',time())).'</b></td>');
-      //ShowHTML('          <td><b>BRL</b></td>');
-      //ShowHTML('          <td><b>USD</b></td>');
-      //ShowHTML('          <td><b>EUR</b></td>');
-      ShowHTML('        </tr>');
-    }  
-    if (count($RS)<=0) {
-      // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>');
-    } else {
-      // Lista os registros selecionados para listagem
-      $RS1 = array_slice($RS, (($P3-1)*$P4), $P4);
-      foreach($RS1 as $row){ 
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>'.f($row,'nm_tipo_material').'</td>');
-        //ShowHTML('        <td nowrap>'.f($row,'nm_almoxarifado').'</td>');
-        //ShowHTML('        <td>'.nvl(f($row,'nm_unidade'),'---').'</td>');
-        //ShowHTML('        <td>'.nvl(f($row,'nm_localizacao'),'---').'</td>');
-        //ShowHTML('        <td title="'.f($row,'nm_projeto').'">'.nvl(f($row,'cd_projeto'),'---').'</td>');
-        ShowHTML('        <td align="center"'.((nvl(f($row,'observacao'),'')!='') ? ' title="'.  CRLF2BR(f($row,'observacao')).'"' : '').'>'.f($row,'numero_rgp').'</td>');
-        if ($w_tipo!='WORD') ShowHTML('        <td>'.ExibePermanente($w_dir_volta,$w_cliente,f($row,'nome_completo').((nvl(f($row,'descricao_complementar'),'')!='') ? ' '.f($row,'descricao_complementar') : ''),f($row,'chave'),$TP,null,null).'</td>');
-        else                 ShowHTML('        <td>'.f($row,'nome_completo').'</td>');
-        //ShowHTML('        <td>'.f($row,'descricao_complementar').'</td>');
-        ShowHTML('        <td align="center">'.formataDataEdicao(f($row,'data_tombamento'),5).'</td>');
-        ShowHTML('        <td align="center">'.f($row,'vida_util').'</td>');
-        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_brl'),2),'---').'</td>');
-        /*
-        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_usd'),2),'---').'</td>');
-        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_eur'),2),'---').'</td>');
-        */
-        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_deprec_mensal_brl'),2),'---').'</td>'); // Depreciação mensal
-        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_brl'),2),'---').'</td>'); // Depreciação acumulada
-        ShowHTML('        <td align="right">'.nvl(formatNumber((f($row,'vl_atual_brl') - f($row,'vl_depreciado_brl')),2),'---').'</td>');
-        /*
-        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_usd'),2),'---').'</td>');
-        ShowHTML('        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_eur'),2),'---').'</td>');
-        */
-      }
-    } 
-    ShowHTML('      </center>');
-    ShowHTML('    </table>');
-    ShowHTML('  </td>');
-    ShowHTML('<tr><td align="center" colspan=3>');
-    if ($w_tipo!='WORD') {
-      if ($R>'') {
-        MontaBarra($w_dir.$w_pagina.$par.'&R='.$R.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
-      } else {
-        MontaBarra($w_dir.$w_pagina.$par.'&R='.$w_pagina.$par.'&O='.$O.'&P1='.$P1.'&P2='.$P2.'&TP='.$TP.'&SG='.$SG.'&w_chave='.$w_chave,ceil(count($RS)/$P4),$P3,$P4,count($RS));
-      } 
-    }
-    ShowHTML('</tr>');
-  } elseif ($O=='P') {
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
-    ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td valign="top"><table border=0 width="90%" cellspacing=0>');
-    AbreForm('Form',$w_dir.$w_pagina.$par,'POST','return(Validacao(this));',null,$P1,'',$P3,null,$TP,$SG,$R,'L');
-    ShowHTML(montaFiltro('POST',true));
-    ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
-    ShowHTML('      <tr><td colspan=2><table border=0 width="100%" cellspacing=0><tr valign="top">');
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b><u>R</u>GP Atual:</b><br><input '.$p_Disabled.' accesskey="R" type="text" name="p_rgp" class="sti" SIZE="10" MAXLENGTH="18" VALUE="'.$p_rgp.'"></td>');
-    ShowHTML('          <td><b><u>B</u>em:</b><br><input '.$p_Disabled.' accesskey="B" type="text" name="p_material" class="sti" SIZE="40" MAXLENGTH="40" VALUE="'.$p_material.'"></td>');
-    ShowHTML('          <td><b><u>C</u>ódigo do lançamento financeiro:</b><br><input '.$p_Disabled.' accesskey="C" type="text" name="p_financeiro" class="sti" SIZE="20" MAXLENGTH="30" VALUE="'.$p_financeiro.'"></td>');
+  ShowHTML('      <tr>');
+  SelecaoEndereco('En<u>d</u>ereço principal:','d',null,$p_endereco,$w_cliente,'p_endereco','FISICO', 'onChange="document.Form.target=\'\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_endereco\'; document.Form.submit();"', 3);
+  ShowHTML('      </tr>');
 
-    ShowHTML('      <tr>');
-    SelecaoEndereco('En<u>d</u>ereço principal:','d',null,$p_endereco,$w_cliente,'p_endereco','FISICO', 'onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_endereco\'; document.Form.submit();"', 3);
-    ShowHTML('      </tr>');
+  ShowHTML('      <tr valign="top">');
+  selecaoalmoxarifado('Al<u>m</u>oxarifado:','M', 'Selecione o almoxarifado ao qual o bem pertence.', $p_almoxarifado,'p_almoxarifado',null,null);
 
-    ShowHTML('      <tr valign="top">');
-    selecaoalmoxarifado('Al<u>m</u>oxarifado:','M', 'Selecione o almoxarifado ao qual o bem pertence.', $p_almoxarifado,'p_almoxarifado',null,null);
+  ShowHTML('      <tr valign="top">');
+  SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$p_unidade,$p_endereco,'p_unidade','MOD_MT','onChange="document.Form.target=\'\'; document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_unidade\'; document.Form.submit();"', 3);
 
-    ShowHTML('      <tr valign="top">');
-    SelecaoUnidade('<U>U</U>nidade solicitante:','U','Selecione a unidade solicitante do pedido',$p_unidade,$p_endereco,'p_unidade','MOD_MT','onChange="document.Form.action=\''.$w_dir.$w_pagina.$par.'\'; document.Form.O.value=\''.$O.'\'; document.Form.w_troca.value=\'p_unidade\'; document.Form.submit();"', 3);
+  ShowHTML('      <tr>');
+  selecaoLocalizacao('Lo<U>c</U>alização:','C',null,$p_localizacao,$p_unidade,'p_localizacao',null,null,3);
+  ShowHTML('      </tr>');
 
-    ShowHTML('      <tr>');
-    selecaoLocalizacao('Lo<U>c</U>alização:','C',null,$p_localizacao,$p_unidade,'p_localizacao',null,null,3);
-    ShowHTML('      </tr>');
+  ShowHTML('      <tr valign="top">');
+  selecaoTipoMatServ('T<U>i</U>po de material:','I',null,$p_tipo_material,null,'p_tipo_material','FOLHAPER',null,3);
 
-    ShowHTML('      <tr valign="top">');
-    selecaoTipoMatServ('T<U>i</U>po de material:','I',null,$p_tipo_material,null,'p_tipo_material','FOLHAPER',null,3);
+  ShowHTML('          <tr>');
+  $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
+  SelecaoSolic('Projeto:',null,null,$w_cliente,$p_projeto,$w_sq_menu_relac,f($RS1,'sq_menu'),'p_projeto',f($RS_Menu,'sigla'),null,$p_projeto,'<BR />',3);
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td><b><u>M</u>arca:</b><br><input accesskey="M" type="text" name="p_marca" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_marca.'"></td>');
+  ShowHTML('        <td><b><u>M</u>odelo:</b><br><input accesskey="M" type="text" name="p_modelo" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_modelo.'"></td>');
+  selecaoMtSituacao('<u>S</u>ituação física:','S', null, $p_situacao,'p_situacao','BEM',null);
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('        <td><b><U>D</U>escrição complementar:<br><input accesskey="M" type="text" name="p_descricao" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_descricao.'"></td>');
+  ShowHTML('        <td><b><U>O</U>bservação:<br><input accesskey="M" type="text" name="p_observacao" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_observacao.'"></td>');
+  ShowHTML('        <td><b><u>C</u>ódigo externo:</b><br><input accesskey="C" type="text" name="p_codigo_externo" class="sti" SIZE="25" MAXLENGTH="30" VALUE="'.$p_codigo_externo.'"></td>');
+  ShowHTML('      <tr><td valign="top"><b><u>T</u>ombamento entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
 
-    ShowHTML('          <tr>');
-    $sql = new db_getLinkData; $RS1 = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
-    SelecaoSolic('Projeto:',null,null,$w_cliente,$p_projeto,$w_sq_menu_relac,f($RS1,'sq_menu'),'p_projeto',f($RS_Menu,'sigla'),null,$p_projeto,'<BR />',3);
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b><u>M</u>arca:</b><br><input accesskey="M" type="text" name="p_marca" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_marca.'"></td>');
-    ShowHTML('        <td><b><u>M</u>odelo:</b><br><input accesskey="M" type="text" name="p_modelo" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_modelo.'"></td>');
-    selecaoMtSituacao('<u>S</u>ituação física:','S', null, $p_situacao,'p_situacao','BEM',null);
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('        <td><b><U>D</U>escrição complementar:<br><input accesskey="M" type="text" name="p_descricao" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_descricao.'"></td>');
-    ShowHTML('        <td><b><U>O</U>bservação:<br><input accesskey="M" type="text" name="p_observacao" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_observacao.'"></td>');
-    ShowHTML('        <td><b><u>C</u>ódigo externo:</b><br><input accesskey="C" type="text" name="p_codigo_externo" class="sti" SIZE="25" MAXLENGTH="30" VALUE="'.$p_codigo_externo.'"></td>');
-    ShowHTML('      <tr><td valign="top"><b><u>T</u>ombamento entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
-
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b>Recuperar:</b><br>');
-    ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S"'.(($p_ativo=='S') ? ' checked' : '').'> Apenas ativos<br>');
-    ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N"'.(($p_ativo=='N') ? ' checked' : '').'> Apenas inativos<br>');
-    ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value=""'.((nvl($p_ativo,'X')=='X') ? ' checked' : '').'> Tanto faz');
-    ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
-    ShowHTML('          </table>');
-    ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
-    ShowHTML('      <tr><td align="center" colspan="3">');
-    ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
-    if ($O=='C') {
-      // Se for cópia
-      ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Abandonar cópia">');
-    } else {
-      ShowHTML('            <input class="stb" type="button" onClick="location.href=\''.montaURL_JS($w_dir,$w_pagina.$par.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG).'\';" name="Botao" value="Remover filtro">');
-    } 
-    ShowHTML('          </td>');
-    ShowHTML('      </tr>');
-    ShowHTML('    </table>');
-    ShowHTML('    </TD>');
-    ShowHTML('</tr>');
-    ShowHTML('</FORM>');
-  } else {
-    ScriptOpen('JavaScript');
-    ShowHTML(' alert("Opção não disponível");');
-    ShowHTML(' history.back(1);');
-    ScriptClose();
-  } 
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('          <td><b>Recuperar:</b><br>');
+  ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S"'.(($p_ativo=='S') ? ' checked' : '').'> Apenas ativos<br>');
+  ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N"'.(($p_ativo=='N') ? ' checked' : '').'> Apenas inativos<br>');
+  ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value=""'.((nvl($p_ativo,'X')=='X') ? ' checked' : '').'> Tanto faz');
+  ShowHTML('      <tr valign="top">');
+  ShowHTML('          <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
+  ShowHTML('          </table>');
+  ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
+  ShowHTML('      <tr><td align="center" colspan="3">');
+  ShowHTML('            <input class="STB" type="submit" name="Botao" value="Exibir">');
+  ShowHTML('            <input class="STB" type="button" onClick="location.href=\'' . montaURL_JS($w_dir, $w_pagina . $par . '&R=' . $R . '&P1=' . $P1 . '&P2=' . $P2 . '&P3=' . $P3 . '&P4=' . $P4 . '&TP=' . $TP . '&O=P&SG=' . $SG) . '\';" name="Botao" value="Limpar campos">');
+  ShowHTML('          </td>');
+  ShowHTML('      </tr>');
+  ShowHTML('    </table>');
+  ShowHTML('    </TD>');
+  ShowHTML('</tr>');
+  ShowHTML('</FORM>');
   ShowHTML('    </table>');
   ShowHTML('    </TD>');
   ShowHTML('</tr>');
@@ -592,6 +463,268 @@ function Inicial() {
   ShowHTML('</center>');
 } 
 
+// =========================================================================
+// Relatório de depreciação
+// -------------------------------------------------------------------------
+function depreciacao() {
+  extract($GLOBALS);
+  Global $w_Disabled;
+  $w_chave              = $_REQUEST['w_chave'];
+  $w_copia              = $_REQUEST['w_copia'];
+  $w_tipo               = $_REQUEST['w_tipo'];
+  $w_tipo_material      = $_REQUEST['w_tipo_material'];
+  
+  $sql = new db_getMTBem;
+  $RSQuery = $sql->getInstanceOf($dbms,$w_cliente, $w_usuario, $p_chave, $p_sqcc, 
+          $p_projeto, $p_financeiro, $p_tipo_material, $p_material, $p_rgp, $p_descricao,
+          $p_marca, $p_modelo, $p_observacao, $p_ativo, $p_almoxarifado, $p_endereco, 
+          $p_unidade,  $p_localizacao, $p_situacao, $p_inicio, $p_fim, $p_codigo_externo,
+          $p_restricao);
+  $RSQuery = SortArray($RSQuery,'nm_tipo_material','asc','nome_completo','asc','numero_rgp','asc'); 
+
+  // Recupera informações sobre o tipo do material ou serviço
+  if (nvl($w_tipo_material,'')!='') {
+    $sql = new db_getTipoMatServ; $RS_Tipo = $sql->getInstanceOf($dbms,$w_cliente,$w_tipo_material,null,null,null,null,null,null,'REGISTROS');
+    foreach ($RS_Tipo as $row) { $RS_Tipo = $row; break; }
+    $w_classe = f($RS_Tipo,'classe');
+  } 
+
+  $w_embed  = '';
+  $l_html   = '';
+  $w_filtro = '';
+  
+  headerGeral('P', $w_tipo, $w_chave, $conSgSistema.' - Patrimônio', $w_embed, null, null, $w_linha_pag,$w_filtro);
+  if ($w_embed!='WORD') {
+    Cabecalho();
+    head();
+    ShowHTML('<TITLE>'.$conSgSistema.' - Patrimônio</TITLE>');
+    ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+    ShowHTML('</HEAD>');
+    BodyOpenClean('onLoad="this.focus()";');
+    CabecalhoRelatorio($w_cliente, f($RS_Menu,'nome'), 4, $w_chave);
+    ShowHTML('<HR>');
+  }
+  ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
+
+  if ($w_tipo!='EXCEL') {
+    if ($p_rgp>'')          $w_filtro.='<tr><td align="right">RGP <td>[<b>'.$p_rgp.'</b>]';
+    if ($p_material>'')     $w_filtro.='<tr><td align="right">Bem <td>[<b>'.$p_material.'</b>] em qualquer parte';
+    if ($p_financeiro>'')   $w_filtro.='<tr><td align="right">Financeiro <td>[<b>'.$p_financeiro.'</b>]';
+    if ($p_endereco>'') {
+      $sql = new db_getAddressData; $RS = $sql->getInstanceOf($dbms, $p_endereco);
+      $w_filtro.='<tr><td align="right">Endereço <td>[<b>'.f($RS,'endereco_completo').'</b>]';
+    } 
+    if ($p_almoxarifado>'') {
+      $sql = new db_getAlmoxarifado; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_almoxarifado,null,null,null,null,'OUTROS');
+      $w_filtro.='<tr><td align="right">Almoxarifado <td>[<b>'.f($RS[0],'nome').'</b>]';
+    } 
+    if ($p_tipo_material>'') {
+      $sql = new db_getTipoMatServ; $RS = $sql->getInstanceOf($dbms,$w_cliente,$p_tipo_material,null,null,null,null,null,null,'REGISTROS');
+      $w_filtro.='<tr><td align="right">Tipo <td>[<b>'.f($RS[0],'nome_completo').'</b>]';
+    } 
+    if ($p_projeto>'') {
+      $sql = new db_getSolicData; $RS = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
+      $w_filtro .= '<tr valign="top"><td align="right">Projeto <td>[<b><A class="HL" HREF="projeto.php?par=Visual&O=L&w_chave='.$p_projeto.'&w_tipo=Volta&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Exibe as informações do projeto." target="_blank">'.f($RS,'titulo').'</a></b>]';
+    } 
+    if ($p_marca>'')        $w_filtro.='<tr><td align="right">Marca <td>[<b>'.$p_marca.'</b>] em qualquer parte';
+    if ($p_modelo>'')       $w_filtro.='<tr><td align="right">Modelo <td>[<b>'.$p_modelo.'</b>] em qualquer parte';
+    if ($p_situacao>'') {
+      $sql = new db_getMtSituacao; $RS = $sql->getInstanceOf($dbms,$w_cliente,null,$p_situacao,null,null,null);
+      $w_filtro.='<tr><td align="right">Situação física <td>[<b>'.f($RS[0],'nome').'</b>]';
+    } 
+    if ($p_descricao>'')    $w_filtro.='<tr><td align="right">Descrição <td>[<b>'.$p_descricao.'</b>] em qualquer parte';
+    if ($p_observacao>'')   $w_filtro.='<tr><td align="right">Observação <td>[<b>'.$p_observacao.'</b>] em qualquer parte';
+    if ($p_fim>'')          $w_filtro .= '<tr valign="top"><td align="right">Tombamento <td>[<b>'.$p_inicio.'-'.$p_fim.'</b>]';
+    if ($p_ativo=='S') {
+      $w_filtro.='<tr><td align="right">Situação <td>[<b>Apenas itens ativos</b>]';
+    } elseif ($p_ativo=='N') {
+      $w_filtro.='<tr><td align="right">Situação <td>[<b>Apenas itens inativos</b>]';
+    } else {
+      $w_filtro.='<tr><td align="right">Situação <td>[<b>Itens ativos e inativos</b>]';
+    }
+    if ($w_filtro) {
+      $l_html .= '<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
+    }
+  }
+  
+  
+  $w_resumo = array();
+  $w_qtd_geral = 0;
+  $w_aquisicao_geral = 0;
+  $w_acumulado_geral = 0;
+  $w_atual_geral = 0;
+  $w_atual = '*0*'; // valor qualquer apenas para marcar o início da execução
+
+  $l_html .= '<tr><td align="center" colspan=3><div align="center">';
+  $l_html .= '    <TABLE class="tudo" width=99%  border="1" bordercolor="#00000">';
+  if (count($RSQuery)<=0) {
+    // Se não foram selecionados registros, exibe mensagem
+    $l_html .= '      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>';
+  } else {
+    foreach($RSQuery as $row){ 
+      if ($w_atual != f($row,'nm_tipo_material')) {
+        if ($w_atual != '*0*') {
+          // Linha de totais do tipo de material
+          $l_html .= '      <tr valign="top">';
+          $l_html .= '        <td align="right" colspan='.($colspan-3).'><b> Total '.$w_atual.' ('.formatNumber($w_resumo[$w_atual]['qtd'],0).' bens)</b></td>';
+          $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['aquisicao']).'</b></td>';
+          $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['acumulado']).'</b></td>';
+          $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['atual']).'</b></td>';
+          $l_html .= '      </tr>';
+
+          $w_qtd_geral += $w_resumo[$w_atual]['qtd'];
+          $w_aquisicao_geral += $w_resumo[$w_atual]['aquisicao'];
+          $w_acumulado_geral += $w_resumo[$w_atual]['acumulado'];
+          $w_atual_geral += $w_resumo[$w_atual]['atual'];
+        }
+        $colspan = 0;
+        depreciacao_cab($w_tipo, $l_html, $colspan, f($row,'nm_tipo_material'));
+        $w_atual = f($row,'nm_tipo_material');
+        $w_resumo[$w_atual]['qtd'] = 0;
+        $w_resumo[$w_atual]['aquisicao'] = 0;
+        $w_resumo[$w_atual]['acumulado'] = 0;
+        $w_resumo[$w_atual]['atual'] = 0;
+      }
+      $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+      $l_html .= '      <tr valign="top">';
+      //$l_html .= '        <td title="'.f($row,'nm_projeto').'">'.nvl(f($row,'cd_projeto'),'---').'</td>';
+      $l_html .= '        <td align="center"'.((nvl(f($row,'observacao'),'')!='') ? ' title="'.  CRLF2BR(f($row,'observacao')).'"' : '').'>'.f($row,'numero_rgp').'</td>';
+      $l_html .= '        <td>'.ExibePermanente($w_dir_volta,$w_cliente,f($row,'nome_completo').((nvl(f($row,'descricao_complementar'),'')!='') ? ' '.f($row,'descricao_complementar') : ''),f($row,'chave'),$TP,null,null,$w_tipo).'</td>';
+      //$l_html .= '        <td>'.f($row,'descricao_complementar').'</td>';
+      if (!$p_almoxarifado) $l_html .= '        <td nowrap>'.f($row,'nm_almoxarifado').'</td>';
+      //if (!$p_unidade) $l_html .= '        <td>'.nvl(f($row,'nm_unidade'),'---').'</td>';
+      if (!$p_endereco) $l_html .= '        <td>'.nvl(f($row,'logradouro'),'---').'</td>';
+      if (!$p_localizacao) $l_html .= '        <td nowrap>'.nvl(f($row,'nm_localizacao'),'---').'</td>';
+      $l_html .= '        <td align="center">'.formataDataEdicao(f($row,'data_tombamento'),5).'</td>';
+      $l_html .= '        <td align="center">'.f($row,'vida_util').'</td>';
+      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_brl'),2),'---').'</td>';
+      /*
+      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_usd'),2),'---').'</td>';
+      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_eur'),2),'---').'</td>';
+      */
+      //$l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_deprec_mensal_brl'),2),'---').'</td>'; // Depreciação mensal
+      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_brl'),2),'---').'</td>'; // Depreciação acumulada
+      $l_html .= '        <td align="right">'.nvl(formatNumber((f($row,'vl_atual_brl') - f($row,'vl_depreciado_brl')),2),'---').'</td>';
+      /*
+      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_usd'),2),'---').'</td>';
+      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_eur'),2),'---').'</td>';
+      */
+      
+      // Acumula valores
+      $w_resumo[$w_atual]['qtd']++;
+      $w_resumo[$w_atual]['aquisicao'] += f($row,'vl_atual_brl');
+      $w_resumo[$w_atual]['acumulado'] += f($row,'vl_depreciado_brl');
+      $w_resumo[$w_atual]['atual'] += (f($row,'vl_atual_brl') - f($row,'vl_depreciado_brl'));
+    }
+
+    if ($w_atual != '*0*') {
+      // Linha de totais do último tipo de material
+      $l_html .= '      <tr valign="top">';
+      $l_html .= '        <td align="right" colspan='.($colspan-3).'><b> Total '.$w_atual.' ('.formatNumber($w_resumo[$w_atual]['qtd'],0).' bens)</b></td>';
+      $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['aquisicao']).'</b></td>';
+      $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['acumulado']).'</b></td>';
+      $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['atual']).'</b></td>';
+      $l_html .= '      </tr>';
+
+      $w_qtd_geral += $w_resumo[$w_atual]['qtd'];
+      $w_aquisicao_geral += $w_resumo[$w_atual]['aquisicao'];
+      $w_acumulado_geral += $w_resumo[$w_atual]['acumulado'];
+      $w_atual_geral += $w_resumo[$w_atual]['atual'];
+    }
+
+    // Linha de totais gerais da emissão
+    $l_html .= '      <tr valign="middle" style="height: 40px;">';
+    $l_html .= '        <td align="right" colspan='.($colspan-3).'><b> TOTAL GERAL ('.formatNumber($w_qtd_geral,0).' BENS)</b></td>';
+    $l_html .= '        <td align="right"><b>'.formatNumber($w_aquisicao_geral).'</b></td>';
+    $l_html .= '        <td align="right"><b>'.formatNumber($w_acumulado_geral).'</b></td>';
+    $l_html .= '        <td align="right"><b>'.formatNumber($w_atual_geral).'</b></td>';
+    $l_html .= '      </tr>';
+    
+  }
+
+  $l_html .= '    </table></div>';
+  $l_html .= '  </td>';
+  $l_html .= '</tr>';
+
+  if ($w_atual != '*0*') {
+    // Quadro resumo
+    $l_html .= '<tr style="height: 40px;"><td colspan=3>&nbsp;</td></tr>';
+    $l_html .= '<tr><td align="center" colspan=3><div align="center">';
+    $l_html .= '    <TABLE class="tudo" border="1" bordercolor="#00000">';
+    $l_html .= '      <tr style="height: 40px;">';
+    $l_html .= '        <td align="center" colspan=5><b>RESUMO</b></td>';
+    $l_html .= '      </tr>';
+    $l_html .= '      <tr>';
+    $l_html .= '        <td align="center"><b>Grupo</b></td>';
+    $l_html .= '        <td align="center"><b>Bens</b></td>';
+    $l_html .= '        <td align="center"><b>Valor<br>Aquisição (BRL)</b></td>';
+    $l_html .= '        <td align="center"><b>Depreciação<br>Acumulada (BRL)</b></td>';
+    $l_html .= '        <td align="center"><b>Valor em<br>'.$p_fim.' (BRL)</b></td>';
+    $l_html .= '      </tr>';
+    foreach($w_resumo as $k => $v) {
+      $l_html .= '      <tr valign="top">';
+      $l_html .= '        <td>'.$k.'</td>';
+      $l_html .= '        <td align="right">'.formatNumber($v['qtd'],0).'</td>';
+      $l_html .= '        <td align="right">'.formatNumber($v['aquisicao']).'</td>';
+      $l_html .= '        <td align="right">'.formatNumber($v['acumulado']).'</td>';
+      $l_html .= '        <td align="right">'.formatNumber($v['atual']).'</td>';
+      $l_html .= '      </tr>';
+    }
+    $l_html .= '      <tr valign="top">';
+    $l_html .= '        <td><b>TOTAIS</td>';
+    $l_html .= '        <td align="right"><b>'.formatNumber($w_qtd_geral,0).'</b></td>';
+    $l_html .= '        <td align="right"><b>'.formatNumber($w_aquisicao_geral).'</b></td>';
+    $l_html .= '        <td align="right"><b>'.formatNumber($w_acumulado_geral).'</b></td>';
+    $l_html .= '        <td align="right"><b>'.formatNumber($w_atual_geral).'</b></td>';
+    $l_html .= '      </tr>';
+    $l_html .= '    </table></div>';
+  }
+
+  ShowHTML($l_html);
+  
+  ShowHTML('</table>');
+
+  if($w_tipo=='PDF') RodapePdf();
+  else               Rodape();
+} 
+
+function depreciacao_cab($w_tipo, &$l_html, &$colspan, $titulo) {
+  extract($GLOBALS);
+  $texto = '';
+  
+  $texto .= '        <tr align="center">';
+  //$colspan++; $texto .= '          <td rowspan=2><b>Projeto</td>';
+  $colspan++; $texto .= '          <td rowspan=2><b>RGP</td>';
+  $colspan++; $texto .= '          <td rowspan=2><b>Bem</td>';
+  //$colspan++; $texto .= '          <td rowspan=2><b>Detalhamento</td>';
+  if (!$p_almoxarifado) { $colspan++; $texto .= '          <td rowspan=2><b>Almoxarifado</td>'; }
+  //if (!$p_unidade) { $colspan++; $texto .= '          <td rowspan=2><b>Unidade</td>'; }
+  if (!$p_endereco) { $colspan++; $texto .= '          <td rowspan=2><b>Endereço</td>'; }
+  if (!$p_localizacao) { $colspan++; $texto .= '          <td rowspan=2><b>Localização</td>'; }
+  $colspan++; $texto .= '          <td rowspan=2><b>Tombamento</td>';
+  $colspan++; $texto .= '          <td rowspan=2><b>Vida Útil (Anos)</td>';
+  //$texto .= '          <td colspan=3><b>Valor Aquisição</b></td>';
+  $colspan++; $texto .= '          <td rowspan=2><b>Valor Aquisição (BRL)</b></td>';
+  //$texto .= '          <td colspan=3><b>Valor Depreciado</b></td>';
+  $texto .= '          <td colspan=2><b>Depreciação (BRL)</b></td>';
+  $texto .= '        </tr>';
+  $texto .= '        <tr align="center">';
+  //$colspan++; $texto .= '          <td><b>BRL</b></td>';
+  //$colspan++; $texto .= '          <td><b>USD</b></td>';
+  //$colspan++; $texto .= '          <td><b>EUR</b></td>';
+  //$colspan++; $texto .= '          <td><b>Mensal</b></td>';
+  $colspan++; $texto .= '          <td><b>Acumulada</b></td>';      
+  $colspan++; $texto .= '          <td><b>Valor em '.nvl($p_fim, date('d/m/Y',time())).'</b></td>';
+  //$colspan++; $texto .= '          <td><b>BRL</b></td>';
+  //$colspan++; $texto .= '          <td><b>USD</b></td>';
+  //$colspan++; $texto .= '          <td><b>EUR</b></td>';
+
+  $l_html .= '      <tr valign="middle" style="height: 40px;" bgcolor="'.$w_cor.'">';
+  $l_html .= '        <td colspan='.$colspan.' align="center"><b>'.$titulo.'<b></td>';
+  $l_html .= $texto;
+
+  $l_html .= '        </tr>';
+}
 
 // =========================================================================
 // Rotina principal
@@ -601,6 +734,7 @@ function Main() {
   global $w_Disabled;
   switch ($par) {
     case 'INICIAL':            Inicial();           break;
+    case 'DEPRECIACAO':        Depreciacao();       break;
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

@@ -1223,12 +1223,16 @@ function ExibeMaterial($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic,$hint=n
 // =========================================================================
 // Montagem da URL com os dados de um material ou serviço
 // -------------------------------------------------------------------------
-function ExibePermanente($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic,$hint=null) {
+function ExibePermanente($p_dir,$p_cliente,$p_nome,$p_chave,$p_tp,$p_solic,$hint=null,$p_tipo=null) {
   extract($GLOBALS,EXTR_PREFIX_SAME,'l_');
   if (Nvl($p_chave,'')=='') {
     $l_string='---';
   } else {
-    $l_string .= '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_mt/permanente.php?par=TELAPERMANENTE&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'TelaBem\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="'.((nvl($hint,'')!='') ? $hint : 'Clique para exibir os dados deste bem patrimonial!').'">'.$p_nome.'</a>';
+    if ($p_tipo) {
+      $l_string = $p_nome;
+    } else {
+      $l_string = '<a class="hl" HREF="javascript:this.status.value;" onClick="window.open(\''.$conRootSIW.'mod_mt/permanente.php?par=TELAPERMANENTE&w_cliente='.$p_cliente.'&w_chave='.$p_chave.'&w_solic='.$p_solic.'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$p_tp.'&SG='.'\',\'TelaBem\',\'width=785,height=570,top=10,left=10,toolbar=no,scrollbars=yes,resizable=yes,status=no\'); return false;" title="'.((nvl($hint,'')!='') ? $hint : 'Clique para exibir os dados deste bem patrimonial!').'">'.$p_nome.'</a>';
+    }
   }
   return $l_string;
 }
