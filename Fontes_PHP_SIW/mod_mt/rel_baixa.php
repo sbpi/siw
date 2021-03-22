@@ -1,66 +1,4 @@
 <?php
-/*
-select p.sq_permanente chave_siw, p.numero_rgp rfid,
-       c.nome as grupo,
-       a.nome||case when p.marca is not null then ' '||p.marca end||
-       case when p.modelo is not null then ' '||p.modelo end||
-       case when p.numero_serie is not null then ' Série: '||p.numero_serie end||' '||
-       p.descricao_complementar bem, 
-       to_char(p.data_tombamento,'dd/mm/yyyy') tombamento,
-       p.cc_patrimonial, 
-       brl.valor_atual vl_aquisicao,
-       p.vida_util,
-       p.vida_util * 365 vida_util_dias,
-       --(brl.valor_atual/(p.vida_util*365) * 30) deprec_mensal,
-       --(brl.valor_atual/(p.vida_util*365)) deprec_diaria,
-       case when p.data_tombamento > to_date('31/12/2018','dd/mm/yyyy') then 0
-            when to_date('31/12/2018','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 then p.vida_util * 365
-            else to_date('31/12/2018','dd/mm/yyyy') - p.data_tombamento 
-       end dias_inicio_periodo,
-       case when p.data_tombamento > to_date('31/12/2018','dd/mm/yyyy') then 0
-            when p.data_tombamento + (p.vida_util * 365) <=  to_date('31/12/2018','dd/mm/yyyy') then 100
-            else round((to_date('31/12/2018','dd/mm/yyyy') - p.data_tombamento) / (365*p.vida_util) * 100,2) 
-       end percentual_inicio_periodo,
-       case when to_date('31/12/2018','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, null, to_date('31/12/2018','dd/mm/yyyy')) end deprec_inicio_periodo,
-       case when to_date('01/01/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/01/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/01/2019','dd/mm/yyyy'), to_date('31/01/2019','dd/mm/yyyy')) end mes_1,
-       case when to_date('01/02/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('28/02/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/02/2019','dd/mm/yyyy'), to_date('28/02/2019','dd/mm/yyyy')) end mes_2,
-       case when to_date('01/03/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/03/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/03/2019','dd/mm/yyyy'), to_date('31/03/2019','dd/mm/yyyy')) end mes_3,
-       case when to_date('01/04/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('30/04/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/04/2019','dd/mm/yyyy'), to_date('30/04/2019','dd/mm/yyyy')) end mes_4,
-       case when to_date('01/05/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/05/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/05/2019','dd/mm/yyyy'), to_date('31/05/2019','dd/mm/yyyy')) end mes_5,
-       case when to_date('01/06/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('30/06/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/06/2019','dd/mm/yyyy'), to_date('30/06/2019','dd/mm/yyyy')) end mes_6,
-       case when to_date('01/07/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/07/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/07/2019','dd/mm/yyyy'), to_date('31/07/2019','dd/mm/yyyy')) end mes_7,
-       case when to_date('01/08/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/08/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/08/2019','dd/mm/yyyy'), to_date('31/08/2019','dd/mm/yyyy')) end mes_8,
-       case when to_date('01/09/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('30/09/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/09/2019','dd/mm/yyyy'), to_date('30/09/2019','dd/mm/yyyy')) end mes_9,
-       case when to_date('01/10/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/10/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/10/2019','dd/mm/yyyy'), to_date('31/10/2019','dd/mm/yyyy')) end mes_10,
-       case when to_date('01/11/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('30/11/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/11/2019','dd/mm/yyyy'), to_date('30/11/2019','dd/mm/yyyy')) end mes_11,
-       case when to_date('01/12/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/12/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/12/2019','dd/mm/yyyy'), to_date('31/12/2019','dd/mm/yyyy')) end mes_12,
-       p.cc_depreciacao,
-       case when to_date('01/01/2019','dd/mm/yyyy') - p.data_tombamento > p.vida_util * 365 or to_date('31/01/2019','dd/mm/yyyy') < p.data_tombamento then 0 else calculaDepreciacao(p.sq_permanente, brl.sq_moeda, to_date('01/01/2019','dd/mm/yyyy'), to_date('31/12/2019','dd/mm/yyyy')) end deprec_ano,
-       calculaDepreciacao(p.sq_permanente, brl.sq_moeda, p.data_tombamento, to_date('31/12/2019','dd/mm/yyyy')) deprec_total,
-       case when p.data_tombamento > to_date('31/12/2019','dd/mm/yyyy') then 0
-            when p.data_tombamento + (p.vida_util * 365) <=  to_date('31/12/2019','dd/mm/yyyy') then 100
-            else round((to_date('31/12/2019','dd/mm/yyyy') - p.data_tombamento) / (365*p.vida_util) * 100,2) 
-       end percentual_fim_periodo,
-       brl.valor_atual - calculaDepreciacao(p.sq_permanente, brl.sq_moeda, p.data_tombamento, to_date('31/12/2019','dd/mm/yyyy')) valor_fim_periodo
-  from mt_permanente p
-       inner           join cl_material         a  on (p.sq_material         = a.sq_material)
-         inner         join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
-         inner         join mt_almoxarifado     x  on (p.sq_almoxarifado     = x.sq_almoxarifado)
-       left            join (select cot.sq_permanente, cot.sq_moeda, cot.valor_aquisicao, cot.valor_atual, cot.data_valor_atual
-                               from mt_bem_cotacao      cot
-                                    inner join co_moeda moe on (cot.sq_moeda = moe.sq_moeda)
-                              where moe.sigla = 'BRL'
-                            )                brl  on (p.sq_permanente       = brl.sq_permanente)
- where p.ativo = 'S'
-   and x.nome = 'Imobilizado Contabilidade'
-   and p.data_tombamento <= to_date('31/12/2019','dd/mm/yyyy')
-   --and p.data_tombamento + (p.vida_util * 365) >= to_date('01/01/2019','dd/mm/yyyy')
-   --and p.numero_rgp = 6016
-   --and p.data_tombamento + (p.vida_util * 365) between to_date('01/01/2019','dd/mm/yyyy') and to_date('31/12/2019','dd/mm/yyyy')
-   --and p.data
-order by 3,2
-*/
-
 header('Expires: '.-1500);
 session_start();
 $w_dir_volta = '../';
@@ -94,12 +32,12 @@ include_once($w_dir_volta.'funcoes/selecaoMatServ.php');
 include_once($w_dir_volta.'funcoes/selecaoMtSituacao.php');
 
 // =========================================================================
-//  /rel_depreciacao.php
+//  /rel_baixa.php
 // ------------------------------------------------------------------------
 // Nome     : Alexandre Vinhadelli Papadópolis
 // Descricao: Relatório de depreciação de bens
 // Mail     : alex@sbpi.com.br
-// Criacao  : 17/11/2019, 11:06
+// Criacao  : 21/03/2021, 21h46
 // Versao   : 1.0.0.0
 // Local    : Brasília - DF
 // -------------------------------------------------------------------------
@@ -126,7 +64,7 @@ $SG         = upper($_REQUEST['SG']);
 $R          = $_REQUEST['R'];
 $O          = upper($_REQUEST['O']);
 $w_assinatura = $_REQUEST['w_assinatura'];
-$w_pagina     = 'rel_depreciacao.php?par=';
+$w_pagina     = 'rel_baixa.php?par=';
 $w_Disabled   = 'ENABLED';
 $w_dir        = 'mod_mt/';
 $w_troca      = $_REQUEST['w_troca'];
@@ -144,7 +82,6 @@ $p_descricao      = $_REQUEST['p_descricao'];
 $p_marca          = $_REQUEST['p_marca'];
 $p_modelo         = $_REQUEST['p_modelo'];
 $p_observacao     = $_REQUEST['p_observacao'];
-$p_ativo          = $_REQUEST['p_ativo'];
 $p_rgp            = $_REQUEST['p_rgp'];
 $p_sqcc           = $_REQUEST['p_sqcc'];
 $p_projeto        = $_REQUEST['p_projeto'];
@@ -154,7 +91,6 @@ $p_unidade        = $_REQUEST['p_unidade'];
 $p_localizacao    = $_REQUEST['p_localizacao'];
 $p_situacao       = $_REQUEST['p_situacao'];
 $p_inicio         = $_REQUEST['p_inicio'];
-$p_expirado       = $_REQUEST['p_expirado'];
 $p_fim            = $_REQUEST['p_fim'];
 $p_endereco       = $_REQUEST['p_endereco'];
 $p_codigo_externo = $_REQUEST['p_codigo_externo'];
@@ -162,7 +98,7 @@ $p_codigo_externo = $_REQUEST['p_codigo_externo'];
 $p_ordena         = $_REQUEST['p_ordena'];
 $p_volta          = upper($_REQUEST['p_volta']);
 
-if ($SG=='MTDEPREC') {
+if ($SG=='MTRELBX') {
   if ($O=='') $O='P';
 } elseif ($O=='') $O='L';
 
@@ -225,8 +161,12 @@ function Inicial() {
   $w_copia              = $_REQUEST['w_copia'];
   $w_tipo               = $_REQUEST['w_tipo'];
   $w_tipo_material      = $_REQUEST['w_tipo_material'];
+  
+  // Configuração do nível de acesso
+  $w_restricao = 'EDICAOT';
+  if ($p_acesso=='I') $w_restricao = 'EDICAOP';
 
-  if ($w_troca>'') {
+  if ($w_troca>'' && $O <> 'E') {
     $w_sqcc            = $_REQUEST['w_sqcc'];
     $w_projeto         = $_REQUEST['w_projeto'];
     $w_almoxarifado    = $_REQUEST['w_almoxarifado'];
@@ -280,19 +220,14 @@ function Inicial() {
       Validate('p_modelo','Modelo','','',1,50,'1','1');
       Validate('p_observacao','Observação','','',1,2000,'1','1');
       Validate('p_codigo_externo','Código externo','','',1,30,'1','1');
-      Validate('p_inicio','Início do período', 'DATA', 1, '10', '10', '', '0123456789/');
-      Validate('p_fim','Fim do período', 'DATA', 1, '10', '10', '', '0123456789/');
+      Validate('p_inicio','Início do período', 'DATA', '', '10', '10', '', '0123456789/');
+      Validate('p_fim','Fim do período', 'DATA', '', '10', '10', '', '0123456789/');
       ShowHTML('  if ((theForm.p_inicio.value != \'\' && theForm.p_fim.value == \'\') || (theForm.p_inicio.value == \'\' && theForm.p_fim.value != \'\')) {');
       ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
       ShowHTML('     theForm.p_inicio.focus();');
       ShowHTML('     return false;');
       ShowHTML('  }');
       CompData('p_inicio','Início do período','<=','p_fim','Fim do período');
-      ShowHTML('  if (theForm.p_expirado.checked && theForm.p_inicio.value == \'\') {');
-      ShowHTML('     alert (\'Para busca por bens com vida útil expirada no período é obrigatório informar o período!\');');
-      ShowHTML('     theForm.p_inicio.focus();');
-      ShowHTML('     return false;');
-      ShowHTML('  }');
       ValidateClose();
       ScriptClose();
     } 
@@ -318,9 +253,9 @@ function Inicial() {
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td><div align="justify">Informe nos campos abaixo os valores que deseja filtrar e clique sobre o botão <i>Aplicar filtro</i>. Clicando sobre o botão <i>Remover filtro</i>, o filtro existente será apagado.</div><hr>');
   ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td valign="top"><table border=0 width="90%" cellspacing=0>');
-  if ($SG=='MTDEPREC') $rel = 'depreciacao';
+  if ($SG=='MTRELBX') $rel = 'baixados';
   else $rel = 'detDesp';
-  AbreForm('Form',$w_dir.$w_pagina.$rel,'POST','return(Validacao(this));','Depreciação',$P1,'',$P3,null,$TP,$SG,$R,'L');
+  AbreForm('Form',$w_dir.$w_pagina.$rel,'POST','return(Validacao(this));','Baixa',$P1,'',$P3,null,$TP,$SG,$R,'L');
   ShowHTML(montaFiltro('POST',true));
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('      <tr><td colspan=2><table border=0 width="100%" cellspacing=0><tr valign="top">');
@@ -358,13 +293,7 @@ function Inicial() {
   ShowHTML('        <td><b><U>O</U>bservação:<br><input accesskey="M" type="text" name="p_observacao" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_observacao.'"></td>');
   ShowHTML('        <td><b><u>C</u>ódigo externo:</b><br><input accesskey="C" type="text" name="p_codigo_externo" class="sti" SIZE="25" MAXLENGTH="30" VALUE="'.$p_codigo_externo.'"></td>');
   ShowHTML('      <tr><td colspan="3" valign="top"><b><u>P</u>eríodo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').' ');
-  ShowHTML('          <input class="item" type="CHECKBOX" '.(($p_expirado=='S') ? 'CHECKED' : '').' name="p_expirado" value="S"> Apenas bens com expiração da vida útil no período informado');
 
-  ShowHTML('      <tr valign="top">');
-  ShowHTML('          <td><b>Recuperar:</b><br>');
-  ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="S"'.(($p_ativo=='S') ? ' checked' : '').'> Apenas ativos<br>');
-  ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value="N"'.(($p_ativo=='N') ? ' checked' : '').'> Apenas inativos<br>');
-  ShowHTML('              <input '.$w_Disabled.' class="str" type="radio" name="p_ativo" value=""'.((nvl($p_ativo,'X')=='X') ? ' checked' : '').'> Tanto faz');
   ShowHTML('      <tr valign="top">');
   ShowHTML('          <td><b><U>L</U>inhas por página:<br><INPUT ACCESSKEY="L" '.$w_Disabled.' class="sti" type="text" name="P4" size="4" maxlength="4" value="'.$P4.'"></td></tr>');
   ShowHTML('          </table>');
@@ -386,9 +315,9 @@ function Inicial() {
 } 
 
 // =========================================================================
-// Relatório de depreciação
+// Relatório de bens baixados
 // -------------------------------------------------------------------------
-function depreciacao() {
+function baixados() {
   extract($GLOBALS);
   Global $w_Disabled;
   $w_chave              = $_REQUEST['w_chave'];
@@ -399,10 +328,10 @@ function depreciacao() {
   $sql = new db_getMTBem;
   $RSQuery = $sql->getInstanceOf($dbms,$w_cliente, $w_usuario, $p_chave, $p_sqcc, 
           $p_projeto, $p_financeiro, $p_tipo_material, $p_material, $p_rgp, $p_descricao,
-          $p_marca, $p_modelo, $p_observacao, $p_ativo, $p_almoxarifado, $p_endereco, 
+          $p_marca, $p_modelo, $p_observacao, 'N', $p_almoxarifado, $p_endereco, 
           $p_unidade,  $p_localizacao, $p_situacao, $p_inicio, $p_fim, $p_codigo_externo,
-          (($p_expirado=='S') ? 'EXPIRACAO' : $p_restricao));
-  $RSQuery = SortArray($RSQuery,'nm_tipo_material','asc','nome_completo','asc','numero_rgp','asc'); 
+          $p_restricao);
+  $RSQuery = SortArray($RSQuery,'numero_rgp','asc');
 
   $w_embed  = '';
   $l_html   = '';
@@ -450,165 +379,57 @@ function depreciacao() {
     if ($p_descricao>'')    $w_filtro.='<tr><td align="right">Descrição <td>[<b>'.$p_descricao.'</b>] em qualquer parte';
     if ($p_observacao>'')   $w_filtro.='<tr><td align="right">Observação <td>[<b>'.$p_observacao.'</b>] em qualquer parte';
     if ($p_fim>'')          $w_filtro .= '<tr valign="top"><td align="right">Período <td>[<b>'.$p_inicio.'-'.$p_fim.'</b>]';
-    if ($p_expirado=='S') $w_filtro.='<tr><td align="right">Restrição <td>[<b>Apenas bens com vida útil expirada no período</b>]';
-    if ($p_ativo=='S') {
-      $w_filtro.='<tr><td align="right">Situação <td>[<b>Apenas itens ativos</b>]';
-    } elseif ($p_ativo=='N') {
-      $w_filtro.='<tr><td align="right">Situação <td>[<b>Apenas itens inativos</b>]';
-    } else {
-      $w_filtro.='<tr><td align="right">Situação <td>[<b>Itens ativos e inativos</b>]';
-    }
     if ($w_filtro) {
       $l_html .= '<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     }
-  }
-  
+  } 
   
   $w_resumo = array();
   $w_qtd_geral = 0;
   $w_aquisicao_geral = 0;
-  $w_periodo_geral = 0;
   $w_acumulado_geral = 0;
   $w_atual_geral = 0;
+  $w_ativos = 0;
+  $w_vl_ativos = 0;
+  $w_baixados = 0;
+  $w_vl_baixados = 0;
+  $w_transferidos = 0;
+  $w_vl_transferidos = 0;
   $w_atual = '*0*'; // valor qualquer apenas para marcar o início da execução
 
   $l_html .= '<tr><td align="center" colspan=3><div align="center">';
   $l_html .= '    <TABLE class="tudo" width=99%  border="1" bordercolor="#00000">';
+  baixados_cab($w_tipo, $l_html, $colspan, f($row,'nm_tipo_material'));
   if (count($RSQuery)<=0) {
     // Se não foram selecionados registros, exibe mensagem
     $l_html .= '      <tr bgcolor="'.$conTrBgColor.'"><td colspan=10 align="center"><b>Não foram encontrados registros.</b></td></tr>';
   } else {
+    $w_linha = 1;
     foreach($RSQuery as $row){ 
-      if ($w_atual != f($row,'nm_tipo_material')) {
-        if ($w_atual != '*0*') {
-          // Linha de totais do tipo de material
-          $l_html .= '      <tr valign="top">';
-          $l_html .= '        <td align="right" colspan='.($colspan-4).'><b> Total '.$w_atual.' ('.formatNumber($w_resumo[$w_atual]['qtd'],0).' bens)</b></td>';
-          $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['aquisicao']).'</b></td>';
-          $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['periodo']).'</b></td>';
-          $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['acumulado']).'</b></td>';
-          $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['atual']).'</b></td>';
-          $l_html .= '      </tr>';
-
-          $w_qtd_geral += $w_resumo[$w_atual]['qtd'];
-          $w_aquisicao_geral += $w_resumo[$w_atual]['aquisicao'];
-          $w_periodo_geral += $w_resumo[$w_atual]['periodo'];
-          $w_acumulado_geral += $w_resumo[$w_atual]['acumulado'];
-          $w_atual_geral += $w_resumo[$w_atual]['atual'];
-        }
-        $colspan = 0;
-        depreciacao_cab($w_tipo, $l_html, $colspan, f($row,'nm_tipo_material'));
-        $w_atual = f($row,'nm_tipo_material');
-        $w_resumo[$w_atual]['qtd'] = 0;
-        $w_resumo[$w_atual]['aquisicao'] = 0;
-        $w_resumo[$w_atual]['periodo'] = 0;
-        $w_resumo[$w_atual]['acumulado'] = 0;
-        $w_resumo[$w_atual]['atual'] = 0;
-      }
       $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
       $l_html .= '      <tr valign="top">';
-      //$l_html .= '        <td title="'.f($row,'nm_projeto').'">'.nvl(f($row,'cd_projeto'),'---').'</td>';
+      $l_html .= '        <td align="center">'.$w_linha++.'</td>';
       $l_html .= '        <td align="center"'.((nvl(f($row,'observacao'),'')!='') ? ' title="'.  CRLF2BR(f($row,'observacao')).'"' : '').'>'.f($row,'numero_rgp').'</td>';
       $l_html .= '        <td>'.ExibePermanente($w_dir_volta,$w_cliente,f($row,'nome_completo').((nvl(f($row,'descricao_complementar'),'')!='') ? ' '.f($row,'descricao_complementar') : ''),f($row,'chave'),$TP,null,null,$w_tipo).'</td>';
-      //$l_html .= '        <td>'.f($row,'descricao_complementar').'</td>';
-      if (!$p_almoxarifado) $l_html .= '        <td nowrap>'.f($row,'nm_almoxarifado').'</td>';
-      //if (!$p_unidade) $l_html .= '        <td>'.nvl(f($row,'nm_unidade'),'---').'</td>';
-      if (!$p_endereco) $l_html .= '        <td>'.nvl(f($row,'logradouro'),'---').'</td>';
-      if (!$p_localizacao) $l_html .= '        <td nowrap>'.nvl(f($row,'nm_localizacao'),'---').'</td>';
-      $l_html .= '        <td align="center">'.formataDataEdicao(f($row,'data_tombamento'),5).'</td>';
-      $l_html .= '        <td align="center">'.f($row,'vida_util').'</td>';
-      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_brl'),2),'---').'</td>';
-      /*
-      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_usd'),2),'---').'</td>';
-      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_atual_eur'),2),'---').'</td>';
-      */
-      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_brl_periodo'),2),'---').'</td>'; // Depreciação mensal
-      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_brl'),2),'---').'</td>'; // Depreciação acumulada
-      $l_html .= '        <td align="right">'.nvl(formatNumber((f($row,'vl_atual_brl') - f($row,'vl_depreciado_brl')),2),'---').'</td>';
-      /*
-      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_usd'),2),'---').'</td>';
-      $l_html .= '        <td align="right">'.nvl(formatNumber(f($row,'vl_depreciado_eur'),2),'---').'</td>';
-      */
-      
-      // Acumula valores
-      $w_resumo[$w_atual]['qtd']++;
-      $w_resumo[$w_atual]['aquisicao'] += f($row,'vl_atual_brl');
-      $w_resumo[$w_atual]['periodo'] += f($row,'vl_depreciado_brl_periodo');
-      $w_resumo[$w_atual]['acumulado'] += f($row,'vl_depreciado_brl');
-      $w_resumo[$w_atual]['atual'] += (f($row,'vl_atual_brl') - f($row,'vl_depreciado_brl'));
+      $l_html .= '        <td align="center">'.formataDataEdicao(f($row,'data_baixa'),5).'</td>';
+      if ($w_tipo!='WORD') $l_html .= '        <td align="center"><A target="'.f($row,'codigo_interno').'" class="hl" HREF="'.$w_dir.'baixa_bem.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'sq_baixa').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'">'.f($row,'cd_baixa').'</a></td>';
+      else                 $l_html .= '        <td align="center">'.f($row,'codigo_interno').'</td>'; 
+      if ($w_mod_pa=='S') {
+        if ($w_embed!='WORD' && nvl(f($row,'protocolo_siw'),'')!='') {
+          $l_html .= '        <td align="right"><A class="HL" HREF="mod_pa/documento.php?par=Visual&R='.$w_pagina.$par.'&O=L&w_chave='.f($row,'protocolo_siw').'&w_tipo=&P1=2&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG=PADGERAL'.MontaFiltro('GET').'" title="Exibe as informações deste registro." target="processo">'.f($row,'protocolo').'</a>';
+        } else {
+          $l_html .= '        <td align="right">'.f($row,'protocolo');
+        }
+      }
+      $l_html .= '        <td>'.f($row,'nm_tipo_baixa').'</td>';
+      $l_html .= '        <td>'.(($w_tipo=='WORD') ? f($row,'nm_destino') : ExibePessoa('../',$w_cliente,f($row,'sq_pessoa_destino'),$TP,f($row,'nm_destino'))).'</td>';
     }
-
-    if ($w_atual != '*0*') {
-      // Linha de totais do último tipo de material
-      $l_html .= '      <tr valign="top">';
-      $l_html .= '        <td align="right" colspan='.($colspan-4).'><b> Total '.$w_atual.' ('.formatNumber($w_resumo[$w_atual]['qtd'],0).' bens)</b></td>';
-      $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['aquisicao']).'</b></td>';
-      $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['periodo']).'</b></td>';
-      $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['acumulado']).'</b></td>';
-      $l_html .= '        <td align="right"><b>'.formatNumber($w_resumo[$w_atual]['atual']).'</b></td>';
-      $l_html .= '      </tr>';
-
-      $w_qtd_geral += $w_resumo[$w_atual]['qtd'];
-      $w_aquisicao_geral += $w_resumo[$w_atual]['aquisicao'];
-      $w_periodo_geral += $w_resumo[$w_atual]['periodo'];
-      $w_acumulado_geral += $w_resumo[$w_atual]['acumulado'];
-      $w_atual_geral += $w_resumo[$w_atual]['atual'];
-    }
-
-    // Linha de totais gerais da emissão
-    $l_html .= '      <tr valign="middle" style="height: 40px;">';
-    $l_html .= '        <td align="right" colspan='.($colspan-4).'><b> TOTAL GERAL ('.formatNumber($w_qtd_geral,0).' BENS)</b></td>';
-    $l_html .= '        <td align="right"><b>'.formatNumber($w_aquisicao_geral).'</b></td>';
-    $l_html .= '        <td align="right"><b>'.formatNumber($w_periodo_geral).'</b></td>';
-    $l_html .= '        <td align="right"><b>'.formatNumber($w_acumulado_geral).'</b></td>';
-    $l_html .= '        <td align="right"><b>'.formatNumber($w_atual_geral).'</b></td>';
-    $l_html .= '      </tr>';
-    
   }
 
   $l_html .= '    </table></div>';
   $l_html .= '  </td>';
   $l_html .= '</tr>';
 
-  if ($w_atual != '*0*') {
-    // Quadro resumo
-    $l_html .= '<tr style="height: 40px;"><td colspan=3>&nbsp;</td></tr>';
-    $l_html .= '<tr><td align="center" colspan=3><div align="center">';
-    $l_html .= '    <TABLE class="tudo" border="1" bordercolor="#00000">';
-    $l_html .= '      <tr style="height: 40px;">';
-    $l_html .= '        <td align="center" colspan=6><b>RESUMO</b></td>';
-    $l_html .= '      </tr>';
-    $l_html .= '      <tr align="center">';
-    $l_html .= '        <td rowspan="2"><b>Grupo</b></td>';
-    $l_html .= '        <td rowspan="2"><b>Bens</b></td>';
-    $l_html .= '        <td rowspan="2"><b>Valor<br>Aquisição (BRL)</b></td>';
-    $l_html .= '        <td colspan="2"><b>Depreciação(BRL)</b></td>';
-    $l_html .= '        <td rowspan="2"><b>Valor em<br>'.str_replace('/20','/',$p_fim).' (BRL)</b></td>';
-    $l_html .= '      </tr>';
-    $l_html .= '      <tr align="center">';
-    $l_html .= '        <td><b>'.str_replace('/20','/',$p_inicio).' a<br>'.str_replace('/20','/',$p_fim).'</b></td>';
-    $l_html .= '        <td><b>Acumulada</b></td>';
-    $l_html .= '      </tr>';
-    foreach($w_resumo as $k => $v) {
-      $l_html .= '      <tr valign="top">';
-      $l_html .= '        <td>'.$k.'</td>';
-      $l_html .= '        <td align="right">'.formatNumber($v['qtd'],0).'</td>';
-      $l_html .= '        <td align="right">'.formatNumber($v['aquisicao']).'</td>';
-      $l_html .= '        <td align="right">'.formatNumber($v['periodo']).'</td>';
-      $l_html .= '        <td align="right">'.formatNumber($v['acumulado']).'</td>';
-      $l_html .= '        <td align="right">'.formatNumber($v['atual']).'</td>';
-      $l_html .= '      </tr>';
-    }
-    $l_html .= '      <tr valign="top">';
-    $l_html .= '        <td><b>TOTAIS</td>';
-    $l_html .= '        <td align="right"><b>'.formatNumber($w_qtd_geral,0).'</b></td>';
-    $l_html .= '        <td align="right"><b>'.formatNumber($w_aquisicao_geral).'</b></td>';
-    $l_html .= '        <td align="right"><b>'.formatNumber($w_periodo_geral).'</b></td>';
-    $l_html .= '        <td align="right"><b>'.formatNumber($w_acumulado_geral).'</b></td>';
-    $l_html .= '        <td align="right"><b>'.formatNumber($w_atual_geral).'</b></td>';
-    $l_html .= '      </tr>';
-    $l_html .= '    </table></div>';
-  }
 
   ShowHTML($l_html);
   
@@ -618,37 +439,23 @@ function depreciacao() {
   else               Rodape();
 } 
 
-function depreciacao_cab($w_tipo, &$l_html, &$colspan, $titulo) {
+function baixados_cab($w_tipo, &$l_html, &$colspan, $titulo) {
   extract($GLOBALS);
   $texto = '';
   
   $texto .= '        <tr align="center">';
-  //$colspan++; $texto .= '          <td rowspan=2><b>Projeto</td>';
-  $colspan++; $texto .= '          <td rowspan=2><b>RGP</td>';
-  $colspan++; $texto .= '          <td rowspan=2><b>Bem</td>';
-  //$colspan++; $texto .= '          <td rowspan=2><b>Detalhamento</td>';
-  if (!$p_almoxarifado) { $colspan++; $texto .= '          <td rowspan=2><b>Almoxarifado</td>'; }
-  //if (!$p_unidade) { $colspan++; $texto .= '          <td rowspan=2><b>Unidade</td>'; }
-  if (!$p_endereco) { $colspan++; $texto .= '          <td rowspan=2><b>Endereço</td>'; }
-  if (!$p_localizacao) { $colspan++; $texto .= '          <td rowspan=2><b>Localização</td>'; }
-  $colspan++; $texto .= '          <td rowspan=2><b>Tombamento</td>';
-  $colspan++; $texto .= '          <td rowspan=2><b>Vida Útil (Anos)</td>';
-  //$texto .= '          <td colspan=3><b>Valor Aquisição</b></td>';
-  $colspan++; $texto .= '          <td rowspan=2><b>Valor Aquisição (BRL)</b></td>';
-  //$texto .= '          <td colspan=3><b>Valor Depreciado</b></td>';
-  $texto .= '          <td colspan=2><b>Depreciação (BRL)</b></td>';     
-  $colspan++; $texto .= '          <td rowspan=2><b>Valor em '.str_replace('/20','/',$p_fim).' (BRL)</b></td>';
+  $colspan++; $texto .= '          <td><b>Item</td>';
+  $colspan++; $texto .= '          <td><b>Bem</td>';
+  $colspan++; $texto .= '          <td><b>RGP</td>';
+  $colspan++; $texto .= '          <td><b>Efetivação</td>';
+  $colspan++; $texto .= '          <td><b>Solicitação</b></td>';
+  if ($w_mod_pa=='S') {
+    $colspan++; $texto .= '          <td><b>Processo</td>';
+  }
+  $colspan++; $texto .= '          <td><b>Tipo</td>';
+  $colspan++; $texto .= '          <td><b>Beneficiário</td>';
   $texto .= '        </tr>';
   $texto .= '        <tr align="center">';
-  //$colspan++; $texto .= '          <td><b>BRL</b></td>';
-  //$colspan++; $texto .= '          <td><b>USD</b></td>';
-  //$colspan++; $texto .= '          <td><b>EUR</b></td>';
-  //$colspan++; $texto .= '          <td><b>Mensal</b></td>';
-  $colspan++; $texto .= '          <td nowrap><b>'.str_replace('/20','/',$p_inicio).' a<br>'.str_replace('/20','/',$p_fim).'</b></td>';
-  $colspan++; $texto .= '          <td><b>Acumulada</b></td>'; 
-  //$colspan++; $texto .= '          <td><b>BRL</b></td>';
-  //$colspan++; $texto .= '          <td><b>USD</b></td>';
-  //$colspan++; $texto .= '          <td><b>EUR</b></td>';
 
   $l_html .= '      <tr valign="middle" style="height: 40px;" bgcolor="'.$w_cor.'">';
   $l_html .= '        <td colspan='.$colspan.' align="center"><b>'.$titulo.'<b></td>';
@@ -665,7 +472,7 @@ function Main() {
   global $w_Disabled;
   switch ($par) {
     case 'INICIAL':            Inicial();           break;
-    case 'DEPRECIACAO':        Depreciacao();       break;
+    case 'BAIXADOS':           Baixados();          break;
     default:
     Cabecalho();
     ShowHTML('<BASE HREF="'.$conRootSIW.'">');

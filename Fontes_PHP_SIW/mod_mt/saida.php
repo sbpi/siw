@@ -71,7 +71,7 @@ include_once('validaentrada.php');
 //  /saida.php
 // ------------------------------------------------------------------------
 // Nome     : Alexandre Vinhadelli Papadópolis
-// Descricao: Registra entradas de material
+// Descricao: Registra saídas de material
 // Mail     : alex@sbpi.com.br
 // Criacao  : 24/01/2011, 14:30
 // Versao   : 1.0.0.0

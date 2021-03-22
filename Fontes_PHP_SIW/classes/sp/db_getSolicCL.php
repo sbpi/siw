@@ -46,7 +46,7 @@ class db_getSolicCL {
                    'p_sqcc'                     =>array(tvl($p_sqcc),           B_INTEGER,        32),
                    'p_projeto'                  =>array(tvl($p_projeto),        B_INTEGER,        32),
                    'p_atividade'                =>array(tvl($p_atividade),      B_INTEGER,        32),
-                   'p_acao_ppa'                 =>array(tvl($p_acao_ppa),       B_INTEGER,        32),
+                   'p_acao_ppa'                 =>array(tvl($p_acao_ppa),       B_VARCHAR,        32),
                    'p_orprior'                  =>array(tvl($p_orprior),        B_INTEGER,        32),
                    'p_empenho'                  =>array(tvl($p_empenho),        B_VARCHAR,        30),
                    'p_servico'                  =>array(tvl($p_servico),        B_VARCHAR,        30),

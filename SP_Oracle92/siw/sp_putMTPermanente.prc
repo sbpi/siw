@@ -22,7 +22,6 @@ create or replace procedure sp_putMTPermanente
     p_fim_garantia    in  date     default null,
     p_vida_util       in  number   default null,
     p_observacao      in  varchar2 default null,
-    p_ativo           in  varchar2 default null,
     p_cc_patrimonial  in varchar2  default null,
     p_cc_depreciacao  in varchar2  default null,
     p_valor_brl       in  number   default null,
@@ -54,7 +53,7 @@ begin
       values
         (w_chave,       p_cliente,       p_localizacao,          p_almoxarifado,  p_sqcc,  p_material,  p_entrada,         p_situacao,    p_forn_garantia,
          p_numero_rgp,  p_tombamento,    p_descricao,            p_numero_serie,  p_marca, p_modelo,    p_fim_garantia,    p_vida_util,
-         p_observacao,  p_ativo,         p_projeto,              p_codigo_externo
+         p_observacao,  'S',             p_projeto,              p_codigo_externo
         );
         
    Elsif p_operacao = 'A' Then
@@ -78,7 +77,6 @@ begin
              data_fim_garantia      = p_fim_garantia,
              vida_util              = p_vida_util,
              observacao             = p_observacao,
-             ativo                  = p_ativo,
              sq_projeto             = p_projeto,
              codigo_externo         = p_codigo_externo
        where sq_permanente = p_chave;

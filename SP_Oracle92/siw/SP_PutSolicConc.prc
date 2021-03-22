@@ -299,9 +299,27 @@ begin
        where sq_solicitacao_item = crec.sq_solicitacao_item;
    end loop;
    
+   if w_sg_menu = 'MTBAIXA' then -- Efetivação de baixa patrimonial
+      -- Grava a data de efetivação da baixa de bens patrimoniais
+      update mt_saida_item
+         set data_efetivacao = to_date(p_fim,'dd/mm/yyyy')
+      where sq_mtSaida = (select sq_mtSaida from mt_saida where sq_siw_solicitacao = p_chave);
+
+      -- Inativa o bem permanente
+      update mt_permanente
+         set ativo = 'N'
+      where sq_permanente in (select b.sq_permanente
+                                from mt_saida                 a
+                                     inner join mt_saida_item b on a.sq_mtSaida = b.sq_mtSaida
+                               where a.sq_siw_solicitacao = p_chave
+                             );
+   end if;
+   
    -- Atualiza a situação da solicitação
    Update siw_solicitacao set
-      conclusao      = case when length(p_fim) = 10 then to_date(p_fim,'dd/mm/yyyy') else coalesce(to_date(p_fim,'dd/mm/yyyy, hh24:mi'),sysdate) end,
+      conclusao      = case when length(p_fim) = 10 then to_date(p_fim,'dd/mm/yyyy') 
+                            else coalesce(to_date(p_fim,'dd/mm/yyyy, hh24:mi'),sysdate) 
+                       end,
       executor       = p_executor,
       recebedor      = p_financeiro_resp,
       valor          = coalesce(p_valor,valor),

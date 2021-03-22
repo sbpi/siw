@@ -702,7 +702,7 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
   // Se for listagem dos dados
   if ($l_O=='L' || $l_O=='V') {
     $sql = new db_getSolicList; $RS1 = $sql->getInstanceOf($dbms,f($RS,'sq_menu'),$w_usuario,'FILHOS',null,
-      null,null,null,null,null,null,null,null,null,null,$v_chave, null, null, null, null, null, null,
+      null,null,null,null,null,null,null,null,'T',null,$v_chave, null, null, null, null, null, null,
       null, null, null, null, null, null, null, null, null);
     $RS1 = SortArray($RS1,'inclusao','asc', 'codigo_interno', 'asc');
     if (count($RS1)>0) {
@@ -720,10 +720,15 @@ function VisualCertame($v_chave,$l_O,$l_usuario,$l_P1,$l_tipo) {
       $i             = 1;
       $w_total       = 0;
       foreach ($RS1 as $row) {
-        if (f($row,'sigla')=='FNREVENT') {
-          $w_total       -= f($row,'valor');
-        } else {
-          $w_total       += f($row,'valor');
+        if (f($row,'sg_tramite')!='CA') {
+          // acumula somente se lançamento não está cancelado
+          if (f($row,'sigla')=='FNREVENT') {
+            // Se lançamento de crédito, subtrai do total
+            $w_total       -= f($row,'valor');
+          } else {
+            // Caso contrário, soma
+            $w_total       += f($row,'valor');
+          }
         }
         $l_html.=chr(13).'        <tr valign="middle">';
         $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'dados_solic'),'N','S').'</td>';

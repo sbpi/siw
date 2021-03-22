@@ -90,6 +90,7 @@ $p_marca          = $_REQUEST['p_marca'];
 $p_modelo         = $_REQUEST['p_modelo'];
 $p_observacao     = $_REQUEST['p_observacao'];
 $p_ativo          = $_REQUEST['p_ativo'];
+$p_expirado       = $_REQUEST['p_expirado'];
 $p_rgp            = $_REQUEST['p_rgp'];
 $p_sqcc           = $_REQUEST['p_sqcc'];
 $p_projeto        = $_REQUEST['p_projeto'];
@@ -256,13 +257,14 @@ function Inicial() {
       } 
       if ($p_descricao>'')    $w_filtro.='<tr><td align="right">Descrição <td>[<b>'.$p_descricao.'</b>] em qualquer parte';
       if ($p_observacao>'')     $w_filtro.='<tr><td align="right">Observação <td>[<b>'.$p_observacao.'</b>] em qualquer parte';
-      if ($p_fim>'')      $w_filtro .= '<tr valign="top"><td align="right">Tombamento <td>[<b>'.$p_inicio.'-'.$p_fim.'</b>]';
+      if ($p_fim>'')      $w_filtro .= '<tr valign="top"><td align="right">Período <td>[<b>'.$p_inicio.'-'.$p_fim.'</b>]';
+      if ($p_expirado=='S') $w_filtro.='<tr><td align="right">Restrição <td>[<b>Apenas bens com vida útil expirada no período</b>]';
       if ($p_ativo=='S') {
-        $w_filtro.='<tr><td align="right">Situação <td>[<b>Apenas itens ativos</b>]';
+        $w_filtro.='<tr><td align="right">Situação <td>[<b>Apenas bens ativos</b>]';
       } elseif ($p_ativo=='N') {
-        $w_filtro.='<tr><td align="right">Situação <td>[<b>Apenas itens inativos</b>]';
+        $w_filtro.='<tr><td align="right">Situação <td>[<b>Apenas bens inativos</b>]';
       } else {
-        $w_filtro.='<tr><td align="right">Situação <td>[<b>Itens ativos e inativos</b>]';
+        $w_filtro.='<tr><td align="right">Situação <td>[<b>Bens ativos e inativos</b>]';
       }
       if ($w_filtro>'')     $w_filtro='<div align="left"><table border=0><tr valign="top"><td><b>Filtro:</b><td nowrap><ul>'.$w_filtro.'</ul></tr></table></div>';
     } 
@@ -271,7 +273,7 @@ function Inicial() {
             $p_projeto, $p_financeiro, $p_tipo_material, $p_material, $p_rgp, $p_descricao,
             $p_marca, $p_modelo, $p_observacao, $p_ativo, $p_almoxarifado, $p_endereco, 
             $p_unidade,  $p_localizacao, $p_situacao, $p_inicio, $p_fim, $p_codigo_externo,
-            $p_restricao);
+            (($p_expirado=='S') ? 'EXPIRACAO' : $p_restricao));
     if (Nvl($p_ordena,'') > '') {
       $lista = explode(',',str_replace(' ',',',$p_ordena));
       $RS = SortArray($RS,$lista[0],$lista[1],'numero_rgp','asc');
@@ -404,14 +406,19 @@ function Inicial() {
         Validate('p_modelo','Modelo','','',1,50,'1','1');
         Validate('p_observacao','Observação','','',1,2000,'1','1');
         Validate('p_codigo_externo','Código externo','','',1,30,'1','1');
-        Validate('p_inicio','Tombamento inicial', 'DATA', '', '10', '10', '', '0123456789/');
-        Validate('p_fim','Tombamento final', 'DATA', '', '10', '10', '', '0123456789/');
+        Validate('p_inicio','Início do período', 'DATA', '', '10', '10', '', '0123456789/');
+        Validate('p_fim','Fim do período', 'DATA', '', '10', '10', '', '0123456789/');
         ShowHTML('  if ((theForm.p_inicio.value != \'\' && theForm.p_fim.value == \'\') || (theForm.p_inicio.value == \'\' && theForm.p_fim.value != \'\')) {');
-        ShowHTML('     alert (\'Informe ambas as datas de tombamento ou nenhuma delas!\');');
+        ShowHTML('     alert (\'Informe ambas as datas ou nenhuma delas!\');');
         ShowHTML('     theForm.p_inicio.focus();');
         ShowHTML('     return false;');
         ShowHTML('  }');
-        CompData('p_inicio','Tombamento inicial','<=','p_fim','Tombamento final');
+        CompData('p_inicio','Início do período','<=','p_fim','Fim do período');
+        ShowHTML('  if (theForm.p_expirado.checked && theForm.p_inicio.value == \'\') {');
+        ShowHTML('     alert (\'Para busca por bens com vida útil expirada no período é obrigatório informar o período!\');');
+        ShowHTML('     theForm.p_inicio.focus();');
+        ShowHTML('     return false;');
+        ShowHTML('  }');
       } elseif ($O=='E') {
         Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','30','1','1');
         ShowHTML('  if (confirm(\'Confirma a exclusão deste registro?\'));');
@@ -552,6 +559,7 @@ function Inicial() {
     ShowHTML('<INPUT type="hidden" name="w_entrada" value="'.$w_entrada.'">');
     ShowHTML('<INPUT type="hidden" name="w_forn_garantia" value="'.$w_forn_garantia.'">');
     ShowHTML('<INPUT type="hidden" name="w_fim_garantia" value="'.$w_fim_garantia.'">');
+    ShowHTML('<INPUT type="hidden" name="w_ativo" value="'.$w_ativo.'">');
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>');
     ShowHTML('    <table width="97%" border="0"><tr>');
@@ -609,8 +617,6 @@ function Inicial() {
     ShowHTML('        <td><b><u>C</u>onta Contábil Patrimonial:</b></br><input '.$w_Disabled.' type="text" name="w_cc_patrimonial" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_patrimonial.'"></td>');
     ShowHTML('        <td><b><u>C</u>onta Contábil de Depreciação:</b></br><input '.$w_Disabled.' type="text" name="w_cc_depreciacao" class="sti" SIZE="11" MAXLENGTH="25" VALUE="'.$w_cc_depreciacao.'"></td>');
 
-    ShowHTML('      <tr valign="top">');
-    MontaRadioSN('<b>Ativo?</b>',$w_ativo,'w_ativo');
     ShowHTML('      <tr><td colspan=3><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="sti" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
     ShowHTML('      <tr><td align="center" colspan=5><hr>');
     if ($O=='E') {
@@ -669,7 +675,8 @@ function Inicial() {
     ShowHTML('        <td><b><U>D</U>escrição complementar:<br><input accesskey="M" type="text" name="p_descricao" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_descricao.'"></td>');
     ShowHTML('        <td><b><U>O</U>bservação:<br><input accesskey="M" type="text" name="p_observacao" class="sti" SIZE="25" MAXLENGTH="50" VALUE="'.$p_observacao.'"></td>');
     ShowHTML('        <td><b><u>C</u>ódigo externo:</b><br><input accesskey="C" type="text" name="p_codigo_externo" class="sti" SIZE="25" MAXLENGTH="30" VALUE="'.$p_codigo_externo.'"></td>');
-    ShowHTML('      <tr><td valign="top"><b><u>T</u>ombamento entre:</b><br><input '.$w_Disabled.' accesskey="V" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
+    ShowHTML('      <tr><td valign="top" colspan="3"><b><u>P</u>eríodo:</b><br><input '.$w_Disabled.' accesskey="P" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' e <input '.$w_Disabled.' accesskey="C" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').' ');
+    ShowHTML('          <input class="item" type="CHECKBOX" '.(($p_expirado=='S') ? 'CHECKED' : '').' name="p_expirado" value="S"> Apenas bens com expiração da vida útil no período informado');
 
     ShowHTML('      <tr valign="top">');
     ShowHTML('          <td><b>Recuperar:</b><br>');
@@ -1364,6 +1371,18 @@ function visualPermanente($l_chave,$l_navega=true,$l_solic) {
   $l_html.=chr(13).'          <td>Modelo<br><b>'.nvl(f($l_rs,'modelo'),'---').'</b></td>';
   $l_html.=chr(13).'          <td>Nº de série<br><b>'.nvl(f($l_rs,'numero_serie'),'---').'</b></td>';
   $l_html.=chr(13).'        </table>';
+
+  if (f($l_rs,'numero_rgp')!='') {
+    $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>';
+    $l_html.=chr(13).'      <tr><td colspan="2" bgcolor="#f0f0f0"><table width="100%" border="0">';
+    $l_html.=chr(13).'        <tr valign="top">';
+    $l_html.=chr(13).'          <td colspan="2" align="center"><b>BEM BAIXADO EM '.FormataDataEdicao(f($l_rs,'data_baixa')).' ('.f($l_rs,'cd_baixa').')</b>';
+    $l_html.=chr(13).'          </td>';
+    $l_html.=chr(13).'        <tr valign="top"><td width="30%"><b>Beneficiário:<b></td><td>'.f($l_rs,'nm_destino').' </td></tr>';
+    $l_html.=chr(13).'        <tr valign="top"><td width="30%"><b>Observacao:<b></td><td>'.f($l_rs,'nota_baixa').' </td></tr>';
+    $l_html.=chr(13).'        </table>';
+  }
+  
   $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=2></td></tr>';
   if (nvl(f($l_rs,'nm_cc'),'')!='')      $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Classificação:<b></td><td>'.f($l_rs,'nm_cc').' </td></tr>';
   if (nvl(f($l_rs,'nm_projeto'),'')!='') $l_html.=chr(13).'      <tr valign="top"><td width="30%"><b>Projeto:<b></td><td>'.f($l_rs,'cd_projeto').' - '.f($l_rs,'nm_projeto').' </td></tr>';
@@ -1640,8 +1659,7 @@ function Grava() {
             $_REQUEST['w_material'],$_REQUEST['w_entrada'],$_REQUEST['w_situacao'],$_REQUEST['w_forn_garantia'],
             $_REQUEST['w_rgp'], $_REQUEST['w_tombamento'], $_REQUEST['w_descricao'], $_REQUEST['w_codigo_externo'], 
             $_REQUEST['w_numero_serie'], $_REQUEST['w_marca'], $_REQUEST['w_modelo'], $_REQUEST['w_fim_garantia'], 
-            $_REQUEST['w_vida_util'], $_REQUEST['w_observacao'], $_REQUEST['w_ativo'],
-            $_REQUEST['w_cc_patrimonial'],$_REQUEST['w_cc_depreciacao'],
+            $_REQUEST['w_vida_util'], $_REQUEST['w_observacao'], $_REQUEST['w_cc_patrimonial'],$_REQUEST['w_cc_depreciacao'],
             $_REQUEST['w_valor_brl'], $_REQUEST['w_valor_usd'], $_REQUEST['w_valor_eur'],
             $_REQUEST['w_data_brl'], $_REQUEST['w_data_usd'], $_REQUEST['w_data_eur'],
             $w_chave_nova);

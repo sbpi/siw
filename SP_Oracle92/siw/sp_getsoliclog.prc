@@ -587,7 +587,7 @@ begin
                and (p_chave_aux is null or (p_chave_aux is not null and b.sq_documento_log = p_chave_aux))
                and (p_tipo is null or (p_tipo is not null and (p_tipo <>  2)));
       End If;
-   Elsif w_modulo = 'PA' Then -- Se for o módulo de protocolo
+   Elsif w_modulo = 'PA' or w_modulo = 'PT' Then -- Se for o módulo de protocolo ou de materiais
       If p_restricao = 'LISTA' Then
          -- Recupera os encaminhamentos de uma demanda
          open p_result for 

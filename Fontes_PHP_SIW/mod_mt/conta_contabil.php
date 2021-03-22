@@ -178,21 +178,21 @@ function Classif() {
     //Validate('p_uf','Projeto','','','2','90','1','1');    
     Validate('p_proponente','Beneficiário','','','2','90','1','');
     ShowHTML('  if ((theForm.p_inicio.value != "" && theForm.p_fim.value == "") || (theForm.p_inicio.value == "" && theForm.p_fim.value != "")) {');
-    ShowHTML('     alert("Informe ambas as datas de tombamento ou nenhuma delas!");');
+    ShowHTML('     alert("Informe ambas as datas ou nenhuma delas!");');
     ShowHTML('     theForm.p_inicio.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
-    Validate('p_inicio','Tombamento inicial','DATA','1','10','10','','0123456789/');
-    Validate('p_fim','Tombamento final','DATA','1','10','10','','0123456789/');
-    CompData('p_inicio','Tombamento inicial','<=','p_fim','Tombamento final');
+    Validate('p_inicio','Início do período','DATA','1','10','10','','0123456789/');
+    Validate('p_fim','Fim do período','DATA','1','10','10','','0123456789/');
+    CompData('p_inicio','Início do período','<=','p_fim','Fim do período');
     ShowHTML('  if ((theForm.p_ini_i.value != "" && theForm.p_ini_f.value == "") || (theForm.p_ini_i.value == "" && theForm.p_ini_f.value != "")) {');
-    ShowHTML('     alert("Informe ambas as datas de tombamento ou nenhuma delas!");');
+    ShowHTML('     alert("Informe ambas as datas ou nenhuma delas!");');
     ShowHTML('     theForm.p_ini_i.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
-    Validate('p_ini_i','Tombamento inicial','DATA','','10','10','','0123456789/');
-    Validate('p_ini_f','Tombamento final','DATA','','10','10','','0123456789/');
-    CompData('p_ini_i','Tombamento inicial','<=','p_ini_f','Tombamento final');
+    Validate('p_ini_i','Início do período','DATA','','10','10','','0123456789/');
+    Validate('p_ini_f','Fim do período','DATA','','10','10','','0123456789/');
+    CompData('p_ini_i','Início do período','<=','p_ini_f','Fim do período');
     Validate('p_palavra','Código lançamento','','','2','90','1','1');
     Validate('p_objeto','Finalidade/justificativa','','','2','90','1','1');
     ShowHTML('  disAll();');
@@ -470,13 +470,13 @@ function Dexion() {
     openBox('reload');
     ValidateOpen('Validacao');
     ShowHTML('  if ((theForm.p_inicio.value != "" && theForm.p_fim.value == "") || (theForm.p_inicio.value == "" && theForm.p_fim.value != "")) {');
-    ShowHTML('     alert("Informe ambas as datas de tombamento ou nenhuma delas!");');
+    ShowHTML('     alert("Informe ambas as datas ou nenhuma delas!");');
     ShowHTML('     theForm.p_inicio.focus();');
     ShowHTML('     return false;');
     ShowHTML('  }');
-    Validate('p_inicio','Tombamento inicial','DATA','1','10','10','','0123456789/');
-    Validate('p_fim','Tombamento final','DATA','1','10','10','','0123456789/');
-    CompData('p_inicio','Tombamento inicial','<=','p_fim','Tombamento final');
+    Validate('p_inicio','Início do período','DATA','1','10','10','','0123456789/');
+    Validate('p_fim','Fim do período','DATA','1','10','10','','0123456789/');
+    CompData('p_inicio','Início do período','<=','p_fim','Fim do período');
     ShowHTML('  disAll();');
     ValidateClose();
     ScriptClose();
@@ -517,7 +517,7 @@ function Dexion() {
     SelecaoContaBanco('C<u>o</u>nta bancária:','O','Selecione a conta bancária envolvida no lançamento.',$p_pais,null,'p_pais',null,null);
     */
     ShowHTML('      <tr valign="top">');
-    ShowHTML('          <td><b><u>T</u>ombaento entre:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
+    ShowHTML('          <td><b><u>P</u>eríodo:</b><br><input '.$w_Disabled.' accesskey="M" type="text" name="p_inicio" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_inicio.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_inicio').' e <input '.$w_Disabled.' accesskey="T" type="text" name="p_fim" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$p_fim.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);">'.ExibeCalendario('Form','p_fim').'</td>');
     ShowHTML('      <tr><td align="center" colspan="3" height="1" bgcolor="#000000">');
     ShowHTML('      <tr><td align="center" colspan="3">');
     ShowHTML('            <input class="stb" type="submit" name="Botao" value="Aplicar filtro">');
@@ -538,20 +538,11 @@ function Dexion() {
 
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Centro de Custo</td>');
-    ShowHTML('          <td><b>Localização do Documento</td>');
-    ShowHTML('          <td><b>Parceiro</td>');
-    ShowHTML('          <td><b>Conta de Débito</td>');
-    ShowHTML('          <td><b>Conta de Crédito</td>');
-    ShowHTML('          <td><b>Histórico Padrão</td>');
-    ShowHTML('          <td><b>Débito Conciliado</td>');
-    ShowHTML('          <td><b>Crédito Conciliado</td>');
-    ShowHTML('          <td><b>Complemento de Histórico</td>');
-    ShowHTML('          <td><b>Data do Lançamento</td>');
-    ShowHTML('          <td><b>Valor</td>');
-    ShowHTML('          <td><b>Observação</td>');
-    ShowHTML('          <td><b>Pendente</td>');
-    ShowHTML('          <td><b>Registro</td>');
+    ShowHTML('          <td><b>Data da Aquisição</td>');
+    ShowHTML('          <td><b>Valor Aquisição</td>');
+    ShowHTML('          <td><b>Conta Patrimonial</td>');
+    ShowHTML('          <td><b>Conta de Depreciação</td>');
+    ShowHTML('          <td><b>Complemento de Histórico / NF</td>');
     ShowHTML('        </tr>');
     if (!count($RS)) {
       ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=14 align="center"><b>Não foram encontrados registros.</b></td></tr>');
@@ -560,22 +551,17 @@ function Dexion() {
       foreach($RS as $row) {
         $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
         ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>'.f($row,'cc_debito'));
-        ShowHTML('        <td>'.f($row,'cc_credito'));
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>'.f($row,'nome'));
         ShowHTML('        <td align="center">'.str_replace('/','',formataDataEdicao(f($row,'data_tombamento'),5)).'</td>');
         ShowHTML('        <td align="right">'.str_replace('.','',formatNumber(f($row,'vl_atual_brl'))).'</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td nowrap>'.ExibePermanente($w_dir_volta,$w_cliente,f($row,'numero_rgp'),f($row,'chave'),$TP,null,null).'</td>');
+        ShowHTML('        <td>'.f($row,'cc_patrimonial'));
+        ShowHTML('        <td>'.f($row,'cc_depreciacao'));
+        ShowHTML('        <td nowrap>'.
+                    ExibePermanente($w_dir_volta,$w_cliente,f($row,'numero_rgp'),f($row,'chave'),$TP,null,null).
+                    ' - '.
+                    f($row,'nome_completo').
+                    '</td>');
         ShowHTML('      </tr>');
-        if (nvl(f($row,'cc_debito'),'')=='') $i++;
+        if (nvl(f($row,'cc_patrimonial'),'')=='') $i++;
       }
       
       AbreForm('Form1',$w_dir.$w_pagina.'GeraDexion','POST',null,null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);     
@@ -631,21 +617,13 @@ function GeraDexion() {
   header('Cache-Control: no-cache, must-revalidate',false);
 
   foreach($RS as $row) {
-    echo "|";
-    echo "|";
-    echo "|";
-    echo "|";
-    echo f($row,'cc_debito')."|";
-    echo f($row,'cc_credito')."|";
-    echo "|";
-    echo "|";
-    echo "|";
-    echo str_replace(chr(13).chr(10),' ',f($row,'nome'))."|";
     echo str_replace('/','',formataDataEdicao(f($row,'data_tombamento'),5))."|";
     echo str_replace('.','',formatNumber(f($row,'vl_atual_brl')))."|";
-    echo "|";
-    echo "|";
-    ShowHTML(f($row,'numero_rgp')); // Usa ShowHTML para quebrar a linha
+    echo f($row,'cc_debito')."|";
+    echo f($row,'cc_credito')."|";
+    ShowHTML(f($row,'numero_rgp').
+             ' - '.
+             str_replace(chr(13).chr(10),' ',f($row,'nome_completo'))); // Usa ShowHTML para quebrar a linha
   }
   
 } 

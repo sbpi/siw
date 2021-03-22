@@ -24,7 +24,7 @@ create or replace procedure sp_getMTBem
     p_restricao      in varchar2   default null,
     p_result         out sys_refcursor) is
 begin
-   If p_restricao is null Then
+   If p_restricao is null or p_restricao = 'GARANTIA' or p_restricao = 'EXPIRACAO' Then
       -- Recupera bens permanentes
       open p_result for
          select p.sq_permanente as chave, p.cliente, p.sq_localizacao, p.sq_almoxarifado, 
@@ -53,14 +53,20 @@ begin
                 h.titulo nm_projeto, h.codigo_interno cd_projeto,
                 o.nome cc_pessoa_nome, o.nome_resumido cc_pessoa_nome_res,
                 brl.valor_aquisicao vl_aquisicao_brl, brl.valor_atual vl_atual_brl, brl.data_valor_atual dt_vl_atual_brl,
+                case when brl.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, brl.sq_moeda, null, p_inicio-1) else null end vl_depreciado_brl_antes,
+                case when brl.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, brl.sq_moeda, p_inicio, p_fim) else null end vl_depreciado_brl_periodo,
                 case when brl.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, brl.sq_moeda, null, p_fim) else null end vl_depreciado_brl,
                 case when brl.valor_aquisicao is not null then round(brl.valor_atual/(p.vida_util*365) * 30,2) else null end vl_deprec_mensal_brl,
                 usd.valor_aquisicao vl_aquisicao_usd, usd.valor_atual vl_atual_usd, usd.data_valor_atual dt_vl_atual_usd,
-                case when usd.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, usd.sq_moeda, null, p_fim) else null end vl_depreciado_usd,
-                case when usd.valor_aquisicao is not null then round(usd.valor_atual/(p.vida_util*12),2) else null end vl_deprec_mensal_usd,
+                --case when usd.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, usd.sq_moeda, null, p_fim) else null end vl_depreciado_usd,
+                --case when usd.valor_aquisicao is not null then round(usd.valor_atual/(p.vida_util*12),2) else null end vl_deprec_mensal_usd,
                 eur.valor_aquisicao vl_aquisicao_eur, eur.valor_atual vl_atual_eur, eur.data_valor_atual dt_vl_atual_eur,
-                case when eur.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, eur.sq_moeda, null, p_fim) else null end vl_depreciado_eur,
-                case when eur.valor_aquisicao is not null then round(eur.valor_atual/(p.vida_util*12),2) else null end vl_deprec_mensal_eur
+                --case when eur.valor_aquisicao is not null then calculaDepreciacao(p.sq_permanente, eur.sq_moeda, null, p_fim) else null end vl_depreciado_eur,
+                --case when eur.valor_aquisicao is not null then round(eur.valor_atual/(p.vida_util*12),2) else null end vl_deprec_mensal_eur,
+                case when bx.sq_permanente is not null then 'S' else 'N' end nm_bem_baixado,
+                case when bx.sq_permanente is not null and (upper(bx.nm_tipo_baixa) = 'TRANSFERÊNCIA' or upper(bx.nm_tipo_baixa) = 'DOAÇÃO') then 'S' else '-' end nm_transferido,
+                case when bx.sq_permanente is not null and upper(bx.nm_tipo_baixa) <> 'TRANSFERÊNCIA' and upper(bx.nm_tipo_baixa) <> 'DOAÇÃO' then 'S' else '-' end nm_baixado,
+                bx.data_baixa, bx.sq_baixa, bx.cd_baixa, bx.nota_baixa, bx.sq_pessoa_destino, bx.nm_destino, bx.nm_res_destino, bx. nm_tipo_baixa
            from mt_permanente                            p
                 inner           join cl_material         a  on (p.sq_material         = a.sq_material)
                   inner         join cl_tipo_material    c  on (a.sq_tipo_material    = c.sq_tipo_material)
@@ -92,6 +98,17 @@ begin
                                              inner join co_moeda moe on (cot.sq_moeda = moe.sq_moeda)
                                        where moe.sigla = 'EUR'
                                      )                eur  on (p.sq_permanente       = eur.sq_permanente)
+                left            join (select k.sq_permanente, l.data_efetivacao data_baixa, m1.nome nm_tipo_baixa, 
+                                             n.sq_siw_solicitacao sq_baixa, n.codigo_interno cd_baixa, n.observacao nota_baixa,
+                                             m.sq_pessoa_destino, p.nome nm_destino, p.nome_resumido nm_res_destino
+                                        from mt_permanente                         k
+                                             inner       join mt_saida_item        l  on k.sq_permanente        = l.sq_permanente
+                                               inner     join mt_saida             m  on l.sq_mtSaida           = m.sq_mtSaida
+                                                 inner   join mt_tipo_movimentacao m1 on m.sq_tipo_movimentacao = m1.sq_tipo_movimentacao
+                                                 inner   join siw_solicitacao      n  on m.sq_siw_solicitacao   = n.sq_siw_solicitacao
+                                                   inner join siw_tramite          o  on n.sq_siw_tramite        = o.sq_siw_tramite and o.sigla = 'AT'
+                                                 inner   join co_pessoa            p  on m.sq_pessoa_destino     = p.sq_pessoa
+                                     )                bx   on (p.sq_permanente = bx.sq_permanente)
           where a.cliente         = p_cliente
             and (p_chave          is null or (p_chave          is not null and p.sq_permanente       = p_chave))
             and (p_material       is null or (p_material       is not null and acentos(a.nome)       like '%'||acentos(p_material)||'%'))
@@ -112,7 +129,11 @@ begin
             and (p_financeiro     is null or (p_financeiro     is not null and m.codigo_interno      = p_financeiro))
             and (p_inicio         is null or (p_inicio         is not null and 
                                                                ((p_restricao = 'GARANTIA' and p.data_fim_garantia between p_inicio and p_fim) or
-                                                                (nvl(p_restricao,'-') <> 'GARANTIA' and p.data_tombamento  between p_inicio and p_fim)
+                                                                (p_restricao = 'EXPIRACAO' and (p.data_tombamento + (p.vida_util*365) - 1) between p_inicio and p_fim) or
+                                                                (nvl(p_restricao,'-') <> 'GARANTIA' and nvl(p_restricao,'-') <> 'EXPIRACAO' and 
+                                                                 p.data_tombamento  <= p_fim and 
+                                                                 (bx.data_baixa is null or (bx.data_baixa is not null and bx.data_baixa >= p_inicio))
+                                                                )
                                                                )
                                              )
                 )

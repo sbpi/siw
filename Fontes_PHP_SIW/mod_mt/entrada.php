@@ -119,7 +119,7 @@ if (strpos($SG,'ENVIO')!==false) {
     $O='V';
 } elseif ($O=='') {
   // Se for acompanhamento, entra na filtragem
-  if ($P1==3 || $SG=='MTENTMAT') $O='P'; else $O='L';
+  if ($P1==3 || $SG=='MTENTMAT' || $SG=='MTENTBEM') $O='P'; else $O='L';
 } 
 
 switch ($O) {
@@ -443,7 +443,7 @@ function Inicial() {
         ShowHTML('        <td align="right" width="1%">&nbsp;'.formatNumber(f($row,'qt_itens'),0).'&nbsp;</td>');
         if ($w_tipo!='WORD') {
           ShowHTML('        <td class="remover" width="1%" nowrap>&nbsp;');
-          if (strpos('NA,ES',f($row,'sg_sit'))!==false) {
+          if (strpos('NI,NA,ES',f($row,'sg_sit'))!==false) {
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_mtentrada').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Altera as informações cadastrais da entrada">AL</A>&nbsp');
             ShowHTML('          <A class="HL" HREF="'.$w_dir.$w_pagina.'Excluir&R='.$w_pagina.$par.'&O=E&w_chave='.f($row,'sq_mtentrada').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET').'" title="Exclusão da entrada.">EX</A>&nbsp');
           } elseif (f($row,'qt_saidas')==0) {
@@ -1007,7 +1007,7 @@ function Geral() {
           }
           ShowHTML('    </table>');
           if (count($w_classes>1) || !$w_classes[4]) {
-            ShowHTML('      <tr><td><b><u>D</u>ata de armazenamento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_armazenamento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_armazenamento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de armazenamento do material.">'.ExibeCalendario('Form1','w_armazenamento').'</td>');
+            if (f($row,'classe')<=3) ShowHTML('      <tr><td><b><u>D</u>ata de armazenamento:</b><br><input '.$w_Disabled.' accesskey="D" type="text" name="w_armazenamento" class="sti" SIZE="10" MAXLENGTH="10" VALUE="'.$w_armazenamento.'" onKeyDown="FormataData(this,event);" onKeyUp="SaltaCampo(this.form.name,this,10,event);" title="Informe a data de armazenamento do material.">'.ExibeCalendario('Form1','w_armazenamento').'</td>');
             ShowHTML('      <tr><td colspan=2><b>'.$_SESSION['LABEL_CAMPO'].':<BR> <INPUT ACCESSKEY="A" class="STI" type="PASSWORD" name="w_assinatura" size="30" maxlength="30" value=""></td></tr>');
             ShowHTML('      <tr><td align="center" colspan=2 height="1" bgcolor="#000000"></TD></TR>');
             ShowHTML('      <tr><td align="center" colspan=2>');
@@ -1262,11 +1262,12 @@ function Itens() {
 //      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Fabricante','marca').'</td>');
 //    } elseif (($w_classes[1] || $w_classes[2] || $w_classes[3]) && $w_classes[4]) {
 //      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Fabricante / marca','marca').'</td>');
-//    }
-//    if ($w_classes[4]) {
-//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Modelo','modelo').'</td>');
-//      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Vida útil','vida_util').'</td>');
-//    }
+    }
+    if ($w_classes[4]) {
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Fabricante','marca').'</td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Modelo','modelo').'</td>');
+      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Vida útil','vida_util').'</td>');
+    }
 //    if ($w_classes[1]) {
 //      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Lote','lote_numero').'</td>');
 //      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Fabricação','fabricacao').'</td>');
@@ -1274,14 +1275,14 @@ function Itens() {
 //    if ($w_classes[1] || $w_classes[2] || $w_classes[3]) {
 //      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Validade','validade').'</td>');
 //      $colspan++; ShowHTML('          <td><b>'.LinkOrdena('F.E.','fator_embalagem').'</td>');
-    }
+//    }
     $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Qtd','quantidade').'</td>');
-    if ($w_edita) ShowHTML('          <td><b>'.LinkOrdena('Total','valor_total').'</td>');
-    ShowHTML('          <td><b>Operações</td>');
+    if ($w_edita) { $colspan++; ShowHTML('          <td><b>'.LinkOrdena('Total','valor_total').'</td>'); }
+    $colspan++; ShowHTML('          <td><b>Operações</td>');
     ShowHTML('        </tr>');
     if (count($RS)==0) {
       // Se não foram selecionados registros, exibe mensagem
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=9 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan='.$colspan.' align="center"><b>Não foram encontrados registros.</b></td></tr>');
     } else {
       AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$R,$O);
       ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
@@ -1329,10 +1330,10 @@ function Itens() {
         } else {
           $w_total += f($row,'valor_total');
           ShowHTML('        <td>'.f($row,'marca').'</td>');
-          //if ($w_classes[4]) {
-          //  ShowHTML('        <td>'.nvl(f($row,'modelo'),'&nbsp;').'</td>');
-          //  ShowHTML('        <td align="center">'.nvl(f($row,'vida_util'),'&nbsp').'</td>');
-          //}
+          if ($w_classes[4]) {
+            ShowHTML('        <td>'.nvl(f($row,'modelo'),'&nbsp;').'</td>');
+            ShowHTML('        <td align="center">'.nvl(f($row,'vida_util'),'&nbsp').'</td>');
+          }
           //if ($w_classes[1]) {
           //  ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'lote_numero'),5),'&nbsp;').'</td>');
           //  ShowHTML('        <td align="center">'.nvl(formataDataEdicao(f($row,'fabricacao'),5),'&nbsp;').'</td>');
@@ -1357,7 +1358,7 @@ function Itens() {
         ShowHTML('        </td>');
         ShowHTML('      </tr>');
       }
-      ShowHTML('      <tr><td colspan=6 align="center"><hr>');
+      ShowHTML('      <tr><td colspan='.$colspan.' align="center"><hr>');
       ShowHTML('            <input class="stb" type="submit" name="Botao" value="Gravar">');
       ShowHTML('        </form>');
     } 
@@ -1741,7 +1742,7 @@ function Excluir() {
   foreach($RS as $row){$RS=$row; break;}
   $w_situacao                 = f($RS,'sq_mtsituacao');
 
-  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,'MTENTMAT',$w_pagina.$par,'E');
+  AbreForm('Form',$w_dir.$w_pagina.'Grava','POST','return(Validacao(this));',null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,'E');
   ShowHTML('<INPUT type="hidden" name="w_chave" value="'.$w_chave.'">');
   ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
   ShowHTML('<INPUT type="hidden" name="w_menu" value="'.$w_menu.'">');
@@ -1851,272 +1852,266 @@ function Grava() {
   ShowHTML('<BASE HREF="'.$conRootSIW.'">');
   ShowHTML('</head>');
   BodyOpen('onLoad=this.focus();');
-  switch ($SG) {
-    case 'MTENTMAT':
-      // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
-        // Se o cliente tem o módulo financeiro, é obrigatório que a entrada esteja vinculada a um lançamento pago
-        if ($w_mod_fn=='S' && $O!='E') {
-          $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,null,null,$_REQUEST['w_fornecedor'],$_REQUEST['w_sq_tipo_doc_ant'],$_REQUEST['w_numero_ant'],null,null,null);
-          $w_existe = false;
-          if (count($RS)==0) {
-            $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,null,null,$_REQUEST['w_fornecedor'],$_REQUEST['w_sq_tipo_doc_ant'],'AJUSTAR',null,null,null);
-          }
-          if (count($RS)>0) {
-            $RS = SortArray($RS,'numero','asc');
-            $w_data   = true;
-            $w_valor  = true;
-            foreach($RS as $row2) {
-              $w_existe = true;
-              if (formataDataEdicao(f($row2,'data'))==$_REQUEST['w_data_ant']) $w_data  = false;
-              if (formatNumber(f($row2,'valor'))==$_REQUEST['w_valor_ant'])    $w_valor = false;
-              $RS2 = $row2;
-            }
-          }
-          
-          if ($w_existe) {
-            if ($w_data) {
-              ScriptOpen('JavaScript');
-              ShowHTML('  alert("ATENÇÃO: A data '.$_REQUEST['w_data'].' difere da registrada: '.formataDataEdicao(f($RS2,'data')).'\n'.f($RS2,'codigo_interno').' - '.f($RS2,'nm_tipo_documento').' '.f($RS2,'numero').'");');
-              ScriptClose();
-              retornaFormulario('w_data');
-              exit();
-            } elseif ($w_valor) {
-              ScriptOpen('JavaScript');
-              ShowHTML('  alert("ATENÇÃO: O valor '.$_REQUEST['w_valor'].' difere do registrado: '.formatNumber(f($RS2,'valor')).'\n'.f($RS2,'codigo_interno').' - '.f($RS2,'nm_tipo_documento').' '.f($RS2,'numero').'");');
-              ScriptClose();
-              retornaFormulario('w_valor');
-              exit();
-            }
-          }
-        }
-        // Recupera o código da situação inicial da movimentação
-        $sql = new db_getMtSituacao; $RS = $sql->getInstanceOf($dbms,$w_cliente,'ENTRADA',null,'S',null,null);
+  if ($SG=='ENTMAT' || $SG=='MTENTBEM') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
+      // Se o cliente tem o módulo financeiro, é obrigatório que a entrada esteja vinculada a um lançamento pago
+      if ($w_mod_fn=='S' && $O!='E') {
+        $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,null,null,$_REQUEST['w_fornecedor'],$_REQUEST['w_sq_tipo_doc_ant'],$_REQUEST['w_numero_ant'],null,null,null);
+        $w_existe = false;
         if (count($RS)==0) {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert("ATENÇÃO: A tabela de situações precisa ser carrregada com pelo menos um registro relativo a entrada de material!");');
-          ScriptClose();
-          retornaFormulario('w_tipo');
-          exit();
-        } else {
-          $RS = SortArray($RS,'sigla','asc');
-          foreach($RS as $row){$RS=$row; break;}
-          $w_situacao = f($RS,'chave');
+          $sql = new db_getLancamentoDoc; $RS = $sql->getInstanceOf($dbms,null,null,$_REQUEST['w_fornecedor'],$_REQUEST['w_sq_tipo_doc_ant'],'AJUSTAR',null,null,null);
         }
-        // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
-        if ($O=='E') {
-          $sql = new db_getDocumentoArquivo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null,$w_cliente);
-          foreach ($RS as $row) {
-            if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+        if (count($RS)>0) {
+          $RS = SortArray($RS,'numero','asc');
+          $w_data   = true;
+          $w_valor  = true;
+          foreach($RS as $row2) {
+            $w_existe = true;
+            if (formataDataEdicao(f($row2,'data'))==$_REQUEST['w_data_ant']) $w_data  = false;
+            if (formatNumber(f($row2,'valor'))==$_REQUEST['w_valor_ant'])    $w_valor = false;
+            $RS2 = $row2;
+          }
+        }
+        
+        if ($w_existe) {
+          if ($w_data) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert("ATENÇÃO: A data '.$_REQUEST['w_data'].' difere da registrada: '.formataDataEdicao(f($RS2,'data')).'\n'.f($RS2,'codigo_interno').' - '.f($RS2,'nm_tipo_documento').' '.f($RS2,'numero').'");');
+            ScriptClose();
+            retornaFormulario('w_data');
+            exit();
+          } elseif ($w_valor) {
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert("ATENÇÃO: O valor '.$_REQUEST['w_valor'].' difere do registrado: '.formatNumber(f($RS2,'valor')).'\n'.f($RS2,'codigo_interno').' - '.f($RS2,'nm_tipo_documento').' '.f($RS2,'numero').'");');
+            ScriptClose();
+            retornaFormulario('w_valor');
+            exit();
+          }
+        }
+      }
+      // Recupera o código da situação inicial da movimentação
+      $sql = new db_getMtSituacao; $RS = $sql->getInstanceOf($dbms,$w_cliente,(($SG=='MTENTBEM') ? 'ENTMATPER' : 'ENTRADA'),null,'S',null,null);
+      if (count($RS)==0) {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("ATENÇÃO: A tabela de situações precisa ser carrregada com pelo menos um registro relativo a entrada de material!");');
+        ScriptClose();
+        retornaFormulario('w_tipo');
+        exit();
+      } else {
+        $RS = SortArray($RS,'sigla','asc');
+        foreach($RS as $row){$RS=$row; break;}
+        $w_situacao = f($RS,'chave');
+      }
+      // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
+      if ($O=='E') {
+        $sql = new db_getDocumentoArquivo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],null,null,null,$w_cliente);
+        foreach ($RS as $row) {
+          if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+        }
+      } 
+      $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,$O,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_copia'],$_REQUEST['w_executor'],
+              $_REQUEST['w_fornecedor'],$_REQUEST['w_tipo'],$w_situacao,$_REQUEST['w_solicitacao'],$_REQUEST['w_documento'],
+              nvl($_REQUEST['w_prevista'],$_REQUEST['w_efetiva']),$_REQUEST['w_efetiva'],
+              $_REQUEST['w_sq_tipo_documento'],$_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_valor'],
+              $_REQUEST['w_armazenamento'],$_REQUEST['w_numero_empenho'],$_REQUEST['w_data_empenho'],$w_chave_nova);
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.(($O=='E') ? 'inicial&O=L' : 'geral&O=A&w_chave='.$w_chave_nova).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+    } 
+  } elseif ($SG=='MTENITEM') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
+      if (is_array($_REQUEST['w_chave_aux'])) {
+        for ($i=1; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
+          if ($_REQUEST['w_chave_aux'][$i]>'') {
+            $w_valor = $_REQUEST['w_valor'][$i];
+
+            if (nvl($_REQUEST['w_qtd_compra'],'')!='') {
+              $w_valor      = toNumberPHP($_REQUEST['w_valor'][$i]);
+              $w_qtd_compra = toNumberPHP($_REQUEST['w_qtd_compra'][$i]);
+              $w_quantidade = toNumberPHP($_REQUEST['w_quantidade'][$i]);
+
+              $w_valor = formatNumber($w_valor / $w_qtd_compra * $w_quantidade);
+            }
+
+            $SQL = new dml_putMtEntItem; $SQL->getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'][$i],$_REQUEST['w_almoxarifado'][$i],
+                    $_REQUEST['w_situacao'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_material'][$i],$_REQUEST['w_quantidade'][$i],$w_valor,$_REQUEST['w_fator'][$i],
+                    $_REQUEST['w_validade'][$i],$_REQUEST['w_fabricacao'][$i],$_REQUEST['w_vida_util'][$i],$_REQUEST['w_lote'][$i],$_REQUEST['w_fabricante'][$i],
+                    $_REQUEST['w_modelo'][$i],$_REQUEST['w_bloqueio'][$i],$_REQUEST['w_motivo'][$i]);
           }
         } 
-        $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,$O,$w_cliente,$w_usuario,$_REQUEST['w_chave'],$_REQUEST['w_copia'],$_REQUEST['w_executor'],
-                $_REQUEST['w_fornecedor'],$_REQUEST['w_tipo'],$w_situacao,$_REQUEST['w_solicitacao'],$_REQUEST['w_documento'],
-                nvl($_REQUEST['w_prevista'],$_REQUEST['w_efetiva']),$_REQUEST['w_efetiva'],
-                $_REQUEST['w_sq_tipo_documento'],$_REQUEST['w_numero'],$_REQUEST['w_data'],$_REQUEST['w_valor'],
-                $_REQUEST['w_armazenamento'],$_REQUEST['w_numero_empenho'],$_REQUEST['w_data_empenho'],$w_chave_nova);
-        ScriptOpen('JavaScript');
-        ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.(($O=='E') ? 'inicial&O=L' : 'geral&O=A&w_chave='.$w_chave_nova).'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
-        ScriptClose();
+        
       } else {
-        ScriptOpen('JavaScript');
-        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
-        ScriptClose();
-        retornaFormulario('w_assinatura');
-      } 
-      break;
-    case 'MTENITEM':
-      // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
-        if (is_array($_REQUEST['w_chave_aux'])) {
-          for ($i=1; $i<=count($_POST['w_chave_aux'])-1; $i=$i+1) {
-            if ($_REQUEST['w_chave_aux'][$i]>'') {
-              $w_valor = $_REQUEST['w_valor'][$i];
+        $w_valor = $_REQUEST['w_valor'];
 
-              if (nvl($_REQUEST['w_qtd_compra'],'')!='') {
-                $w_valor      = toNumberPHP($_REQUEST['w_valor'][$i]);
-                $w_qtd_compra = toNumberPHP($_REQUEST['w_qtd_compra'][$i]);
-                $w_quantidade = toNumberPHP($_REQUEST['w_quantidade'][$i]);
+        if (nvl($_REQUEST['w_qtd_compra'],'')!='' && nvl($_REQUEST['w_valor'],'')!='') {
+          $w_valor      = toNumberPHP($_REQUEST['w_valor']);
+          $w_qtd_compra = toNumberPHP($_REQUEST['w_qtd_compra']);
+          $w_quantidade = toNumberPHP($_REQUEST['w_quantidade']);
 
-                $w_valor = formatNumber($w_valor / $w_qtd_compra * $w_quantidade);
-              }
+          $w_valor = formatNumber($w_valor / $w_qtd_compra * $w_quantidade);
+        }
 
-              $SQL = new dml_putMtEntItem; $SQL->getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'][$i],$_REQUEST['w_almoxarifado'][$i],
-                      $_REQUEST['w_situacao'][$i],$_REQUEST['w_ordem'][$i],$_REQUEST['w_material'][$i],$_REQUEST['w_quantidade'][$i],$w_valor,$_REQUEST['w_fator'][$i],
-                      $_REQUEST['w_validade'][$i],$_REQUEST['w_fabricacao'][$i],$_REQUEST['w_vida_util'][$i],$_REQUEST['w_lote'][$i],$_REQUEST['w_fabricante'][$i],
-                      $_REQUEST['w_modelo'][$i],$_REQUEST['w_bloqueio'][$i],$_REQUEST['w_motivo'][$i]);
-            }
-          } 
-          
-        } else {
-          $w_valor = $_REQUEST['w_valor'];
+        $SQL = new dml_putMtEntItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_almoxarifado'],
+                $_REQUEST['w_situacao'],$_REQUEST['w_ordem'],$_REQUEST['w_material'],$_REQUEST['w_quantidade'],$w_valor,$_REQUEST['w_fator'],
+                $_REQUEST['w_validade'],$_REQUEST['w_fabricacao'],$_REQUEST['w_vida_util'],$_REQUEST['w_lote'],$_REQUEST['w_fabricante'],
+                $_REQUEST['w_modelo'],$_REQUEST['w_bloqueio'],$_REQUEST['w_motivo']);
+      }        
 
-          if (nvl($_REQUEST['w_qtd_compra'],'')!='' && nvl($_REQUEST['w_valor'],'')!='') {
-            $w_valor      = toNumberPHP($_REQUEST['w_valor']);
-            $w_qtd_compra = toNumberPHP($_REQUEST['w_qtd_compra']);
-            $w_quantidade = toNumberPHP($_REQUEST['w_quantidade']);
-
-            $w_valor = formatNumber($w_valor / $w_qtd_compra * $w_quantidade);
+      ScriptOpen('JavaScript');
+      ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'Itens&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'";');
+      ScriptClose();
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+    }     
+  } elseif ($SG=='MTENANEXO') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
+      if (UPLOAD_ERR_OK==0) {
+        $w_maximo = $_REQUEST['w_upload_maximo'];
+        foreach ($_FILES as $Chv => $Field) {
+          if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
+            // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+            ScriptOpen('JavaScript');
+            ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
+            ScriptClose();
+            retornaFormulario('w_observacao');
+            exit();
           }
-
-          $SQL = new dml_putMtEntItem; $SQL->getInstanceOf($dbms,$O,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_almoxarifado'],
-                  $_REQUEST['w_situacao'],$_REQUEST['w_ordem'],$_REQUEST['w_material'],$_REQUEST['w_quantidade'],$w_valor,$_REQUEST['w_fator'],
-                  $_REQUEST['w_validade'],$_REQUEST['w_fabricacao'],$_REQUEST['w_vida_util'],$_REQUEST['w_lote'],$_REQUEST['w_fabricante'],
-                  $_REQUEST['w_modelo'],$_REQUEST['w_bloqueio'],$_REQUEST['w_motivo']);
-        }        
-
-        ScriptOpen('JavaScript');
-        ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'Itens&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'";');
-        ScriptClose();
-      } else {
-        ScriptOpen('JavaScript');
-        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
-        ScriptClose();
-        retornaFormulario('w_assinatura');
-      }     
-      break;
-    case 'MTENANEXO':
-      // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
-        if (UPLOAD_ERR_OK==0) {
-          $w_maximo = $_REQUEST['w_upload_maximo'];
-          foreach ($_FILES as $Chv => $Field) {
-            if (!($Field['error']==UPLOAD_ERR_OK || $Field['error']==UPLOAD_ERR_NO_FILE)) {
-              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+          $w_tamanho = $Field['size'];            
+          if ($Field['size'] > 0) {
+            // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
+            if ($Field['size'] > $w_maximo) {
               ScriptOpen('JavaScript');
               ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
               ScriptClose();
               retornaFormulario('w_observacao');
               exit();
-            }
-            $w_tamanho = $Field['size'];            
-            if ($Field['size'] > 0) {
-              // Verifica se o tamanho das fotos está compatível com  o limite de 100KB. 
-              if ($Field['size'] > $w_maximo) {
-                ScriptOpen('JavaScript');
-                ShowHTML('  alert("Atenção: o tamanho máximo do arquivo não pode exceder '.($w_maximo/1024).' KBytes!");');
-                ScriptClose();
-                retornaFormulario('w_observacao');
-                exit();
-              } 
-              // Se já há um nome para o arquivo, mantém 
-              if ($_REQUEST['w_atual']>'') {
-                $sql = new db_getDocumentoArquivo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
-                foreach ($RS as $row) {
-                  if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
-                  if (!(strpos(f($row,'caminho'),'.')===false)) {
-                    $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,30);
-                  } else {
-                    $w_file = basename(f($row,'caminho'));
-                  }
+            } 
+            // Se já há um nome para o arquivo, mantém 
+            if ($_REQUEST['w_atual']>'') {
+              $sql = new db_getDocumentoArquivo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+              foreach ($RS as $row) {
+                if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+                if (!(strpos(f($row,'caminho'),'.')===false)) {
+                  $w_file = substr(basename(f($row,'caminho')),0,(strpos(basename(f($row,'caminho')),'.') ? strpos(basename(f($row,'caminho')),'.')+1 : 0)-1).substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,30);
+                } else {
+                  $w_file = basename(f($row,'caminho'));
                 }
-              } else {
-                $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
-                if (!(strpos($Field['name'],'.')===false)) {
-                  $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
-                }
-              } 
-              $w_tipo    = $Field['type'];
-              $w_nome    = $Field['name'];
-              if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
-            } elseif(nvl($Field['name'],'')!=''){
-              ScriptOpen('JavaScript');
-              ShowHTML('  alert("Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!");');
-              ScriptClose();
-              retornaFormulario('w_caminho');
-              exit();
-            }
-          } 
-          // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
-          if ($O=='E' && $_REQUEST['w_atual']>'') {
-            $sql = new db_getDocumentoArquivo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
-            foreach ($RS as $row) {
-              if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
-            }
-          } 
-          $SQL = new dml_putDocumentoArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_ordem'],$_REQUEST['w_tipo_arquivo'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
-        } else {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');
-          ScriptClose();
-          exit();
-        } 
-        ScriptOpen('JavaScript');
-        // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
-        ShowHTML('  location.href="'.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'";');
-        ScriptClose();
-      } else {
-        ScriptOpen('JavaScript');
-        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
-        ScriptClose();
-        retornaFormulario('w_assinatura');
-      } 
-      break;      
-    case 'MTENTARM':
-      // Verifica se a Assinatura Eletrônica é válida
-      if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
-        $sql = new db_getMtMovim; $RS_Solic = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
-                $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-        foreach($RS_Solic as $row){$RS_Solic=$row; break;}
-        if (f($RS_Solic,'sq_mtsituacao')!=$_REQUEST['w_situacao']) {
-          ScriptOpen('JavaScript');
-          ShowHTML('  alert("ATENÇÃO: A entrada de material já teve sua situação alterada!");');
-          ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
-          ScriptClose();
-          exit();
-        } else {
-          $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,'VERIFENT',3,null,null,null,null,null,null,null,null,null,null,
-                  $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
-          foreach($RS as $row){$RS=$row; break;}
-          if (/*f($RS,'entrada_mes_seguinte')=='S'||f($RS,'saida_mes_seguinte')=='S'||*/f($RS,'mes_corrente_fechado')=='S'||f($RS,'mes_seguinte_fechado')=='S'||f($RS,'mes_anterior_fechado')=='N') {
+              }
+            } else {
+              $w_file = str_replace('.tmp','',basename($Field['tmp_name']));
+              if (!(strpos($Field['name'],'.')===false)) {
+                $w_file = $w_file.substr($Field['name'],(strrpos($Field['name'],'.') ? strrpos($Field['name'],'.')+1 : 0)-1,10);
+              }
+            } 
+            $w_tipo    = $Field['type'];
+            $w_nome    = $Field['name'];
+            if ($w_file>'') move_uploaded_file($Field['tmp_name'],DiretorioCliente($w_cliente).'/'.$w_file);
+          } elseif(nvl($Field['name'],'')!=''){
             ScriptOpen('JavaScript');
-            ShowHTML('  alert("ATENÇÃO: Não será possível efetivar a ação! Motivo(s):'.
-                     //((f($RS,'entrada_mes_seguinte')=='S') ? '\n- Existe entrada em mês posterior' : '').
-                     //((f($RS,'saida_mes_seguinte')=='S') ? '\n- Existe saída em mês posterior' : '').
-                     ((f($RS,'mes_corrente_fechado')=='S') ? '\n- Mês de entrega efetiva já fechado' : '').
-                     ((f($RS,'mes_seguinte_fechado')=='S') ? '\n- Mês posterior ao de entrega efetiva já fechado' : '').
-                     ((f($RS,'mes_anterior_fechado')=='N') ? '\n- Mês anterior ao de entrega efetiva não fechado' : '').
-                    '");');
-            ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
+            ShowHTML('  alert("Atenção: o tamanho do arquivo deve ser maior que 0 KBytes!");');
             ScriptClose();
+            retornaFormulario('w_caminho');
             exit();
           }
-          
-          $SQL = new dml_putMtEntArm; 
-          if ($O=='E') {
-            // Estorna a entrada
-            $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null,null);
-          } else {
-            // Armazena os itens da entrada
-            for ($i=0; $i<=count($_POST['w_item'])-1; $i=$i+1) {
-              if ($_REQUEST['w_item'][$i]>'') {
-                $SQL->getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_item'][$i],$_REQUEST['w_local'][$i]);
-              }
-            }
-          }
-
-          // Registra o armazenamento
-          $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,'V',$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,
-            null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_armazenamento'],null,null,$w_chave_nova);
-
-          ScriptOpen('JavaScript');
-          ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
-          ScriptClose();
         } 
+        // Se for exclusão e houver um arquivo físico, deve remover o arquivo do disco.  
+        if ($O=='E' && $_REQUEST['w_atual']>'') {
+          $sql = new db_getDocumentoArquivo; $RS = $sql->getInstanceOf($dbms,$_REQUEST['w_chave'],$_REQUEST['w_atual'],null,null,$w_cliente);
+          foreach ($RS as $row) {
+            if (file_exists($conFilePhysical.$w_cliente.'/'.f($row,'caminho'))) unlink($conFilePhysical.$w_cliente.'/'.f($row,'caminho'));
+          }
+        } 
+        $SQL = new dml_putDocumentoArquivo; $SQL->getInstanceOf($dbms,$O,$w_cliente,$_REQUEST['w_chave'],$_REQUEST['w_chave_aux'],$_REQUEST['w_nome'],$_REQUEST['w_ordem'],$_REQUEST['w_tipo_arquivo'],$_REQUEST['w_descricao'],$w_file,$w_tamanho,$w_tipo,$w_nome);
       } else {
         ScriptOpen('JavaScript');
-        ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
+        ShowHTML('  alert("ATENÇÃO: ocorreu um erro na transferência do arquivo. Tente novamente!");');
         ScriptClose();
-        retornaFormulario('w_assinatura');
         exit();
       } 
-      break;
-    default:
       ScriptOpen('JavaScript');
-      ShowHTML('  alert("Bloco de dados não encontrado: '.$SG.'");');
-      ShowHTML('  history.back(1);');
+      // Recupera a sigla do serviço pai, para fazer a chamada ao menu 
+      ShowHTML('  location.href="'.montaURL_JS($w_dir,$R.'&O=L&w_menu='.$_REQUEST['w_menu'].'&w_chave='.$_REQUEST['w_chave'].'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.MontaFiltro('GET')).'";');
       ScriptClose();
-      break;
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+    } 
+  } elseif ($SG=='MTENTARM') {
+    // Verifica se a Assinatura Eletrônica é válida
+    if (verificaAssinaturaEletronica($_SESSION['USERNAME'],$w_assinatura) || $w_assinatura=='') {
+      $sql = new db_getMtMovim; $RS_Solic = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,$SG,3,null,null,null,null,null,null,null,null,null,null,
+              $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+      foreach($RS_Solic as $row){$RS_Solic=$row; break;}
+      if (f($RS_Solic,'sq_mtsituacao')!=$_REQUEST['w_situacao']) {
+        ScriptOpen('JavaScript');
+        ShowHTML('  alert("ATENÇÃO: A entrada de material já teve sua situação alterada!");');
+        ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
+        ScriptClose();
+        exit();
+      } else {
+        $sql = new db_getMtMovim; $RS = $sql->getInstanceOf($dbms,$w_cliente,$w_usuario,'VERIFENT',3,null,null,null,null,null,null,null,null,null,null,
+                $_REQUEST['w_chave'],null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null);
+        foreach($RS as $row){$RS=$row; break;}
+        if (/*f($RS,'entrada_mes_seguinte')=='S'||f($RS,'saida_mes_seguinte')=='S'||*/f($RS,'mes_corrente_fechado')=='S'||f($RS,'mes_seguinte_fechado')=='S'||f($RS,'mes_anterior_fechado')=='N') {
+          ScriptOpen('JavaScript');
+          ShowHTML('  alert("ATENÇÃO: Não será possível efetivar a ação! Motivo(s):'.
+                   //((f($RS,'entrada_mes_seguinte')=='S') ? '\n- Existe entrada em mês posterior' : '').
+                   //((f($RS,'saida_mes_seguinte')=='S') ? '\n- Existe saída em mês posterior' : '').
+                   ((f($RS,'mes_corrente_fechado')=='S') ? '\n- Mês de entrega efetiva já fechado' : '').
+                   ((f($RS,'mes_seguinte_fechado')=='S') ? '\n- Mês posterior ao de entrega efetiva já fechado' : '').
+                   ((f($RS,'mes_anterior_fechado')=='N') ? '\n- Mês anterior ao de entrega efetiva não fechado' : '').
+                  '");');
+          ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
+          ScriptClose();
+          exit();
+        }
+        
+        $SQL = new dml_putMtEntArm; 
+        if ($O=='E') {
+          // Estorna a entrada
+          $SQL->getInstanceOf($dbms,'E',$_REQUEST['w_chave'],null,null);
+        } else {
+          // Armazena os itens da entrada
+          for ($i=0; $i<=count($_POST['w_item'])-1; $i=$i+1) {
+            if ($_REQUEST['w_item'][$i]>'') {
+              $SQL->getInstanceOf($dbms,'A',$_REQUEST['w_chave'],$_REQUEST['w_item'][$i],$_REQUEST['w_local'][$i]);
+            }
+          }
+        }
+
+        // Registra o armazenamento
+        $SQL = new dml_putMtEntrada; $SQL->getInstanceOf($dbms,'V',$w_cliente,$w_usuario,$_REQUEST['w_chave'],null,null,
+          null,null,null,null,null,null,null,null,null,null,null,$_REQUEST['w_armazenamento'],null,null,$w_chave_nova);
+
+        ScriptOpen('JavaScript');
+        ShowHTML('  location.href="'.montaURL_JS($w_dir,$w_pagina.'inicial&O=L&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($RS_Menu,'sigla').MontaFiltro('GET')).'";');
+        ScriptClose();
+      } 
+    } else {
+      ScriptOpen('JavaScript');
+      ShowHTML('  alert("'.$_SESSION['LABEL_ALERTA'].' inválida!");');
+      ScriptClose();
+      retornaFormulario('w_assinatura');
+      exit();
+    } 
+  } else {
+    ScriptOpen('JavaScript');
+    ShowHTML('  alert("Bloco de dados não encontrado: '.$SG.'");');
+    ShowHTML('  history.back(1);');
+    ScriptClose();
   } 
 } 
 
