@@ -13,7 +13,7 @@ class dml_putMTPermanente {
    function getInstanceOf($dbms, $operacao, $p_cliente, $p_usuario, $p_chave, $p_copia, 
         $p_localizacao, $p_almoxarifado, $p_projeto, $p_sqcc, $p_material, $p_entrada, $p_situacao, 
         $p_forn_garantia,$p_numero_rgp, $p_tombamento, $p_descricao, $p_codigo_externo, $p_numero_serie,
-        $p_marca, $p_modelo, $p_fim_garantia, $p_vida_util, $p_observacao, $p_ativo, $p_cc_patrimonial,
+        $p_marca, $p_modelo, $p_fim_garantia, $p_vida_util, $p_observacao, $p_cc_patrimonial,
         $p_cc_depreciacao, $p_valor_brl, $p_valor_usd, $p_valor_eur, $p_data_brl, $p_data_usd, $p_data_eur, 
         &$p_chave_nova) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema'); $sql=$strschema.'sp_putMTPermanente';
@@ -40,7 +40,6 @@ class dml_putMTPermanente {
                    'p_fim_garantia'     =>array(tvl($p_fim_garantia),           B_DATE,           32),
                    'p_vida_util'        =>array(tvl($p_vida_util),              B_INTEGER,        32),
                    'p_observacao'       =>array(tvl($p_observacao),             B_VARCHAR,       500),
-                   'p_ativo'            =>array(tvl($p_ativo),                  B_VARCHAR,         1),
                    'p_cc_patrimonial'   =>array(tvl($p_cc_patrimonial),         B_VARCHAR,        25),
                    'p_cc_depreciacao'   =>array(tvl($p_cc_depreciacao),         B_VARCHAR,        25),
                    'p_valor_brl'        =>array(toNumber(tvl($p_valor_brl)),    B_NUMERIC,      18,2),
