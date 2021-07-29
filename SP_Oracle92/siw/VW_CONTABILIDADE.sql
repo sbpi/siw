@@ -71,20 +71,20 @@ select 'I' TIPO, c.cliente, e2.qtd_itens,
                                                                            m.valor              > 0
                                                                           )
                           )                 f  on (a.sq_siw_solicitacao  = f.sq_siw_solicitacao)
-         left        join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
+         left        join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia da conclusão do lançamento
                                                    c.cliente             = c2.cliente and
                                                    a2.sq_moeda           = c2.sq_moeda and
                                                    c2.data               = case a3.sigla when 'FNDFIXO' 
-                                                                                then (coalesce(d.data,c.quitacao,c.vencimento,a.fim)-1)
-                                                                                else (coalesce(c.quitacao,c.vencimento,a.fim)-1)
+                                                                                then (coalesce(d.data,c.quitacao,c.vencimento,a.fim))
+                                                                                else (coalesce(c.quitacao,c.vencimento,a.fim))
                                                                            end
                                                   )
          left        join co_moeda_cotacao  c3 on (-- Taxa de venda deve ser do dia da conclusão do lançamento
                                                    c.cliente             = c3.cliente and
                                                    a2.sq_moeda           = c3.sq_moeda and
                                                    c3.data               = case a3.sigla when 'FNDFIXO' 
-                                                                                then (coalesce(d.data,c.quitacao,c.vencimento,a.fim)-1)
-                                                                                else (coalesce(c.quitacao,c.vencimento,a.fim)-1)
+                                                                                then (coalesce(d.data,c.quitacao,c.vencimento,a.fim))
+                                                                                else (coalesce(c.quitacao,c.vencimento,a.fim))
                                                                            end
                                                   )
 UNION ALL
@@ -139,20 +139,20 @@ select 'D' TIPO, c.cliente, 1 qtd_itens,
                                                                          m.valor              > 0
                                                                         )
                         )                 f  on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)
-         left      join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
+         left      join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia da conclusão do lançamento
                                                  c.cliente             = c2.cliente and
                                                  a2.sq_moeda           = c2.sq_moeda and
                                                  c2.data               = case a3.sigla when 'FNDFIXO' 
-                                                                              then (coalesce(d.data,c.quitacao,c.vencimento,a.fim)-1)
-                                                                              else (coalesce(c.quitacao,c.vencimento,a.fim)-1)
+                                                                              then (coalesce(d.data,c.quitacao,c.vencimento,a.fim))
+                                                                              else (coalesce(c.quitacao,c.vencimento,a.fim))
                                                                          end
                                                 )
-         left      join co_moeda_cotacao  c3 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
+         left      join co_moeda_cotacao  c3 on (-- Taxa de venda deve ser do dia da conclusão do lançamento
                                                  c.cliente             = c3.cliente and
                                                  a2.sq_moeda           = c3.sq_moeda and
                                                  c3.data               = case a3.sigla when 'FNDFIXO' 
-                                                                              then (coalesce(d.data,c.quitacao,c.vencimento,a.fim)-1)
-                                                                              else (coalesce(c.quitacao,c.vencimento,a.fim)-1)
+                                                                              then (coalesce(d.data,c.quitacao,c.vencimento,a.fim))
+                                                                              else (coalesce(c.quitacao,c.vencimento,a.fim))
                                                                          end
                                                 )
  where e.sq_documento_item is null
@@ -211,14 +211,14 @@ select 'D' TIPO, c.cliente, 1 qtd_itens,
                                                                          m.valor              > 0
                                                                         )
                         )                 f  on (a.sq_siw_solicitacao = f.sq_siw_solicitacao)
-         left      join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
+         left      join co_moeda_cotacao  c2 on (-- Taxa de compra deve ser do dia da conclusão do lançamento
                                                  c.cliente             = c2.cliente and
                                                  a2.sq_moeda           = c2.sq_moeda and
-                                                 c2.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
+                                                 c2.data               = (coalesce(c.quitacao,c.vencimento,a.fim))
                                                 )
-         left      join co_moeda_cotacao  c3 on (-- Taxa de compra deve ser do dia anterior ao da conclusão do lançamento
+         left      join co_moeda_cotacao  c3 on (-- Taxa de venda deve ser do dia da conclusão do lançamento
                                                  c.cliente             = c3.cliente and
                                                  a2.sq_moeda           = c3.sq_moeda and
-                                                 c3.data               = (coalesce(c.quitacao,c.vencimento,a.fim)-1)
+                                                 c3.data               = (coalesce(c.quitacao,c.vencimento,a.fim))
                                                 )
  where e.sq_documento_item is null;
