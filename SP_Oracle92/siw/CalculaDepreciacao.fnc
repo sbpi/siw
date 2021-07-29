@@ -37,7 +37,7 @@ begin
      Else
         -- Trata a data de início do período
         If p_inicio is null or p_inicio <= crec.data_tombamento Then 
-              w_inicio := crec.data_tombamento;
+              w_inicio := crec.data_tombamento + 1; -- A depreciação começa somente no dia seguinte ao de tombamento.
         Else
            w_inicio := p_inicio;
         End If;
