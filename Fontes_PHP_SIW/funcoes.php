@@ -1,4 +1,5 @@
 <?php
+ini_set(default_charset, "iso-8859-1");
 setlocale(LC_ALL, 'pt_BR');
 mb_language('en');
 date_default_timezone_set('America/Sao_Paulo');
