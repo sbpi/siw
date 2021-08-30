@@ -57,7 +57,10 @@ select 'I' TIPO, e2.qtd_itens,
                       else trunc(e.valor_total*c3.taxa_venda,2)
                  end
        end brl_valor_venda,
-       case when a2.sigla = 'BRL' or f1.sq_siw_solicitacao is not null then 1 else trunc(1/f1.fator,4) end fator_conversao
+       case when a2.sigla <> b2.sigla then trunc(1/f.fator,4) 
+            when a2.sigla = 'BRL' or f1.sq_siw_solicitacao is not null then 1
+            else trunc(1/f1.fator,4)
+       end fator_conversao
   from siw_solicitacao                      a
        inner         join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite and a1.sigla in ('EE','AT'))
        inner         join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
@@ -137,7 +140,10 @@ select 'D' TIPO, 1 qtd_itens,
                       else trunc(a.valor*c3.taxa_venda,2)
                  end
        end brl_valor_venda,
-       case when a2.sigla = 'BRL' or f1.sq_siw_solicitacao is not null then 1 else trunc(1/f1.fator,4) end fator_conversao
+       case when a2.sigla <> b2.sigla then trunc(1/f.fator,4) 
+            when a2.sigla = 'BRL' or f1.sq_siw_solicitacao is not null then 1
+            else trunc(1/f1.fator,4)
+       end fator_conversao
   from siw_solicitacao                    a
        inner       join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite and a1.sigla in ('EE','AT'))
        inner       join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
@@ -213,8 +219,11 @@ select 'D' TIPO, 1 qtd_itens,
             else case when c3.sq_moeda_cotacao is null then null
                       else trunc(a.valor*c3.taxa_venda,2)
                  end
-       end brl_valor_venda, 
-       case when a2.sigla = 'BRL' or f1.sq_siw_solicitacao is not null then 1 else trunc(1/f1.fator,4) end fator_conversao
+       end brl_valor_venda,
+       case when a2.sigla <> b2.sigla then trunc(1/f.fator,4) 
+            when a2.sigla = 'BRL' or f1.sq_siw_solicitacao is not null then 1
+            else trunc(1/f1.fator,4)
+       end fator_conversao
   from siw_solicitacao                    a
        inner       join siw_tramite       a1 on (a.sq_siw_tramite      = a1.sq_siw_tramite and a1.sigla in ('EE','AT'))
        inner       join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
