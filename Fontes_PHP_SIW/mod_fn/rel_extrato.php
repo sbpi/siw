@@ -106,7 +106,7 @@ function Inicial() {
         $p_chave, $p_assunto, $p_conta, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
         $p_acao_ppa, $p_orprior, $p_empenho, $p_processo);
-    $RSQuery = SortArray($RSQuery,'nm_banco_debito','asc','cd_agencia_debito','asc','conta_debito','asc','dt_pagamento','asc','tipo','asc','cb_valor','asc','nm_pessoa','asc');
+    $RSQuery = SortArray($RSQuery,'nm_banco_debito','asc','cd_agencia_debito','asc','conta_debito','asc','dt_pagamento','asc','ord_codigo_interno','asc','cb_valor','asc','nm_pessoa','asc');
   }
 
   headerGeral('P', $w_tipo, $w_chave, f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);

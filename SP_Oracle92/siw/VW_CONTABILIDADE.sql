@@ -6,7 +6,10 @@ select 'I' TIPO, c.cliente, e2.qtd_itens,
        c.sq_pessoa_conta, c.sq_agencia, c.numero_conta,
        c.cc_debito, c.cc_credito,
        a.codigo_externo cd_financeiro_externo,
-       nvl(a.descricao,a3.nome)||case e2.qtd_itens when 1 then null else ' - '||e.descricao end ds_financeiro,
+       nvl(a.descricao,a3.nome)||
+            --case e2.qtd_itens when 1 then null else ' - '||e.descricao end||
+            ' - '||c1.nome_resumido||
+            case when b.codigo_interno is null then null else ' - '||b.codigo_interno end ds_financeiro,
        a3.sigla      sg_menu,
        c.vencimento, case a3.sigla when 'FNDFIXO' then d.data else c.quitacao end quitacao, a.conclusao, e.ordem, e.sq_documento_item,
        e.valor_total fn_valor,    -- Valor na moeda do pagamento
@@ -57,6 +60,7 @@ select 'I' TIPO, c.cliente, e2.qtd_itens,
        inner         join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
        inner         join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and a3.sigla <> 'FNDFUNDO')
        inner         join fn_lancamento     c  on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
+         inner       join co_pessoa         c1 on (c.pessoa              = c1.sq_pessoa)
        inner         join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          inner       join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
            inner     join (select sq_lancamento_doc, count(*) qtd_itens
@@ -96,7 +100,9 @@ select 'D' TIPO, c.cliente, 1 qtd_itens,
        c.sq_pessoa_conta, c.sq_agencia, c.numero_conta,
        c.cc_debito, c.cc_credito,
        a.codigo_externo cd_financeiro_externo,
-       nvl(a.descricao,a3.nome) ds_financeiro,
+       nvl(a.descricao,a3.nome)||
+            ' - '||c1.nome_resumido||
+            case when b.codigo_interno is null then null else ' - '||b.codigo_interno end ds_financeiro,
        a3.sigla      sg_menu,
        c.vencimento, case a3.sigla when 'FNDFIXO' then d.data else c.quitacao end quitacao, a.conclusao, 1 ordem, 0 sq_documento_item,
        a.valor       fn_valor,    -- Valor na moeda do pagamento
@@ -129,7 +135,8 @@ select 'D' TIPO, c.cliente, 1 qtd_itens,
        inner       join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
        inner       join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and a3.sigla <> 'FNDFUNDO')
        inner       join fn_lancamento     c  on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
-           left    join siw_solicitacao   b  on (c.sq_solic_vinculo    = b.sq_siw_solicitacao)
+         inner     join co_pessoa         c1 on (c.pessoa              = c1.sq_pessoa)
+         left      join siw_solicitacao   b  on (c.sq_solic_vinculo    = b.sq_siw_solicitacao)
        inner       join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          left      join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
        left        join (select k.sq_siw_solicitacao, m.valor, m.valor/k.valor fator, m.sq_moeda sq_moeda
@@ -165,7 +172,9 @@ select 'D' TIPO, c.cliente, 1 qtd_itens,
        c.sq_pessoa_conta, c.sq_agencia, c.numero_conta,
        c.cc_debito, c.cc_credito,
        a.codigo_externo cd_financeiro_externo,
-       nvl(a.descricao,a3.nome) ds_financeiro,
+       nvl(a.descricao,a3.nome)||
+            ' - '||c1.nome_resumido||
+            case when b.codigo_interno is null then null else ' - '||b.codigo_interno end ds_financeiro,
        a3.sigla      sg_menu,
        c.vencimento, case a3.sigla when 'FNDFIXO' then d.data else c.quitacao end quitacao, a.conclusao, 1 ordem, 0 sq_documento_item,
        a.valor       fn_valor,    -- Valor na moeda do pagamento
@@ -198,7 +207,8 @@ select 'D' TIPO, c.cliente, 1 qtd_itens,
        inner       join co_moeda          a2 on (a.sq_moeda            = a2.sq_moeda)
        inner       join siw_menu          a3 on (a.sq_menu             = a3.sq_menu and a3.sigla = 'FNDFUNDO')
        inner       join fn_lancamento     c  on (a.sq_siw_solicitacao  = c.sq_siw_solicitacao)
-           left    join siw_solicitacao   b  on (c.sq_solic_vinculo    = b.sq_siw_solicitacao)
+         inner     join co_pessoa         c1 on (c.pessoa              = c1.sq_pessoa)
+         left      join siw_solicitacao   b  on (c.sq_solic_vinculo    = b.sq_siw_solicitacao)
        inner       join fn_lancamento_doc d  on (a.sq_siw_solicitacao  = d.sq_siw_solicitacao)
          left      join fn_documento_item e  on (d.sq_lancamento_doc   = e.sq_lancamento_doc)
        left        join (select k.sq_siw_solicitacao, m.valor/k2.valor*k.valor valor, k2.valor/m.valor fator, m.sq_moeda sq_moeda

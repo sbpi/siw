@@ -473,6 +473,12 @@ function Dexion() {
   global $w_Disabled;
   $w_SG = $SG;
   $w_tipo = $_REQUEST['w_tipo'];
+  $w_atual = '';
+  $w_linha = 0;
+  $w_soma  = 0.00;
+  $w_total = 0.00;
+  $w_texto = '';
+  
   // Ajusta parâmetro de busca se foi indicada recuperação apenas de lançamentos sem valores por país
   if ($p_semConta=='S') $w_SG = 'FNSEMCONTA';
   
@@ -564,54 +570,83 @@ function Dexion() {
     ShowHTML('</tr>');
     ShowHTML('</FORM>');
     ShowHTML('    </table>');
-    ShowHTML('    <tr><td align="center" height="1" bgcolor="#000000">');
-    ShowHTML('  </td></tr></table>');
-    ShowHTML('</td></tr></table>');
 
-    ShowHTML('<tr><td colspan=3 align="right"><b>Registros: '.count($RS));
-    ShowHTML('<tr><td colspan=3>');
-
-    ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
-    ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
-    ShowHTML('          <td><b>Centro de Custo</td>');
-    ShowHTML('          <td><b>Localização do Documento</td>');
-    ShowHTML('          <td><b>Parceiro</td>');
-    ShowHTML('          <td><b>Conta de Débito</td>');
-    ShowHTML('          <td><b>Conta de Crédito</td>');
-    ShowHTML('          <td><b>Histórico Padrão</td>');
-    ShowHTML('          <td><b>Débito Conciliado</td>');
-    ShowHTML('          <td><b>Crédito Conciliado</td>');
-    ShowHTML('          <td><b>Complemento de Histórico</td>');
-    ShowHTML('          <td><b>Data do Lançamento</td>');
-    ShowHTML('          <td><b>Valor</td>');
-    ShowHTML('          <td><b>Observação</td>');
-    ShowHTML('          <td><b>Pendente</td>');
-    ShowHTML('          <td><b>Registro</td>');
-    ShowHTML('        </tr>');
+    $w_texto.='<tr><td colspan=3>'.$crlf;
+    $w_texto.='    <tr><td align="center" height="1" bgcolor="#000000">'.$crlf;
+    $w_texto.='  </td></tr></table>'.$crlf;
+    $w_texto.='</td></tr></table>'.$crlf;
+    $w_texto.='    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">'.$crlf;
+    $w_texto.='        <tr bgcolor="'.$conTrBgColor.'" align="center">'.$crlf;
+    $w_texto.='          <td><b>Centro de Custo</td>'.$crlf;
+    $w_texto.='          <td><b>Localização do Documento</td>'.$crlf;
+    $w_texto.='          <td><b>Parceiro</td>'.$crlf;
+    $w_texto.='          <td><b>Conta de Débito</td>'.$crlf;
+    $w_texto.='          <td><b>Conta de Crédito</td>'.$crlf;
+    $w_texto.='          <td><b>Histórico Padrão</td>'.$crlf;
+    $w_texto.='          <td><b>Débito Conciliado</td>'.$crlf;
+    $w_texto.='          <td><b>Crédito Conciliado</td>'.$crlf;
+    $w_texto.='          <td><b>Complemento de Histórico</td>'.$crlf;
+    $w_texto.='          <td><b>Data do Lançamento</td>'.$crlf;
+    $w_texto.='          <td><b>Valor</td>'.$crlf;
+    $w_texto.='          <td><b>Observação</td>'.$crlf;
+    $w_texto.='          <td><b>Pendente</td>'.$crlf;
+    $w_texto.='          <td><b>Registro</td>'.$crlf;
+    $w_texto.='        </tr>'.$crlf;
     if (!count($RS)) {
-      ShowHTML('      <tr bgcolor="'.$conTrBgColor.'"><td colspan=14 align="center"><b>Não foram encontrados registros.</b></td></tr>');
+      $w_texto.='      <tr bgcolor="'.$conTrBgColor.'"><td colspan=14 align="center"><b>Não foram encontrados registros.</b></td></tr>'.$crlf;
     } else {
       $i = 0;
+	  $w_linha;
+	  $w_atual = '';
+	  $w_chave = 0;
+	  $w_soma  = 0;
+	  $w_total = 0;
       foreach($RS as $row) {
-        $w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
-        ShowHTML('      <tr bgcolor="'.$w_cor.'" valign="top">');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>'.f($row,'cc_debito'));
-        ShowHTML('        <td>'.f($row,'cc_credito'));
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>'.f($row,'ds_financeiro'));
-        ShowHTML('        <td align="center">'.str_replace('/','',formataDataEdicao(f($row,'quitacao'),5)).'</td>');
-        ShowHTML('        <td align="right">'.str_replace('.','',formatNumber(f($row,'brl_valor_compra'))).'</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td>&nbsp;</td>');
-        ShowHTML('        <td align="center" nowrap>'.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo).'-'.f($row,'ordem').'</td>');
-        ShowHTML('      </tr>');
+		if ($w_atual <> f($row,'cd_financeiro')) {
+			if ($w_linha>0) {
+				$w_texto.='        <td align="right">'.str_replace('.','',formatNumber($w_soma)).'</td>'.$crlf;
+				$w_texto.='        <td>&nbsp;</td>'.$crlf;
+				$w_texto.='        <td>&nbsp;</td>'.$crlf;
+				$w_texto.='        <td align="center" nowrap>'.exibeSolic($w_dir,$w_chave,$w_atual,'N',$w_tipo).'</td>'.$crlf;
+				$w_texto.='      </tr>'.$crlf;
+				$w_soma = 0;
+			}
+			$w_cor = ($w_cor==$conTrBgColor || $w_cor=='') ? $w_cor=$conTrAlternateBgColor : $w_cor=$conTrBgColor;
+			$w_texto.='      <tr bgcolor="'.$w_cor.'" valign="top">'.$crlf;
+			$w_texto.='        <td>&nbsp;</td>'.$crlf;
+			$w_texto.='        <td>&nbsp;</td>'.$crlf;
+			$w_texto.='        <td>&nbsp;</td>'.$crlf;
+			$w_texto.='        <td>'.f($row,'cc_debito').$crlf;
+			$w_texto.='        <td>'.f($row,'cc_credito').$crlf;
+			$w_texto.='        <td>&nbsp;</td>'.$crlf;
+			$w_texto.='        <td>&nbsp;</td>'.$crlf;
+			$w_texto.='        <td>&nbsp;</td>'.$crlf;
+			$w_texto.='        <td>'.f($row,'ds_financeiro').'</td>'.$crlf;
+			$w_texto.='        <td align="center">'.str_replace('/','',formataDataEdicao(f($row,'quitacao'),5)).'</td>'.$crlf;
+			$w_atual = f($row,'cd_financeiro');
+			$w_chave = f($row,'sq_financeiro');
+			$w_linha++;
+		}
+		$w_soma+=f($row,'brl_valor_compra');
+		$w_total+=f($row,'brl_valor_compra');
         if (nvl(f($row,'cc_debito'),'')=='') $i++;
       }
+	  if ($w_linha>0) {
+		$w_texto.='        <td align="right">'.str_replace('.','',formatNumber($w_soma)).'</td>'.$crlf;
+		$w_texto.='        <td>&nbsp;</td>'.$crlf;
+		$w_texto.='        <td>&nbsp;</td>'.$crlf;
+		$w_texto.='        <td align="center" nowrap>'.exibeSolic($w_dir,$w_chave,$w_atual,'N',$w_tipo).'</td>'.$crlf;
+		$w_texto.='      </tr>'.$crlf;
+      }
+	  if ($w_total>0) {
+        $w_texto.='      <tr bgcolor="'.$w_cor.'" valign="top">'.$crlf;
+        $w_texto.='        <td colspan="10" align="right"><b>Total</b></td>'.$crlf;
+        $w_texto.='        <td align="right"><b>'.formatNumber($w_total).'</b></td>'.$crlf;
+        $w_texto.='        <td colspan="3">&nbsp;</td>'.$crlf;
+        $w_texto.='      </tr>'.$crlf;
+	  }
+	  $w_texto = '<tr><td colspan=3 align="right"><b>Registros: ' . $w_linha . $w_texto;
+      ShowHTML($w_texto);
       
       AbreForm('Form1',$w_dir.$w_pagina.'GeraDexion','POST',null,null,$P1,$P2,$P3,$P4,$TP,$SG,$w_pagina.$par,$O);     
       ShowHTML(MontaFiltro('POST')); 
@@ -665,25 +700,46 @@ function GeraDexion() {
   header('Content-Disposition: attachment; filename=arquivo.txt');
   header('Cache-Control: no-cache, must-revalidate',false);
 
+  $w_atual = '';
+  $w_chave = 0;
+  $w_soma  = 0;
+  $w_linha = 0;
+  
   foreach($RS as $row) {
-    echo "|";
-    echo "|";
-    echo "|";
-    echo "|";
-    echo f($row,'cc_debito')."|";
-    echo f($row,'cc_credito')."|";
-    echo "|";
-    echo "|";
-    echo "|";
-    echo str_replace(chr(13).chr(10),' ',f($row,'ds_financeiro'))."|";
-    echo str_replace('/','',formataDataEdicao(f($row,'quitacao'),5))."|";
-    echo str_replace('.','',formatNumber(f($row,'brl_valor_compra')))."|";
-    echo "|";
-    echo "|";
-    ShowHTML(f($row,'cd_financeiro').'-'.f($row,'ordem')."|"); // Usa ShowHTML para quebrar a linha
+	if ($w_atual <> f($row,'cd_financeiro')) {
+		if ($w_linha>0) {
+			echo str_replace('.','',formatNumber($w_soma))."|";
+			echo "|";
+			echo "|";
+			ShowHTML($w_atual."|"); // Usa ShowHTML para quebrar a linha
+			$w_soma = 0;
+		}
+		echo "|";
+		echo "|";
+		echo "|";
+		echo "|";
+		echo f($row,'cc_debito')."|";
+		echo f($row,'cc_credito')."|";
+		echo "|";
+		echo "|";
+		echo "|";
+		echo str_replace(chr(13).chr(10),' ',f($row,'ds_financeiro'))."|";
+		echo str_replace('/','',formataDataEdicao(f($row,'quitacao'),5))."|";
+		$w_atual = f($row,'cd_financeiro');
+		$w_chave = f($row,'sq_financeiro');
+		$w_linha++;
+	}
+	$w_soma+=f($row,'brl_valor_compra');
+	if (nvl(f($row,'cc_debito'),'')=='') $i++;
+  }
+  if ($w_linha>0) {
+	echo str_replace('.','',formatNumber($w_soma))."|";
+	echo "|";
+	echo "|";
+	ShowHTML($w_atual."|"); // Usa ShowHTML para quebrar a linha
   }
   
-} 
+}
 
 
 // =========================================================================
