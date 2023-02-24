@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once('constants.inc');
-$w_dir_volta = $conDiretorio.'/';
+$w_dir_volta = $conDiretorio;
 
 // =========================================================================
 //  mail_envio.php

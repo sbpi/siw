@@ -1,14 +1,16 @@
 create or replace procedure SP_GetLancamento
-   (p_cliente   in number,
-    p_restricao in varchar2 default null,
-    p_dt_ini    in date     default null,
-    p_dt_fim    in date     default null,
-    p_pg_ini    in date     default null,
-    p_pg_fim    in date     default null,
-    p_co_ini    in date     default null,
-    p_co_fim    in date     default null,
-    p_sq_pessoa in number   default null,
-    p_fase      in varchar2 default null,
+   (p_cliente       in number,
+    p_restricao     in varchar2 default null,
+    p_dt_ini        in date     default null,
+    p_dt_fim        in date     default null,
+    p_pg_ini        in date     default null,
+    p_pg_fim        in date     default null,
+    p_co_ini        in date     default null,
+    p_co_fim        in date     default null,
+    p_sq_pessoa     in number   default null,
+    p_projeto       in number   default null,
+    p_cadastramento in varchar2 default null,
+    p_pago          in varchar2 default null,
     p_result    out sys_refcursor) is
 begin
    -- Recupera os dados para a montagem dos relatórios de contas a pagar, a receber e fluxo de caixa
@@ -36,7 +38,15 @@ begin
                                                        b1.sq_pessoa         = p_cliente
                                                       )
                inner    join siw_tramite        b2 on (b.sq_siw_tramite     = b2.sq_siw_tramite and
-                                                       'CA'                 <> Nvl(b2.sigla,'-')
+                                                       'CA'                 <> Nvl(b2.sigla,'-') and
+                                                       ('T'                 = nvl(p_cadastramento,'T') or
+                                                        ('S'                = nvl(p_cadastramento,'T') and Nvl(b2.sigla,'-') = 'CI') or
+                                                        ('N'                = nvl(p_cadastramento,'T') and Nvl(b2.sigla,'-') <> 'CI')
+                                                       ) and
+                                                       ('T'                 = nvl(p_pago,'T') or
+                                                        ('S'                = nvl(p_pago,'T') and Nvl(b2.sigla,'-') = 'AT') or
+                                                        ('N'                = nvl(p_pago,'T') and Nvl(b2.sigla,'-') <> 'AT')
+                                                       )
                                                       )
              inner      join fn_tipo_lancamento c  on (a.sq_tipo_lancamento = c.sq_tipo_lancamento)
              left       join ac_acordo          d  on (b.sq_solic_pai       = d.sq_siw_solicitacao)
@@ -54,7 +64,8 @@ begin
              )
          and (Instr(p_restricao,'FLUXOPR') = 0 or (Instr(p_restricao,'FLUXOPR') > 0 and a.quitacao is null))
          and (Instr(p_restricao,'FLUXORE') = 0 or (Instr(p_restricao,'FLUXORE') > 0 and a.quitacao is not null))
-         and (p_sq_pessoa is null or (p_sq_pessoa is not null and a.pessoa     = p_sq_pessoa))
+         and (p_sq_pessoa is null or (p_sq_pessoa is not null and a.pessoa             = p_sq_pessoa))
+         and (p_projeto   is null or (p_projeto   is not null and e.sq_siw_solicitacao is not null and e.sq_siw_solicitacao = p_projeto))
       UNION
       select null codigo_interno, d.vencimento, null sq_siw_solicitacao, null quitacao, 
              'S' aviso_prox_conc, d.vencimento-3 aviso,
@@ -81,7 +92,7 @@ begin
                                                         )
                inner      join siw_tramite        b2 on (b.sq_siw_tramite     = b2.sq_siw_tramite and
                                                          'CA'                 <> Nvl(b2.sigla,'-') and
-                                                         0                    < InStr(p_fase,Nvl(b2.sigla,'-'))
+                                                         b2.sigla             in ('EE','ER')
                                                         )
                left       join pj_projeto         e  on (a.sq_solic_vinculo   = e.sq_siw_solicitacao)
                  left     join siw_solicitacao    e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
@@ -106,6 +117,7 @@ begin
          and (Instr(p_restricao,'FLUXOPR') = 0 or (Instr(p_restricao,'FLUXOPR') > 0 and h.quitacao is null))
          and (Instr(p_restricao,'FLUXORE') = 0 or (Instr(p_restricao,'FLUXORE') > 0 and h.quitacao is not null))
          and (p_sq_pessoa is null or (p_sq_pessoa is not null and a.outra_parte     = p_sq_pessoa))
+         and (p_projeto   is null or (p_projeto   is not null and e.sq_siw_solicitacao is not null and e.sq_siw_solicitacao = p_projeto))
       order by 2,12;
 End SP_GetLancamento;
 /

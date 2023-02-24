@@ -39,7 +39,7 @@ $conFontFace		= 'Arial, Helvetica, sans-serif';
 $conFontColor		= '#000000';
 $conTituloFontSize	= '3';
 $conTituloFontFace	= 'Arial';
-$conTituloFontColor	= '#008000';
+$conTituloFontColor	= '#008372';
 
 //---------------------------Definições de imagens
 $conImgAlHigh	= 'images/icone/alert_animated.gif';
@@ -91,15 +91,21 @@ $conEnviaMail   = false;
 
 $crlf           = chr(13).chr(10);
 $conSgSistema   = 'SIW';
-$conApacheStat  = 'http://galileu.sbpi1.com.br/server-status-sbpi';
-$conDefaultPath = 'http://galileu.sbpi1.com.br';
+$conDefaultPath = 'http://jupiter.sbpi1.com.br';
 $conNmSistema   = 'Solução Integrada Web';
-$conRootSIW     = 'http://galileu.sbpi1.com.br/siw_otca/';
-$conDiretorio   = 'c:/www/siw_otca/';
-$conFontPath    = $conDiretorio.'fonts/linux/';
-$conFileVirtual = '/siw_files/';
-//$conFilePhysical= '/var/www/html/siw_files/'; // Formato Linux
-$conFilePhysical= 'c:/www/siw_files/'; // Formato Windows (IIS)
+$conRootSIW     = 'http://jupiter.sbpi1.com.br/siw_otca/';
+
+if (strpos(PHP_OS, "W")===0) { // Windows
+    $conApacheStat  = 'http://jupiter.sbpi1.com.br/server-status-sbpi';
+    $conDiretorio   = 'c:/www/siw_otca/';
+    $conFontPath    = $conDiretorio.'fonts/linux/';
+    $conFileVirtual = '/siw_files/';
+    $conFilePhysical= 'c:/www/siw_files/';
+} else {
+    $conDiretorio   = '/var/www/html/siw_otca/';
+    $conFileVirtual = '/siw_files/';
+    $conFilePhysical= '/var/www/html/siw_files/'; // Formato Linux
+}
 
 // Define se deve ser gravado arquivo de log e o seu caminho
 $conLog         = true;

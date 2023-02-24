@@ -31,9 +31,7 @@ export PATH=$ORACLE_HOME/bin:/usr/sbin:/usr/local/bin:/usr/bin
 umask 002
 
 # 2 - EXECUTA A ROTINA
-#     verificar parâmetros conforme orientações contidas no arquivo mail_envio.php
+#     verificar parâmetros conforme orientações contidas no arquivo mod_eo/cotacoes_bc_auto.php
 
-#/usr/local/bin/php -c /usr/local/etc/php/php.ini /var/www/html/siw/mail_envio.php 1 1 SIW GERA
-#/usr/local/bin/php -c /usr/local/etc/php/php.ini /var/www/html/siw/mail_envio.php 9634 1 SIW GERA
-/usr/local/bin/php -c /usr/local/etc/php/php.ini /var/www/html/siw_otca/mail_envio.php 14375 1 SIW GERA
+/usr/local/bin/php -c /usr/local/etc/php/php.ini /var/www/html/siw_otca/mod_eo/cotacoes_bc_auto.php 17305 1 OTCAP 17306
 

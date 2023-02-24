@@ -114,7 +114,7 @@ function Inicial() {
   }
   if ($O == 'L') {
     // Recupera todos os registros para a listagem
-    $sql = new db_getLancamento; $RS = $sql->getInstanceOf($dbms, $w_cliente, substr($SG, 0, 3), $p_dt_ini, $p_dt_fim, $p_pg_ini, $p_pg_fim, $p_co_ini, $p_co_fim, $w_sq_pessoa, 'EE,ER');
+    $sql = new db_getLancamento; $RS = $sql->getInstanceOf($dbms, $w_cliente, substr($SG, 0, 3), $p_dt_ini, $p_dt_fim, $p_pg_ini, $p_pg_fim, $p_co_ini, $p_co_fim, $w_sq_pessoa,$p_projeto, $p_cadastramento, $p_pago);
     if (nvl($p_ordena, '') != '') {
       $RS = SortArray($RS, lower($lista[0]), lower($lista[1]), 'codigo_interno', 'asc');
     } else {

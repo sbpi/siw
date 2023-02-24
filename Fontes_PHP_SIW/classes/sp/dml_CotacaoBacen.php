@@ -18,13 +18,12 @@ class dml_CotacaoBacen {
                    'p_tipo'       =>array($p_tipo,              B_VARCHAR,         2),
                    'p_valor'      =>array($p_valor,             B_NUMERIC,      18,4),
                   );
-     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     $l_error_reporting = error_reporting(); 
-     error_reporting(0); 
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, $db_type=$_SESSION["DBMS"]);
+     $l_error_reporting = error_reporting(); error_reporting(E_ERROR);
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 
        TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
-     } else {
+     } else { 
        error_reporting($l_error_reporting); 
        return true;
      }

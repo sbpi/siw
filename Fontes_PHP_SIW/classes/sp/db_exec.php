@@ -13,8 +13,8 @@ include_once($w_dir_volta.'classes/db/DatabaseQueries.php');
 class db_exec {
    function getInstanceOf($dbms, $p_sql, $params, $sp=null, &$numRows=null) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
-     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($p_sql, $dbms, null, $db_type=DB_TYPE);
-     $l_error_reporting = error_reporting();  error_reporting(0); 
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($p_sql, $dbms, null, $db_type=$_SESSION['DBMS']);
+     $l_error_reporting = error_reporting();  error_reporting(E_ERROR); 
      if(!$l_rs->executeQuery()) { TrataErro($p_sql, $l_rs->getError(), $params, $sp, __LINE__, __CLASS__); 
      } else {
        error_reporting($l_error_reporting); 
