@@ -210,7 +210,7 @@ function detalhamentoDespesa() {
 
   if ($p_moedas=='S') {
     foreach($RSQuery as $row)  {
-      if (f($row,'sg_fn_moeda')!='0') { $Moeda[f($row,'sg_fn_moeda')]='1';  $Total[f($row,'sg_fn_moeda')] = 0; }
+      if (f($row,'sg_fn_moeda')!='0')         { $Moeda[f($row,'sg_fn_moeda')]='1'; $Total[f($row,'sg_fn_moeda')] = 0; }
       if (nvl(f($row,'fn_sg_moeda'),'')!='')  { $Moeda[f($row,'fn_sg_moeda')]='1'; $Total[f($row,'fn_sg_moeda')] = 0; }
       // Se o relatório tem três moedas diferentes, aborta pois esse é o número atual de moedas ativas
       if (count($Moeda)==3) break;

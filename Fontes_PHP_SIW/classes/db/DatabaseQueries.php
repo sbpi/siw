@@ -490,7 +490,6 @@ class OraDatabaseQueryProc extends OraDatabaseQueries {
     */    
     
     function executeQuery() {
-      
         $par = "";
         $cursor = false;
         foreach($this->params as $paramName=>$value) {

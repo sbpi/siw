@@ -12,6 +12,7 @@ include_once($w_dir_volta.'classes/sp/db_getMenuCode.php');
 include_once($w_dir_volta.'classes/sp/db_getCustomerData.php');
 include_once($w_dir_volta.'classes/sp/db_getLancamento.php');
 include_once($w_dir_volta.'funcoes/montaRadioMes.php');
+include_once($w_dir_volta.'funcoes/selecaoProjeto.php');
 // ========================================================================
 //  /rel_fluxo.php
 // ------------------------------------------------------------------------
@@ -89,6 +90,8 @@ function Inicial(){
   $w_tipo_rel   = upper(trim($_REQUEST['w_tipo_rel']));
   $p_mes_fluxo  = upper(trim($_REQUEST['p_mes_fluxo']));
   $p_ano_fluxo  = upper(trim($_REQUEST['p_ano_fluxo']));
+  $p_projeto    = $_REQUEST['p_projeto'];
+  
   if ($O=='L') {
     $p_dt_ini = First_Day(toDate('01/'.$p_mes_fluxo.'/'.$p_ano_fluxo));
     $p_dt_fim = Last_Day(toDate('27/'.$p_mes_fluxo.'/'.$p_ano_fluxo));
@@ -98,7 +101,7 @@ function Inicial(){
       $w_logo='/img/logo'.substr(f($RS,'logo'),(strpos(f($RS,'logo'),'.') ? strpos(f($RS,'logo'),'.')+1 : 0)-1,30);
     } 
     // Recupera todos os registros para a listagem
-    $sql = new db_getLancamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG,FormataDataEdicao($p_dt_ini),FormataDataEdicao($p_dt_fim),null,null,null,null,null,'EE,ER');
+    $sql = new db_getLancamento; $RS = $sql->getInstanceOf($dbms,$w_cliente,$SG,FormataDataEdicao($p_dt_ini),FormataDataEdicao($p_dt_fim),null,null,null,null,null,$p_projeto, $p_cadastramento, $p_pago);
     $RS = SortArray($RS,'vencimento','asc','tipo','asc');
   } 
   if ($w_tipo_rel=='WORD') {
@@ -121,6 +124,7 @@ function Inicial(){
       FormataData();
       SaltaCampo();
       ValidateOpen('Validacao');
+      Validate('p_projeto', 'Projeto', 'SELECT', '', '1', '18', '', '0123456789');
       Validate('p_ano_fluxo','Ano','1','1','4','4','','0123456789');
       CompValor('p_ano_fluxo','Ano','>','1754','1754');
       ValidateClose();
@@ -145,7 +149,16 @@ function Inicial(){
   ShowHTML('<div align=center><center>');
   ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
   if ($O=='L') {
-    // Exibe a quantidade de registros apresentados na listagem e o cabeçalho da tabela de listagem 
+    // Exibe os critérios de filtragem do relatório
+    $w_filtro = '';
+    if ($p_projeto > '') {
+      $w_filtro .= '<tr valign="top"><td align="right"><font size=1>Projeto<td><font size=1>: <b>' . exibeSolic($w_dir,$p_projeto,null,'S') . '</b>';
+    }
+    if ($w_filtro > '') {
+      ShowHTML('<tr><td align="left" colspan=2>');
+      ShowHTML('<table border=0><tr valign="top"><td><font size=1><b>Filtro:</b><td nowrap><font size=1><ul>' . $w_filtro . '</ul></tr></table>');
+    }
+    
     ShowHTML('<tr><td align="center" colspan=3>');
     ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
     ShowHTML('        <tr bgcolor="'.$conTrBgColor.'" align="center">');
@@ -252,6 +265,10 @@ function Inicial(){
     ShowHTML('<INPUT type="hidden" name="w_troca" value="">');
     ShowHTML('<tr bgcolor="'.$conTrBgColor.'"><td>'); 
     ShowHTML('    <table border="0">');
+    ShowHTML('      <tr>');
+    $sql = new db_getLinkData; $RS = $sql->getInstanceOf($dbms,$w_cliente,'PJCAD');
+    SelecaoProjeto('Pro<u>j</u>eto:','J','Selecione o projeto do contrato na relação.',$p_projeto,$w_usuario,f($RS,'sq_menu'),null,null,null,'p_projeto','PJLIST',$w_atributo, null, 3);
+    ShowHTML('      </tr>');
     ShowHTML('      <tr>');
     MontaRadioMes('<b>Mês de referência:</b>',Nvl($p_mes_fluxo,substr(FormataDataEdicao(time()),3,2)),'p_mes_fluxo');
     ShowHTML('      <td valign="top"><b><u>A</u>no:</b><br><input accesskey="A" type="text" name="p_ano_fluxo" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.Nvl($p_ano_fluxo,substr(FormataDataEdicao(time()),6,4)).'"></td>');

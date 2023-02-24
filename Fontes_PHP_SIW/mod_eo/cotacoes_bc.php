@@ -102,7 +102,6 @@ function Inicial() {
   }
 
   $w_tipo = $_REQUEST['w_tipo'];
-  $w_tipo = $_REQUEST['w_tipo'];
   $w_sq_pessoa = upper(trim($_REQUEST['w_sq_pessoa']));
   
   Cabecalho();
