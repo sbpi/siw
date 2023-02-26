@@ -14,8 +14,10 @@ class db_exec {
    function getInstanceOf($dbms, $p_sql, $params, $sp=null, &$numRows=null) {
      extract($GLOBALS,EXTR_PREFIX_SAME,'strchema');
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($p_sql, $dbms, null, $db_type=$_SESSION['DBMS']);
-     $l_error_reporting = error_reporting();  error_reporting(E_ERROR); 
-     if(!$l_rs->executeQuery()) { TrataErro($p_sql, $l_rs->getError(), $params, $sp, __LINE__, __CLASS__); 
+     $l_error_reporting = error_reporting(); error_reporting(E_ERROR); 
+     if(!$l_rs->executeQuery()) {
+       error_reporting($l_error_reporting); 
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__);
      } else {
        error_reporting($l_error_reporting); 
        $numRows = $l_rs->getNumRows();

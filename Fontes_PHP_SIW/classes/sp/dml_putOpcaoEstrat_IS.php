@@ -19,8 +19,7 @@ class dml_putOpcaoEstrat_IS {
                    'p_chave_aux'                 =>array(tvl($p_chave_aux),                                B_VARCHAR,         2)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     $l_error_reporting = error_reporting(); 
-     error_reporting(0); 
+     $l_error_reporting = error_reporting(); error_reporting(E_ERROR); 
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 
        TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 

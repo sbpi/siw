@@ -103,7 +103,7 @@ class Ora9ConnectionManager extends ConnectionManager {
         $e['sqltext'] = 'Não se aplica';
         TrataErro($sql, $e, $params, __FILE__, __LINE__, __CLASS__);
       }
-      $l_error_reporting = error_reporting(); error_reporting(0);
+      $l_error_reporting = error_reporting(); error_reporting(E_ERROR);
       putenv('NLS_DATE_FORMAT=DD/MM/YYYY');
 //echo '<br>LD_LIBRARY_PATH ==>'.getenv("LD_LIBRARY_PATH");
 //echo '<br>ORACLE_HOME ==>'.getenv("ORACLE_HOME");
@@ -135,7 +135,7 @@ class Ora10ConnectionManager extends ConnectionManager {
         $e['sqltext'] = 'Não se aplica';
         TrataErro($sql, $e, $params, __FILE__, __LINE__, __CLASS__);
       }
-      $l_error_reporting = error_reporting(); error_reporting(0);
+      $l_error_reporting = error_reporting(); error_reporting(E_ERROR);
       putenv('NLS_DATE_FORMAT=DD/MM/YYYY');
 //      putenv('NLS_NUMERIC_CHARACTERS=",."');
 //echo '<br>LD_LIBRARY_PATH ==>'.getenv("LD_LIBRARY_PATH");
@@ -167,7 +167,7 @@ class OraHMConnectionManager extends ConnectionManager {
         $e['sqltext'] = 'Não se aplica';
         TrataErro($sql, $e, $params, __FILE__, __LINE__, __CLASS__);
       }
-      $l_error_reporting = error_reporting(); error_reporting(0);
+      $l_error_reporting = error_reporting(); error_reporting(E_ERROR);
       putenv('NLS_DATE_FORMAT=DD/MM/YYYY');
 //      putenv('NLS_NUMERIC_CHARACTERS=",."');
 //echo '<br>LD_LIBRARY_PATH ==>'.getenv("LD_LIBRARY_PATH");

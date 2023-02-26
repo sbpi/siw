@@ -22,8 +22,7 @@ class dml_putACParametro {
                    'p_condicao'                  =>array(tvl($p_condicao),                                 B_VARCHAR,      4000)   
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     $l_error_reporting = error_reporting(); 
-     error_reporting(0); 
+     $l_error_reporting = error_reporting(); error_reporting(E_ERROR); 
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 
        TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 

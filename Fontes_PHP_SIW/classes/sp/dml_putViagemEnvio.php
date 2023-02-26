@@ -24,8 +24,7 @@ class dml_putViagemEnvio {
                    'p_justif_dia_util'           =>array(tvl($p_justif_dia_util),                B_VARCHAR,      2000)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     $l_error_reporting = error_reporting(); 
-     error_reporting(0); 
+     $l_error_reporting = error_reporting(); error_reporting(E_ERROR); 
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 
        TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 

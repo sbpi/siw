@@ -29,14 +29,16 @@ class db_verificaSenha {
                       );
         $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
         $l_error_reporting = error_reporting(); 
-        error_reporting(0);
-        if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); 
+        error_reporting(E_ERROR);
+        if(!$l_rs->executeQuery()) {
+          error_reporting($l_error_reporting);
+          TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__);  
         } else {
           error_reporting($l_error_reporting);
-            $l_data = $l_rs->getResultArray();
-            if     ($l_rs->getNumRows()==0) { return 2; }
-            elseif (f($l_data,'ativo') == 'N') { return 3; }
-            else   { return 0; }
+          $l_data = $l_rs->getResultArray();
+          if     ($l_rs->getNumRows()==0) { return 2; }
+          elseif (f($l_data,'ativo') == 'N') { return 3; }
+          else   { return 0; }
         }
       } else {
         $sql = new db_getCustomerData; $rs1 = $sql->getInstanceOf($dbms, $p_cliente);

@@ -16,14 +16,16 @@ class db_getCustomerData {
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, $db_type=$_SESSION['DBMS']);
      $l_error_reporting = error_reporting(); error_reporting(E_ERROR); 
-     if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); }
-     else {
+     if(!$l_rs->executeQuery()) {
+       error_reporting($l_error_reporting);
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__);
+     } else {
        error_reporting($l_error_reporting); 
-        if ($l_rs = $l_rs->getResultArray()) {
-          return $l_rs;
-        } else {
-          return array();
-        }
+       if ($l_rs = $l_rs->getResultArray()) {
+         return $l_rs;
+       } else {
+         return array();
+       }
      }
    }
 }    

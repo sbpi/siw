@@ -47,9 +47,11 @@ class dml_putPessoa  {
                    'p_chave_nova'                =>array(&$p_chave_nova,                                   B_INTEGER,        32)                   
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE); 
-     $l_error_reporting = error_reporting(); error_reporting(0); 
-     if(!$l_rs->executeQuery()) { error_reporting($l_error_reporting); TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__); } 
-     else {
+     $l_error_reporting = error_reporting(); error_reporting(E_ERROR); 
+     if(!$l_rs->executeQuery()) {
+       error_reporting($l_error_reporting);
+       TrataErro($sql, $l_rs->getError(), $params, __FILE__, __LINE__, __CLASS__);
+     } else {
        error_reporting($l_error_reporting); 
        return true;
      }

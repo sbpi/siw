@@ -38,8 +38,7 @@ class dml_putXMLLocalizador_PPA {
                    'p_cd_sof_ref'                =>array(tvl($p_cd_sof_ref),                               B_INTEGER,        32)
                   );
      $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
-     $l_error_reporting = error_reporting(); 
-     error_reporting(0); 
+     $l_error_reporting = error_reporting(); error_reporting(E_ERROR); 
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 
        $Err = $l_rs->getError();

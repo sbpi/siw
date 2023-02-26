@@ -15,7 +15,7 @@ class db_getUserData {
                    "p_username" =>array($p_username,    B_VARCHAR,     60),
                    "p_result"   =>array(null,           B_CURSOR,      -1)
                   );
-     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, $db_type=$_SESSION['DBMS']);
+     $lql = new DatabaseQueriesFactory; $l_rs = $lql->getInstanceOf($sql, $dbms, $params, DB_TYPE);
      $l_error_reporting = error_reporting(); error_reporting(E_ERROR); 
      if(!$l_rs->executeQuery()) { 
        error_reporting($l_error_reporting); 

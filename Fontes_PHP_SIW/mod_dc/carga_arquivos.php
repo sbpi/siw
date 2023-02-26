@@ -598,7 +598,7 @@ function analisa_arquivo($arquivo, $opcao, &$lista) {
   if ($opcao=='sintaxephp') {
     // Se verificação de sintaxe PHP, não precisa executar toda a função. Apenas executa PHP -L e retorna o resultado se houver erro.
     $comando = 'php -l '.$arquivo;
-    $l_error_reporting = error_reporting(); error_reporting(0);
+    $l_error_reporting = error_reporting(); error_reporting(E_ERROR);
     $result = shell_exec($comando);
     error_reporting($l_error_reporting);
     $l_array['tipo']      = true;
