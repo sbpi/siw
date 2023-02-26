@@ -175,6 +175,7 @@ function Inicial() {
     $i = 0;
     $w_array = array();
     $sql = new db_getMoedaCotacao;
+    exibearray($db_getMoedaCotacao);
     foreach($RS as $row) {
       if (f($row,'bc_serie_compra')!='' && in_array(f($row,'bc_serie_compra'),$itens)) {
         $w_series[f($row,'bc_serie_compra')]['chave'] = f($row,'sq_moeda');
