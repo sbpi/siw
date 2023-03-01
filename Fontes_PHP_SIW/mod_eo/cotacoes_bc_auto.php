@@ -53,9 +53,10 @@ $_SESSION['DBMS']      = $w_dbms;
 // Includes têm que ficar depois da definição das variáveis de sessão
 include_once($w_dir_volta.'funcoes.php');
 include_once($w_dir_volta.'classes/db/abreSessao.php');
+include_once($w_dir_volta.'classes/sp/db_getUserData.php');
 include_once($w_dir_volta.'classes/sp/db_exec.php');
 include_once($w_dir_volta.'classes/sp/dml_CotacaoBacen.php');
-include_once($w_dir_volta.'classes/sp/db_getUserData.php');
+include_once($w_dir_volta.'classes/sp/dml_putSolicCotacao.php');
 
 // Abre conexão como banco de dados
 $dbms = new abreSessao; $dbms = $dbms->getInstanceOf($_SESSION['DBMS']);
@@ -85,7 +86,8 @@ FechaSessao($dbms);
 function Principal() {
   extract($GLOBALS, EXTR_PREFIX_SAME, 'strchema');
 
-  // Identifica cotações que faltam no banco de dados => Critério: pagamentos concluídos em datas sem cotação 
+  // --------------------------------------
+  //Identifica cotações que faltam no banco de dados => Critério: pagamentos concluídos em datas sem cotação 
   $params=array("p_cliente " =>array($w_cliente,  B_NUMERIC,     32),
                 "p_result"   =>array(null,        B_CURSOR,      -1)
                );
@@ -122,6 +124,7 @@ function Principal() {
          "order by 1$crlf";
   $l_rs = $sql->getInstanceOf($dbms, $SQL, $params);
 
+  // --------------------------------------
   // Configura caminhos para recuperação de arquivos de configuração e arquivos de dados
   $w_caminho = $conFilePhysical.$w_cliente.'/bacen_log';
   $w_arquivo = $w_caminho.'/'.$w_cliente.'_'.date(Ymd.'_'.Gis.'_'.time()).'.log';
@@ -134,6 +137,8 @@ function Principal() {
   // Abre o arquivo de log
   $w_log = @fopen($w_arquivo, 'w');
 
+  // --------------------------------------
+  // Busca no BACEN as cotações do DOLAR e do EURO nas datas recuperadas
   if (count($l_rs)) {
     
     fwrite($w_log, '### COTAÇÕES IMPORTADAS'.$crlf);
@@ -168,12 +173,40 @@ function Principal() {
       $sp = new dml_CotacaoBacen; $sp->getInstanceOf($dbms, $w_cliente, $moeda, $data, 'V', $valorVenda);
       fwrite($w_log, '['.$data.'] [EURO ] compra: ['.$valorCompra.'] venda ['.$valorVenda.']'.$crlf);
     }
-
-
-    // Vincular as cotações com os lançamentos financeiros
-
   } else {
-    fwrite($w_log, 'Nenhuma cotação importada'.$crlf);
+    fwrite($w_log, '### NENHUMA COTAÇÃO IMPORTADA'.$crlf);
+  }
+
+  // --------------------------------------
+  // Atualiza lançamentos financeiros concluídos com cotações igual a 0,00
+  $SQL = "select k.sq_siw_solicitacao, k.codigo_interno,$crlf" .
+         "       p.sigla sg_moeda_cotacao, m.sq_moeda sq_moeda_cotacao,$crlf" .
+         "       conversao($w_cliente, l.quitacao, k.sq_moeda, m.sq_moeda, n.valor, 'C') valor_convertido$crlf" .
+         "  from siw_solicitacao                  k$crlf" .
+         "       inner     join siw_tramite       t on (k.sq_siw_tramite      = t.sq_siw_tramite and t.sigla = 'AT')$crlf" .
+         "       inner     join fn_lancamento     l on (k.sq_siw_solicitacao  = l.sq_siw_solicitacao)$crlf" .
+         "       inner     join fn_lancamento_doc n on (k.sq_siw_solicitacao  = n.sq_siw_solicitacao)$crlf" .
+         "       inner     join siw_solic_cotacao m on (k.sq_siw_solicitacao  = m.sq_siw_solicitacao and$crlf" .
+         "                                              k.sq_moeda            <> m.sq_moeda and $crlf" .
+         "                                              m.valor               = 0$crlf" .
+         "                                             )$crlf" .
+         "         inner   join co_moeda_cotacao  o on (m.sq_moeda            = o.sq_moeda and$crlf" .
+         "                                              o.data                = l.quitacao$crlf" .
+         "                                             )$crlf" .
+         "           inner join co_moeda          p on (o.sq_moeda            = p.sq_moeda)$crlf" .
+         "order by sq_siw_solicitacao, m.sq_moeda$crlf";
+  $l_rs = $sql->getInstanceOf($dbms, $SQL, $params);
+  
+  if (count($l_rs)) {
+    fwrite($w_log, '### LANÇAMENTOS QUE TIVERAM COTAÇÕES ATUALIZADAS'.$crlf);
+
+    $SQL = new dml_putSolicCotacao;
+    foreach($l_rs as $row) {
+      $SQL->getInstanceOf($dbms,'A',f($row,'sq_siw_solicitacao'),f($row,'sq_moeda_cotacao'),formatNumber(f($row,'valor_convertido')));
+      fwrite($w_log, f($row,'codigo_interno').';'.f($row,'sg_moeda_cotacao').';'.formatNumber(f($row,'valor_convertido')).$crlf);
+    }
+  } else {
+    fwrite($w_log, '### NENHUM LANÇAMENTO TEVE SUA COTAÇÃO ATUALIZADA'.$crlf);
   }
 
   // Fecha o arquivo de log
