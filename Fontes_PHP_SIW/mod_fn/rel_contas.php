@@ -288,7 +288,7 @@ function Inicial() {
     }
     ShowHTML('          <td width="45%"><font size="1"><b>' . LinkOrdena('Descrição', 'descricao') . '</font></td>');
     ShowHTML('          <td><font size="1"><b>' . LinkOrdena('Prazo', 'prazo') . '</font></td>');
-    foreach($Ordem as $k=>$v) ShowHTML('        <td><font size="1"><b>'.$v.'</td>');
+    if (isset($Ordem)) foreach($Ordem as $k=>$v) ShowHTML('        <td><font size="1"><b>'.$v.'</td>');
     ShowHTML('        </tr>');
     if (count($RS) <= 0) {
       // Se não foram selecionados registros, exibe mensagem
