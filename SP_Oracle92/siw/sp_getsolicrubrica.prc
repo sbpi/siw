@@ -164,7 +164,7 @@ begin
             and (p_sq_rubrica_destino   is null or (p_sq_rubrica_destino   is not null and a.sq_projeto_rubrica   <> p_sq_rubrica_destino))
             and (p_codigo               is null or (p_codigo               is not null and a.codigo               = p_codigo))
             and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and a.aplicacao_financeira = p_aplicacao_financeira));
-   Elsif p_restricao = 'PJFINS' or p_restricao = 'PJFINN' Then
+   Elsif p_restricao = 'PJFINS' or p_restricao = 'PJFINN' or p_restricao = 'PJFINE' Then
       open p_result for
          select sq_projeto_rubrica, sg_fn_moeda, valor, aplicacao_financeira, descricao,
                 retornaHierarquiaRubrica(sq_projeto_rubrica, 'PAIS') lista
@@ -172,7 +172,7 @@ begin
                         sum(case when substr(w.sg_menu,1,3) = 'FNR' then trunc(-1*w.valor,2) else trunc(w.valor,2) end) valor
                    from vw_projeto_financeiro   w
                   where w.sq_projeto         = p_chave
-                    and (p_restricao  = 'PJFINN' or (p_restricao = 'PJFINS' and w.sg_tramite = 'AT'))
+                    and (p_restricao  = 'PJFINN' or (p_restricao = 'PJFINS' and w.sg_tramite = 'AT') or (p_restricao = 'PJFINE' and w.at_tramite = 'S' and w.sg_tramite <> 'CI'))
                     and (p_aplicacao_financeira is null or (p_aplicacao_financeira is not null and w.aplicacao_financeira = p_aplicacao_financeira))
                     and (p_inicio     is null or
                          (p_inicio    is not null and ((w.sg_tramite = 'AT'  and w.quitacao   between p_inicio and p_fim) or
@@ -182,7 +182,7 @@ begin
                         )
                  group by w.sq_projeto_rubrica, w.sg_fn_moeda, w.aplicacao_financeira, w.ds_financeiro
                 );
-   Elsif p_restricao = 'PJEXECLS' or p_restricao = 'PJEXECLN' Then
+   Elsif p_restricao = 'PJEXECLS' or p_restricao = 'PJEXECLN' or p_restricao = 'PJEXECLE' Then
       open p_result for
          select a.tipo, a.sq_projeto, a.cd_projeto, a.sq_pj_moeda, a.sg_pj_moeda,
                 a.sq_projeto_rubrica, montaordemrubrica(a.sq_projeto_rubrica,'ORDENACAO') or_rubrica,
@@ -241,7 +241,7 @@ begin
                   left    join fn_lancamento_doc   h on (d.sq_siw_solicitacao = h.sq_siw_solicitacao)
                     left join fn_tipo_documento    i on (h.sq_tipo_documento  = i.sq_tipo_documento)
           where a.sq_projeto  = p_chave
-            and (p_restricao  = 'PJEXECLN' or (p_restricao = 'PJEXECLS' and a.sg_tramite = 'AT'))
+            and (p_restricao  = 'PJEXECLN' or (p_restricao = 'PJEXECLS' and a.sg_tramite = 'AT') or (p_restricao = 'PJEXECLE' and a.at_tramite = 'S' and a.sg_tramite <> 'CI'))
             and (p_inicio     is null or
                  (p_inicio    is not null and ((a.sg_tramite =  'AT' and a.quitacao   between p_inicio and p_fim) or
                                                 (a.sg_tramite <> 'AT' and a.vencimento between p_inicio and p_fim)

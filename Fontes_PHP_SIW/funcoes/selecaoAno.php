@@ -3,12 +3,13 @@ include_once($w_dir_volta.'classes/sp/db_getCTEspecificacao.php');
 // =========================================================================
 // Montagem da seleção de anos
 // -------------------------------------------------------------------------
-function selecaoAno($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$anos=2) {
+function selecaoAno($label,$accesskey,$hint,$chave,$chaveAux,$campo,$restricao,$atributo,$anos=2,$inicio, $fim) {
   extract($GLOBALS);
-  $sql = new db_getCTEspecificacao; $l_RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'ANOS');
-  $l_cont=strftime('%Y',(time()))-$anos;
   ShowHTML('          <td valign="top"'.((!isset($hint)) ? ' TITLE="'.$hint.'"' : '').'><b>'.$label.'</b><br><SELECT ACCESSKEY="'.$accesskey.'" class="STS" NAME="'.$campo.'" '.$w_Disabled.' '.$atributo.'>');
   ShowHTML('          <option value="">---');
+
+  $sql = new db_getCTEspecificacao; $l_RS = $sql->getInstanceOf($dbms,$w_cliente,null,null,null,null,null,null,'ANOS');
+  $l_cont=strftime('%Y',(time()))-$anos;
   if($restricao=='ESPEC') {
     while($l_cont<(strftime('%Y',(time()))+($anos+1))) {
       $l_teste = 'sim';

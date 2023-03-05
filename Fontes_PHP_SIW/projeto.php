@@ -1746,7 +1746,7 @@ function Rubrica() {
           ShowHTML('        <td align="right"'.$w_folha.'>'.formatNumber(f($row,'total_previsto')).'</td>');
           ShowHTML('        <td align="right"'.$w_folha.'>'.formatNumber(f($row,'total_real')).'</td>');
         }
-        ShowHTML('        <td class="remover">');
+        ShowHTML('        <td class="remover" nowrap>');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=A&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_projeto_rubrica').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Alterar os dados deste registro.">AL</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.'GRAVA&R='.$w_pagina.$par.'&O=E&w_chave='.$w_chave.'&w_chave_aux='.f($row,'sq_projeto_rubrica').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Excluir este registro." onClick="return confirm(\'Confirma a exclusão do registro?\');">EX</A>&nbsp');
         ShowHTML('          <A class="HL" HREF="'.$w_pagina.$par.'&R='.$w_pagina.$par.'&O=I&w_chave='.$w_chave.'&w_copia='.f($row,'sq_projeto_rubrica').'&w_chave_aux='.f($row,'sq_projeto_rubrica').'&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.$SG.'" title="Inserir uma nova rubrica a partir dos dados deste registro.">CP</A>&nbsp');
@@ -1758,17 +1758,17 @@ function Rubrica() {
       } 
       if($w_financeiro=='N' || $w_cliente=='10135' || $w_cliente=='9634' || nvl(f($RS_Cliente,'sg_segmento'),'-')=='OI') {
         ShowHTML('      <tr>');
-        ShowHTML('        <td colspan="'.(($w_unid_med) ? '7' : '5').'" align="right"><b>Totais</td>'); 
+        ShowHTML('        <td colspan="'.($cs-3).'" align="right"><b>Totais</td>'); 
         ShowHTML('        <td align="right"><b>'.formatNumber($w_total_previsto).'</td>');
         ShowHTML('        <td align="right"><b>'.formatNumber($w_total_real).'</td>');
         ShowHTML('      </tr>');
         ShowHTML('      <tr>');
-        ShowHTML('        <td colspan="'.(($w_unid_med) ? '7' : '5').'" align="right"><b>Total do projeto</td>'); 
+        ShowHTML('        <td colspan="'.($cs-3).'" align="right"><b>Total do projeto</td>'); 
         ShowHTML('        <td align="right">-'.formatNumber($w_valor_projeto).'</td>');
         ShowHTML('        <td align="right">-'.formatNumber($w_valor_projeto).'</td>');
         ShowHTML('      </tr>');
         ShowHTML('      <tr>');
-        ShowHTML('        <td colspan="'.(($w_unid_med) ? '7' : '5').'" align="right"><b>Saldo disponível</td>'); 
+        ShowHTML('        <td colspan="'.($cs-3).'" align="right"><b>Saldo disponível</td>'); 
         ShowHTML('        <td align="right"><b>'.formatNumber($w_valor_projeto-$w_total_previsto).'</td>');
         ShowHTML('        <td align="right"><b>'.formatNumber($w_valor_projeto-$w_total_real).'</td>');
         ShowHTML('      </tr>');

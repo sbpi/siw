@@ -1,7 +1,7 @@
 create or replace view VW_PROJETO_FINANCEIRO as
 -- Pagamentos com detalhamento de itens
 select 'I' TIPO, e2.qtd_itens,
-       b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
+       b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite, a1.ativo at_tramite,
        /*montaOrdemRubrica(e1.sq_projeto_rubrica,'ORDENACAO') ordena,*/ e1.nome nm_rubrica, e1.sq_rubrica_pai, e1.aplicacao_financeira,
        e.sq_projeto_rubrica, 
        a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro, a.codigo_externo cd_financeiro_externo,
@@ -106,7 +106,7 @@ select 'I' TIPO, e2.qtd_itens,
 UNION ALL
 -- Pagamentos sem detalhamento de itens
 select 'D' TIPO, 1 qtd_itens,
-       b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
+       b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite, a1.ativo at_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
        c.sq_projeto_rubrica, 
        a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,  a.codigo_externo cd_financeiro_externo,
@@ -186,7 +186,7 @@ select 'D' TIPO, 1 qtd_itens,
 UNION ALL
 -- Pagamentos por fundo fixo
 select 'D' TIPO, 1 qtd_itens,
-       b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite,
+       b.sq_siw_solicitacao sq_projeto, b.codigo_interno cd_projeto, a1.sigla sg_tramite, a1.ativo at_tramite,
        /*montaOrdemRubrica(c.sq_projeto_rubrica,'ORDENACAO') ordena,*/ c1.nome nm_rubrica, c1.sq_rubrica_pai, c1.aplicacao_financeira,
        c.sq_projeto_rubrica, 
        a.sq_siw_solicitacao sq_financeiro, a.codigo_interno cd_financeiro,  a.codigo_externo cd_financeiro_externo,
@@ -262,3 +262,4 @@ select 'D' TIPO, 1 qtd_itens,
                                                  c3.data               = (coalesce(c.quitacao,c.vencimento,a.fim))
                                                 )
  where e.sq_documento_item is null;
+/
