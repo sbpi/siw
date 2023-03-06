@@ -181,7 +181,7 @@ function Principal() {
   // Atualiza lançamentos financeiros concluídos com cotações igual a 0,00
   $SQL = "select k.sq_siw_solicitacao, k.codigo_interno,$crlf" .
          "       p.sigla sg_moeda_cotacao, m.sq_moeda sq_moeda_cotacao,$crlf" .
-         "       conversao($w_cliente, l.quitacao, k.sq_moeda, m.sq_moeda, n.valor, 'C') valor_convertido$crlf" .
+         "       conversao($w_cliente, l.quitacao, k.sq_moeda, m.sq_moeda, n.valor, 'V') valor_convertido$crlf" .
          "  from siw_solicitacao                  k$crlf" .
          "       inner     join siw_tramite       t on (k.sq_siw_tramite      = t.sq_siw_tramite and t.sigla = 'AT')$crlf" .
          "       inner     join fn_lancamento     l on (k.sq_siw_solicitacao  = l.sq_siw_solicitacao)$crlf" .
