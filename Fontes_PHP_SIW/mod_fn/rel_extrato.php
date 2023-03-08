@@ -188,154 +188,162 @@ function Inicial() {
     $w_conta = 0;
     $w_mes = '';
     $w_inicio = $p_inicio;
-    foreach ($RSQuery as $row) {
-      if ($w_conta!==f($row,'sq_conta_debito') || $w_mes!==formataDataEdicao(f($row,'dt_pagamento'),9)) {
-        $w_sg_moeda = ((f($row,'sg_moeda_cc')!='') ? ' ('.f($row,'sg_moeda_cc').')' : '');
-        if ($w_conta!==0) {
-          $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-          $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.formataDataEdicao(last_day($w_inicio)).$w_sg_moeda.'&nbsp;</b></td>';
-          $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
-          $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
-          $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_atual).'</b></td>';
-          $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
-          $l_html.=chr(13).'      </tr>';
-          $l_html.=chr(13).'      </table></td></tr>';
-        }
-        $l_html.=chr(13).'    <tr><td colspan="2"><table width="100%" border="0">';
-        if (nvl($p_projeto,'')!='' && $w_conta===0) {
-          // Recupera os dados do projeto selecionado
-          $sql = new db_getSolicData; $RS_Projeto = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
-
-          if (nvl(f($RS_Projeto,'sq_plano'),'')!='') {
-            $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.(($w_embed=='WORD') ? upper(f($RS_Projeto,'nm_plano')) : ExibePlano('../',$w_cliente,f($RS_Projeto,'sq_plano'),$TP,upper(f($RS_Projeto,'nm_plano')))).'</b></font></td></tr>';
+    if (!count($RSQuery)) {
+      $sql = new db_getContaBancoData; $RS = $sql->getInstanceOf($dbms,$p_conta);
+      $l_html.=chr(13).'      <tr><td><br><hr NOSHADE color=#000000 size=2></td></tr>'; 
+      $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0" align=justify><font size="2">CONTA <b>'.f($RS,'nm_banco').' AG. '.f($RS,'agencia').' C/C '.f($RS,'numero').((nvl(f($RS,'sg_moeda'),'')!='') ? ' ('.f($RS,'sg_moeda').')' : '').'</b></font></td></tr>';
+      $l_html.=chr(13).'      <tr><td align="center"><b>CONTA SEM MOVIMENTAÇÃO NO PERÍODO</b></td></tr>';
+      $l_html.=chr(13).'      <tr><td><hr NOSHADE color=#000000 size=1></td></tr>'; 
+    } else {
+      foreach ($RSQuery as $row) {
+        if ($w_conta!==f($row,'sq_conta_debito') || $w_mes!==formataDataEdicao(f($row,'dt_pagamento'),9)) {
+          $w_sg_moeda = ((f($row,'sg_moeda_cc')!='') ? ' ('.f($row,'sg_moeda_cc').')' : '');
+          if ($w_conta!==0) {
+            $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
+            $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.formataDataEdicao(last_day($w_inicio)).$w_sg_moeda.'&nbsp;</b></td>';
+            $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
+            $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
+            $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_atual).'</b></td>';
+            $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
+            $l_html.=chr(13).'      </tr>';
+            $l_html.=chr(13).'      </table></td></tr>';
           }
-          $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2">PROJETO: <b>'.f($RS_Projeto,'codigo_interno').' - '.f($RS_Projeto,'titulo').' ('.f($RS_Projeto,'sq_siw_solicitacao').')</b></font></td></tr>';
-          if ($w_tipo!='EXCEL') {
-            $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
+          $l_html.=chr(13).'    <tr><td colspan="2"><table width="100%" border="0">';
+          if (nvl($p_projeto,'')!='' && $w_conta===0) {
+            // Recupera os dados do projeto selecionado
+            $sql = new db_getSolicData; $RS_Projeto = $sql->getInstanceOf($dbms,$p_projeto,'PJGERAL');
 
-            // Exibe a vinculação
-            $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
-            if($w_embed!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS_Projeto,'sq_solic_pai'),f($RS_Projeto,'dados_pai'),'S').'</td></tr>';
-            else                 $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS_Projeto,'sq_solic_pai'),f($RS_Projeto,'dados_pai'),'S','S').'</td></tr>';
+            if (nvl(f($RS_Projeto,'sq_plano'),'')!='') {
+              $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2"><b>PLANO ESTRATÉGICO: '.(($w_embed=='WORD') ? upper(f($RS_Projeto,'nm_plano')) : ExibePlano('../',$w_cliente,f($RS_Projeto,'sq_plano'),$TP,upper(f($RS_Projeto,'nm_plano')))).'</b></font></td></tr>';
+            }
+            $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2">PROJETO: <b>'.f($RS_Projeto,'codigo_interno').' - '.f($RS_Projeto,'titulo').' ('.f($RS_Projeto,'sq_siw_solicitacao').')</b></font></td></tr>';
+            if ($w_tipo!='EXCEL') {
+              $l_html.=chr(13).'      <tr><td colspan="2"><hr NOSHADE color=#000000 size=4></td></tr>';
 
-            $l_html .= chr(13).'      <tr><td><b>Início previsto:</b></td>';
-            $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS_Projeto,'inicio')).' </td></tr>';
-            $l_html .= chr(13).'      <tr><td><b>Término previsto:</b></td>';
-            $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS_Projeto,'fim')).' </td></tr>';
-            $l_html .= chr(13).'      <tr><td><b>Moeda do projeto:</b></td>';
-            $l_html .= chr(13).'        <td>'.f($RS_Projeto,'nm_moeda').' </td></tr>';
-            $l_html.=chr(13).'        <tr><td><b>Fase atual:</b></td>';
-            $l_html.=chr(13).'          <td>'.Nvl(f($RS_Projeto,'nm_tramite'),'-').'</td></tr>';
+              // Exibe a vinculação
+              $l_html.=chr(13).'      <tr><td valign="top" width="30%"><b>Vinculação: </b></td>';
+              if($w_embed!='WORD') $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS_Projeto,'sq_solic_pai'),f($RS_Projeto,'dados_pai'),'S').'</td></tr>';
+              else                 $l_html.=chr(13).'        <td>'.exibeSolic($w_dir,f($RS_Projeto,'sq_solic_pai'),f($RS_Projeto,'dados_pai'),'S','S').'</td></tr>';
+
+              $l_html .= chr(13).'      <tr><td><b>Início previsto:</b></td>';
+              $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS_Projeto,'inicio')).' </td></tr>';
+              $l_html .= chr(13).'      <tr><td><b>Término previsto:</b></td>';
+              $l_html .= chr(13).'        <td>'.FormataDataEdicao(f($RS_Projeto,'fim')).' </td></tr>';
+              $l_html .= chr(13).'      <tr><td><b>Moeda do projeto:</b></td>';
+              $l_html .= chr(13).'        <td>'.f($RS_Projeto,'nm_moeda').' </td></tr>';
+              $l_html.=chr(13).'        <tr><td><b>Fase atual:</b></td>';
+              $l_html.=chr(13).'          <td>'.Nvl(f($RS_Projeto,'nm_tramite'),'-').'</td></tr>';
+            }
+            $l_html.=chr(13).'      <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=2></br></td></tr>'; 
           }
-          $l_html.=chr(13).'      <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=2></br></td></tr>'; 
-        }
-        if ($w_conta!==0) $l_html.=chr(13).'      <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=2></br></td></tr>'; 
-        $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2">CONTA <b>'.f($row,'nm_banco_debito').' AG. '.f($row,'cd_agencia_debito').' C/C '.f($row,'conta_debito').((nvl(f($row,'cb_sg_moeda'),'')!='') ? ' ('.f($row,'cb_sg_moeda').')' : '').'</b></font></td></tr>';
-        $l_html .= chr(13).'</table>';
-        $l_html.=chr(13).'      <tr><td colspan=2><br><font size="2"><b>LANÇAMENTOS</b></font></td></tr>';
-        $l_html.=chr(13).'      <tr><td colspan="2" align="center"><table class="tudo" width=100%  border="1" bordercolor="#00000">';
-        $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $cs = 0;
-        $cs++; $l_html.=chr(13).'            <td rowspan="2"><b>Código</td>';
-        if (nvl($p_projeto,'')=='') { $cs++; $l_html.=chr(13).'            <td rowspan="2"><b>Projeto</td>';}
-        $l_html.=chr(13).'            <td colspan="2"><b>Documento</td>';
-        $cs++; $l_html.=chr(13).'            <td rowspan="2" width="25%"><b>Pessoa</td>';
-        $cs++; $l_html.=chr(13).'            <td rowspan="2" width="40%"><b>Finalidade</td>';
-        $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Crédito'.$w_sg_moeda.'</td>';
-        $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Débito'.$w_sg_moeda.'</td>';
-        $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Saldo'.$w_sg_moeda.'</td>';
-        $l_html.=chr(13).'            <td colspan="2" width="6%"><b>Conta Contábil</td>';
-        $l_html.=chr(13).'          </tr>';
-        $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-        $cs++; $l_html.=chr(13).'            <td><b>Data</td>';
-        $cs++; $l_html.=chr(13).'            <td><b>Tipo e Número</td>';
-        $l_html.=chr(13).'            <td><b>Débito</td>';
-        $l_html.=chr(13).'            <td><b>Crédito</td>';
-        $l_html.=chr(13).'          </tr>';
-        
-        if ($w_conta!==f($row,'sq_conta_debito')) {
-          // Mudou a conta, usa o saldo de abertura informado pelo usuário.
-          // Se mudou o mês, mas a conta é a mesma, não altera o valor da variável.
-          $w_atual   = floatVal(str_replace(',','.',str_replace('.','',$p_abertura)));
-          // Se mudou a conta, a data de abertura é a informada pelo usuário na tela de filtragem.
-          $w_inicio = $p_inicio;
-        } else {
-          // Se mudou apenas o mês, atualiza a data de abertura para o primeiro dia do mês seguinte.
-          $w_inicio  = '01'.substr(formataDataEdicao(f($row,'dt_pagamento')),2);
-        }
-        
-        $w_conta   = f($row,'sq_conta_debito');
-        $w_mes     = formataDataEdicao(f($row,'dt_pagamento'),9);
-        $w_credito = 0;
-        $w_debito  = 0;
-        $i         = 0;
-      }
-
-      if ($i==0) {
-        $l_html.=chr(13).'      <tr valign="top">';
-        $l_html.=chr(13).'        <td align="right" colspan="'.($cs+3).'"><b>Saldo de abertura em '.$w_inicio.': &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>'.formatNumber($w_atual).'</b></td>';
-        $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
-      }
-      $i++;
-      $l_html.=chr(13).'      <tr valign="top">';
-      $l_html.=chr(13).'        <td width="1%" nowrap>'.(($w_tipo=='EXCEL') ? '' : ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-      $l_html.=chr(13).'          '.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno'),'N',$w_tipo).'</td>';
-      if (nvl($p_projeto,'')=='') {
-        $w_pai_projeto = false;
-        if (Nvl(f($row,'dados_pai'),'')!='') {
-          $w_pai = explode('|@|',f($row,'dados_pai'));
-          if ($w_pai[0]=='???') {
-            $l_html.=chr(13).('        <td>&nbsp;</td>');
+          if ($w_conta!==0) $l_html.=chr(13).'      <tr><td colspan="2"><br><hr NOSHADE color=#000000 size=2></td></tr>'; 
+          $l_html.=chr(13).'      <tr><td colspan="2"  bgcolor="#f0f0f0" align=justify><font size="2">CONTA <b>'.f($row,'nm_banco_debito').' AG. '.f($row,'cd_agencia_debito').' C/C '.f($row,'conta_debito').((nvl(f($row,'cb_sg_moeda'),'')!='') ? ' ('.f($row,'cb_sg_moeda').')' : '').'</b></font></td></tr>';
+          $l_html .= chr(13).'</table>';
+          $l_html.=chr(13).'      <tr><td colspan=2><br><font size="2"><b>LANÇAMENTOS</b></font></td></tr>';
+          $l_html.=chr(13).'      <tr><td colspan="2" align="center"><table class="tudo" width=100%  border="1" bordercolor="#00000">';
+          $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+          $cs = 0;
+          $cs++; $l_html.=chr(13).'            <td rowspan="2"><b>Código</td>';
+          if (nvl($p_projeto,'')=='') { $cs++; $l_html.=chr(13).'            <td rowspan="2"><b>Projeto</td>';}
+          $l_html.=chr(13).'            <td colspan="2"><b>Documento</td>';
+          $cs++; $l_html.=chr(13).'            <td rowspan="2" width="25%"><b>Pessoa</td>';
+          $cs++; $l_html.=chr(13).'            <td rowspan="2" width="40%"><b>Finalidade</td>';
+          $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Crédito'.$w_sg_moeda.'</td>';
+          $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Débito'.$w_sg_moeda.'</td>';
+          $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Saldo'.$w_sg_moeda.'</td>';
+          $l_html.=chr(13).'            <td colspan="2" width="6%"><b>Conta Contábil</td>';
+          $l_html.=chr(13).'          </tr>';
+          $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+          $cs++; $l_html.=chr(13).'            <td><b>Data</td>';
+          $cs++; $l_html.=chr(13).'            <td><b>Tipo e Número</td>';
+          $l_html.=chr(13).'            <td><b>Débito</td>';
+          $l_html.=chr(13).'            <td><b>Crédito</td>';
+          $l_html.=chr(13).'          </tr>';
+          
+          if ($w_conta!==f($row,'sq_conta_debito')) {
+            // Mudou a conta, usa o saldo de abertura informado pelo usuário.
+            // Se mudou o mês, mas a conta é a mesma, não altera o valor da variável.
+            $w_atual   = floatVal(str_replace(',','.',str_replace('.','',$p_abertura)));
+            // Se mudou a conta, a data de abertura é a informada pelo usuário na tela de filtragem.
+            $w_inicio = $p_inicio;
           } else {
-            if ($w_pai[11]=='PR') {
-              $w_pai_projeto = true;
-              $l_html.=chr(13).('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N',$w_tipo).'</td>');
+            // Se mudou apenas o mês, atualiza a data de abertura para o primeiro dia do mês seguinte.
+            $w_inicio  = '01'.substr(formataDataEdicao(f($row,'dt_pagamento')),2);
+          }
+          
+          $w_conta   = f($row,'sq_conta_debito');
+          $w_mes     = formataDataEdicao(f($row,'dt_pagamento'),9);
+          $w_credito = 0;
+          $w_debito  = 0;
+          $i         = 0;
+        }
+
+        if ($i==0) {
+          $l_html.=chr(13).'      <tr valign="top">';
+          $l_html.=chr(13).'        <td align="right" colspan="'.($cs+3).'"><b>Saldo de abertura em '.$w_inicio.': &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>'.formatNumber($w_atual).'</b></td>';
+          $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
+        }
+        $i++;
+        $l_html.=chr(13).'      <tr valign="top">';
+        $l_html.=chr(13).'        <td width="1%" nowrap>'.(($w_tipo=='EXCEL') ? '' : ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+        $l_html.=chr(13).'          '.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno'),'N',$w_tipo).'</td>';
+        if (nvl($p_projeto,'')=='') {
+          $w_pai_projeto = false;
+          if (Nvl(f($row,'dados_pai'),'')!='') {
+            $w_pai = explode('|@|',f($row,'dados_pai'));
+            if ($w_pai[0]=='???') {
+              $l_html.=chr(13).('        <td>&nbsp;</td>');
             } else {
-              if (Nvl(f($row,'dados_avo'),'')!='') {
-                $w_avo = explode('|@|',f($row,'dados_avo'));
-                if ($w_avo[11]=='PR') {
-                  $l_html.=chr(13).('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_avo'),f($row,'dados_avo'),'N',$w_tipo).'</td>');
-                } else {
-                  $l_html.=chr(13).('        <td>&nbsp;</td>');
+              if ($w_pai[11]=='PR') {
+                $w_pai_projeto = true;
+                $l_html.=chr(13).('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N',$w_tipo).'</td>');
+              } else {
+                if (Nvl(f($row,'dados_avo'),'')!='') {
+                  $w_avo = explode('|@|',f($row,'dados_avo'));
+                  if ($w_avo[11]=='PR') {
+                    $l_html.=chr(13).('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_avo'),f($row,'dados_avo'),'N',$w_tipo).'</td>');
+                  } else {
+                    $l_html.=chr(13).('        <td>&nbsp;</td>');
+                  }
                 }
               }
             }
+          } else {
+            $l_html.=chr(13).('        <td>&nbsp;</td>');
           }
-        } else {
-          $l_html.=chr(13).('        <td>&nbsp;</td>');
         }
-      }
-      $l_html.=chr(13).'        <td>&nbsp;'.Nvl(FormataDataEdicao(f($row,'dt_pagamento'),5),'-').'&nbsp;</td>';
-      $l_html.=chr(13).'        <td nowrap title="'.f($row,'nm_doc').'">'.f($row,'sg_doc').' '.f($row,'nr_doc').'</td>';
-      if (Nvl(f($row,'pessoa'),'nulo')!='nulo') {
-        if ($w_tipo!='WORD') $l_html.=chr(13).'        <td width="25%">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'pessoa'),$TP,f($row,'nm_pessoa')).'</td>';
-        else                 $l_html.=chr(13).'        <td width="25%">'.f($row,'nm_pessoa_resumido').'</td>';
-      } else {
-        $l_html.=chr(13).'        <td align="center" width="25%">---</td>';
-      }
-      $l_html.=chr(13).'        <td width="40%">'.f($row,'descricao').'</td>';
-      if (f($row,'tipo')=='C') {
-        $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row,'cb_valor')).'</td>';
-        $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
-        $w_credito += Nvl(f($row,'cb_valor'),0);
-        $w_atual   += Nvl(f($row,'cb_valor'),0);
-      } else {
-        $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
-        $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row,'cb_valor')).'</td>';
-        $w_debito += Nvl(f($row,'cb_valor'),0);
-        $w_atual  -= Nvl(f($row,'cb_valor'),0);
-      }
-      $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber($w_atual).'</td>';
-      $l_html.=chr(13).'        <td>'.nvl(f($row,'cc_debito'),'&nbsp;').'</td>';
-      $l_html.=chr(13).'        <td>'.nvl(f($row,'cc_credito'),'&nbsp;').'</td>';
-    } 
-    $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-    $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.$p_fim.$w_sg_moeda.'&nbsp;</b></td>';
-    $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
-    $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
-    $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_atual).'</b></td>';
-    $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
-    $l_html.=chr(13).'      </tr>';
+        $l_html.=chr(13).'        <td>&nbsp;'.Nvl(FormataDataEdicao(f($row,'dt_pagamento'),5),'-').'&nbsp;</td>';
+        $l_html.=chr(13).'        <td nowrap title="'.f($row,'nm_doc').'">'.f($row,'sg_doc').' '.f($row,'nr_doc').'</td>';
+        if (Nvl(f($row,'pessoa'),'nulo')!='nulo') {
+          if ($w_tipo!='WORD') $l_html.=chr(13).'        <td width="25%">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'pessoa'),$TP,f($row,'nm_pessoa')).'</td>';
+          else                 $l_html.=chr(13).'        <td width="25%">'.f($row,'nm_pessoa_resumido').'</td>';
+        } else {
+          $l_html.=chr(13).'        <td align="center" width="25%">---</td>';
+        }
+        $l_html.=chr(13).'        <td width="40%">'.f($row,'descricao').'</td>';
+        if (f($row,'tipo')=='C') {
+          $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row,'cb_valor')).'</td>';
+          $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
+          $w_credito += Nvl(f($row,'cb_valor'),0);
+          $w_atual   += Nvl(f($row,'cb_valor'),0);
+        } else {
+          $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
+          $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row,'cb_valor')).'</td>';
+          $w_debito += Nvl(f($row,'cb_valor'),0);
+          $w_atual  -= Nvl(f($row,'cb_valor'),0);
+        }
+        $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber($w_atual).'</td>';
+        $l_html.=chr(13).'        <td>'.nvl(f($row,'cc_debito'),'&nbsp;').'</td>';
+        $l_html.=chr(13).'        <td>'.nvl(f($row,'cc_credito'),'&nbsp;').'</td>';
+      } 
+      $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
+      $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.$p_fim.$w_sg_moeda.'&nbsp;</b></td>';
+      $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
+      $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
+      $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_atual).'</b></td>';
+      $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
+      $l_html.=chr(13).'      </tr>';
+    }
     $l_html.=chr(13).'      </table></td></tr>';
     ShowHTML($l_html);
     ShowHTML('    </table>');
