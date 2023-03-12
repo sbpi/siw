@@ -127,8 +127,6 @@ function Inicial() {
     Validate('p_inicio', 'Início', 'DATA', '1', '10', '10', '', '0123456789/');
     Validate('p_fim', 'Fim', 'DATA', '1', '10', '10', '', '0123456789/');
     CompData('p_inicio', 'Pagamento inicial', '<=', 'p_fim', 'Pagamento final');
-    ShowHTML('  document.getElementById("form-data").style.display = "none";');
-    ShowHTML('  document.getElementById("progress").style.display = "block";');
     ValidateClose();
   } else {
     ValidateOpen('Validacao');
@@ -140,8 +138,6 @@ function Inicial() {
     ShowHTML('    return false;');
     ShowHTML('  }');
     Validate('w_assinatura',$_SESSION['LABEL_ALERTA'],'1','1','3','15','1','1');
-    ShowHTML('  document.getElementById("form-data1").style.display = "none";');
-    ShowHTML('  document.getElementById("progress1").style.display = "block";');
     ValidateClose();
   }
   ScriptClose();
@@ -162,10 +158,6 @@ function Inicial() {
   Estrutura_Corpo_Abre();
   Estrutura_Texto_Abre();
   if ($O=='L') {
-    ShowHTML('<div class="progress" id="progress" align="center"><img src="images/ajax-loaderback-med.gif" />');
-    ShowHTML('  <blockquote>Processando...</blockquote>');
-    ShowHTML('</div>');
-    flush();
     ShowHTML('<div class="form-data" style="display:none;" id="form-data" align="center">');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     ShowHTML('<tr><td>');
@@ -229,15 +221,12 @@ function Inicial() {
       }
 
       // Formulário de apresentação e gravação dos dados
-      ShowHTML('<div class="progress" id="progress1" style="display:none;" align="center"><img src="images/ajax-loaderback-med.gif" />');
-      ShowHTML('  <blockquote>Processando...</blockquote>');
-      ShowHTML('</div>');
       ShowHTML('<div class="form-data" id="form-data1" align="center">');
       ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
       ShowHTML('<tr>');
       ShowHTML('    <td align="right">'.exportaOffice().'<b>Registros: '.count($w_array));
       ShowHTML('  <tr><td align="center">');
-      AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_pagina.$par, $O);
+      AbreForm('Form', $w_dir . $w_pagina . 'Grava', 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $w_dir.$w_pagina.$par, $O);
       ShowHTML(MontaFiltro('POST'));
       ShowHTML('    <TABLE class="tudo" WIDTH="100%" bgcolor="'.$conTableBgColor.'" BORDER="'.$conTableBorder.'" CELLSPACING="'.$conTableCellSpacing.'" CELLPADDING="'.$conTableCellPadding.'" BorderColorDark="'.$conTableBorderColorDark.'" BorderColorLight="'.$conTableBorderColorLight.'">');
       $i = 0;
@@ -308,13 +297,9 @@ function Inicial() {
     ShowHTML('</table>');
     ShowHTML('</div>');
     ScriptOpen('JavaScript');
-    ShowHTML('  document.getElementById("progress").style.display = "none";');
     ShowHTML('  document.getElementById("form-data").style.display = "block";');
     ScriptClose();
   } elseif ($O=='P') {
-    ShowHTML('<div class="progress" id="progress" style="display:none;" align="center"><img src="images/ajax-loaderback-med.gif" />');
-    ShowHTML('  <blockquote>Processando...</blockquote>');
-    ShowHTML('</div>');
     ShowHTML('<div class="form-data" id="form-data" align="center">');
     ShowHTML('<table border="0" cellpadding="0" cellspacing="0" width="100%">');
     AbreForm('Form', $w_dir . $w_pagina . $par, 'POST', 'return(Validacao(this));', null, $P1, $P2, $P3, $P4, $TP, $SG, $R, 'L');
@@ -368,6 +353,8 @@ function Grava() {
   AbreSessao();
 
   Cabecalho();
+  ShowHTML('<HEAD>');
+  ShowHTML('<BASE HREF="' . $conRootSIW . '">');
   ShowHTML('</HEAD>');
   BodyOpen('onLoad=this.focus();');
 
@@ -475,7 +462,9 @@ function Main() {
     case 'GRAVA':   Grava();   break;
     default:
       cabecalho();
+      ShowHTML('<HEAD>');
       ShowHTML('<BASE HREF="' . $conRootSIW . '">');
+      ShowHTML('</HEAD>');
       BodyOpen('onLoad=this.focus();');
       Estrutura_Topo_Limpo();
       Estrutura_Menu();

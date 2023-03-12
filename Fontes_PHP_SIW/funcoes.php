@@ -3159,6 +3159,21 @@ function head() {
   ShowHTML('<script language="javascript" type="text/javascript" src="' . $conRootSIW . 'js/tooltip.js"></script>');
 }
 
+
+// =========================================================================
+// Rotina de aviso de processamento
+// -------------------------------------------------------------------------
+function processando() {
+  ShowHTML('<div class="progress" id="progress" align="center"><img src="images/ajax-loaderback-med.gif" />');
+  ShowHTML('  <blockquote>Processando...</blockquote>');
+  ShowHTML('</div>');
+  ob_flush();
+  flush();
+  ScriptOpen('JavaScript');
+  ShowHTML('  document.getElementById("progress").style.display = "none";');
+  ScriptClose();
+}
+
 // =========================================================================
 // Rotina de rodapé
 // -------------------------------------------------------------------------
@@ -4004,6 +4019,7 @@ function LimpaMascara($Campo) {
 // Cria a tag Body
 function BodyOpen($cProperties) {
    extract($GLOBALS);
+   Processando();
    Required();
    $wProperties = $cProperties;
    if (nvl($wProperties,'')!='') {
@@ -4025,7 +4041,6 @@ function BodyOpen($cProperties) {
    ShowHTML('<script type="text/javascript" src="'.$conRootSIW.'js/modal/js/modal-message.js"></script> ');
    ShowHTML('<link rel="stylesheet" href="'.$conRootSIW.'js/modal/css/modal-message.css" type="text/css" media="screen"/>');
    ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/funcoes.js"></script>');
-//   ShowHTML('<script language="javascript" type="text/javascript" src="'.$conRootSIW.'js/jquery.js"></script>');
    ShowHTML('<link rel="stylesheet" type="text/css" href="'.$conRootSIW.'classes/menu/xPandMenu.css"/>');
 
 
@@ -4036,7 +4051,6 @@ function BodyOpen($cProperties) {
             'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin .'" ' .
             'Leftmargin="'.$conBodyLeftmargin.'" '.$wProperties.'> ');
    }
-  flush();
 }
 
 function BodyOpenImage($cProperties, $cImage, $cFixed) {
@@ -4068,6 +4082,7 @@ function ShowHtml($Line) {
 // Cria a tag Body
 function BodyOpenClean($cProperties) {
   extract($GLOBALS);
+  Processando();
   Required();
   $wProperties = $cProperties;
   if (nvl($wProperties,'')!='') {
@@ -4088,7 +4103,6 @@ function BodyOpenClean($cProperties) {
   'Vlink="'.$conBodyVLink.'" Background="'.$conBodyBackground.'" '.
   'Bgproperties="'.$conBodyBgproperties.'" Topmargin="'.$conBodyTopmargin.'" '.
   'Leftmargin="'.$conBodyLeftmargin.'" '.$wProperties.'> ');
-  flush();
 }
 
 // Cria a tag Body
