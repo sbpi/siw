@@ -45,7 +45,7 @@ function ValidaLancamento($p_cliente,$l_chave,$p_sg1,$p_sg2,$p_sg3,$p_sg4,$p_tra
   // 2 - Verifica se o valor do lançamento é igual à soma dos valores dos documentos
   //-----------------------------------------------------------------------------
   // 1 - Verifica se o valor do lançamento é maior que zero
-  if (f($l_rs_solic,'valor')==0) {
+  if (f($l_rs_solic,'valor')==0 && f($l_rs_solic,'sigla')!='FNREVENT') {
     $l_erro.='<li>O lançamento não pode ter valor zero.';
     $l_tipo=0;
   }
