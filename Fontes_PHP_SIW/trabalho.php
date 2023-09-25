@@ -226,8 +226,8 @@ function Mesa() {
       ShowHTML('          <td rowspan=2><b>Serviço</td>');
       ShowHTML('          <td colspan=2><b>Em andamento</td>');
       ShowHTML('        <tr bgcolor='.$conTrBgColor.' align="center">');
-      ShowHTML('          <td><b>Consultar</td>');
-      ShowHTML('          <td><b>Intervir</td>');
+      ShowHTML('          <td width="15%" nowrap><b>Total</td>');
+      ShowHTML('          <td width="15%" nowrap><b>Necessita intervenção</td>');
     } else {
       ShowHTML('          <td><b>Módulo</td>');
       ShowHTML('          <td><b>Serviço</td>');

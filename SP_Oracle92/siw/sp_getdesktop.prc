@@ -26,9 +26,17 @@ begin
                             from siw_menu                        c
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
                                    inner join siw_tramite        e  on (d.sq_siw_tramite     = e.sq_siw_tramite)
-                                   inner join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
-                                                 from siw_solicitacao        x
-                                              )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                                   inner join (select x.sq_menu, x.sq_siw_solicitacao, 
+                                                      case z.sigla
+                                                           when 'FN' then 16 -- Módulo financeiro dispensa verificação de acesso - melhora desempenho
+                                                           else acesso(x.sq_siw_solicitacao, p_usuario,null)
+                                                      end as acesso
+                                                 from siw_solicitacao          x
+                                                      inner   join siw_menu    y on x.sq_menu = y.sq_menu
+                                                        inner join siw_modulo  z on y.sq_modulo = z.sq_modulo
+                                              )                  f  on (d.sq_menu            = f.sq_menu and
+                                                                        d.sq_siw_solicitacao = f.sq_siw_solicitacao
+                                                                     )
                            where c.sq_pessoa = p_cliente
                              and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
                              and e.ordem     > 1         -- Esta construção é 5 vezes mais rápida que NOT IN ('CI','CA')
@@ -45,9 +53,17 @@ begin
                                  inner   join siw_modulo        c1 on (c.sq_modulo           = c1.sq_modulo)
                                  inner   join siw_solicitacao    d  on (c.sq_menu            = d.sq_menu)
                                    inner join siw_tramite        e  on (d.sq_siw_tramite     = e.sq_siw_tramite)
-                                   inner join (select x.sq_siw_solicitacao, acesso(x.sq_siw_solicitacao, p_usuario,null) as acesso
-                                                 from siw_solicitacao        x
-                                              )                  f  on (d.sq_siw_solicitacao = f.sq_siw_solicitacao)
+                                   inner join (select x.sq_menu, x.sq_siw_solicitacao, 
+                                                      case z.sigla
+                                                           when 'FN' then 16 -- Módulo financeiro dispensa verificação de acesso - melhora desempenho
+                                                           else acesso(x.sq_siw_solicitacao, p_usuario,null)
+                                                      end as acesso
+                                                 from siw_solicitacao          x
+                                                      inner   join siw_menu    y on x.sq_menu = y.sq_menu
+                                                        inner join siw_modulo  z on y.sq_modulo = z.sq_modulo
+                                              )                  f  on (d.sq_menu            = f.sq_menu and
+                                                                        d.sq_siw_solicitacao = f.sq_siw_solicitacao
+                                                                     )
                            where c.sq_pessoa = p_cliente
                              and (c1.sigla   <> 'FN' or (c1.sigla = 'FN' and e.sigla <> 'EE') or (c1.sigla = 'AC' and d.conclusao is null))
                              and c.sigla     <> 'PADCAD' -- Registro de protocolo não tem acompanhamento pela mesa de trabalho
