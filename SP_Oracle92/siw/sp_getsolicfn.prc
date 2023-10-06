@@ -405,6 +405,42 @@ begin
                   (substr(p_restricao,4,2)      ='CC'  and b.sq_cc        is not null)
                  )
                 );
+   Elsif p_restricao = 'CONTAS' Then
+      open p_result for 
+         select a.sq_pessoa,             b.sq_pessoa_conta,                  b.saldo_inicial,   
+                d.sq_banco,              d.codigo||' - '||d.nome as banco,   d.codigo cd_banco,
+                e.sq_agencia,            e.codigo||' - '||e.nome as agencia, e.codigo cd_agencia,
+                b.operacao,              b.numero,                           b.ativo,                  b.padrao, 
+                b.devolucao_valor,       b.sq_pais_estrang,                  b.aba_code,               b.swift_code,
+                b.endereco_estrang,      b.banco_estrang,                    b.agencia_estrang,        b.cidade_estrang,
+                b.informacoes,           case b.tipo_conta when '1' then 'Corrente' else 'Poupança' end as tipo_conta,
+                b.codigo_externo,
+                c.sq_moeda,              c.codigo cd_moeda,                  c.sigla sg_moeda,         c.simbolo sb_moeda,
+                c.ativo at_moeda
+           from co_pessoa                      a
+                inner     join co_pessoa_conta b on (a.sq_pessoa  = b.sq_pessoa)
+                  inner   join co_agencia      e on (b.sq_agencia = e.sq_agencia)
+                    inner join co_banco        d on (e.sq_banco   = d.sq_banco)
+                  left    join co_moeda        c on (b.sq_moeda   = c.sq_moeda)
+          where a.sq_pessoa  = p_pessoa
+            and (p_pais     is null or (p_pais is not null and (b.sq_pessoa_conta = p_pais)))
+            and (p_projeto  is null or (p_projeto is not null and 0 < (select count(*) from fn_lancamento where sq_pessoa_conta = b.sq_pessoa_conta)))
+            and (p_projeto  is null or 
+                 (p_projeto is not null and 
+                  0 < (select count(*) 
+                         from fn_lancamento                    w
+                              inner     join siw_solicitacao   x on w.sq_siw_solicitacao = x.sq_siw_solicitacao
+                                inner   join siw_menu          y on x.sq_menu            = y.sq_menu
+                                  inner join siw_modulo        z on y.sq_modulo          = z.sq_modulo
+                              left      join siw_solicitacao  b4 on x.sq_solic_pai       = b4.sq_siw_solicitacao
+                                left    join siw_menu        b41 on b4.sq_menu           = b41.sq_menu
+                        where w.sq_pessoa_conta = b.sq_pessoa_conta
+                          and (((substr(y.sigla,4) = 'CONT' or substr(b41.sigla,1,2) = 'CL') and w.sq_solic_vinculo is not null and w.sq_solic_vinculo = p_projeto) or
+                               (substr(y.sigla,4) <> 'CONT' and ((x.sq_solic_pai is not null and x.sq_solic_pai = p_projeto) or (b4.sq_solic_pai is not null and b4.sq_solic_pai = p_projeto)))
+                              )
+                      )
+                 )
+                );
    Elsif p_restricao = 'EXTRATO' Then
       open p_result for 
          select a.sq_menu,            a.sq_modulo,                   a.nome,

@@ -100,13 +100,13 @@ function Inicial() {
   
   if ($O == 'L') {
     // Recupera os lançamentos financeiros
-    $sql = new db_getSolicFN; $RSQuery = $sql->getInstanceOf($dbms,null, $w_usuario, 'EXTRATO', 7, 
+    $sql = new db_getSolicFN; $RSContas = $sql->getInstanceOf($dbms,null, $w_cliente, 'CONTAS', 7, 
         $p_ini_i, $p_ini_f, $p_inicio,$p_fim, $p_atraso, $p_solicitante, 
         $p_unidade, $p_prioridade, $p_ativo, $p_proponente, 
         $p_chave, $p_assunto, $p_conta, $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
         $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
         $p_acao_ppa, $p_orprior, $p_empenho, $p_processo);
-    $RSQuery = SortArray($RSQuery,'nm_banco_debito','asc','cd_agencia_debito','asc','conta_debito','asc','dt_pagamento','asc','ord_codigo_interno','asc','cb_valor','asc','nm_pessoa','asc');
+    $RSContas = SortArray($RSContas,'cd_banco','asc','cd_agencia','asc','numero','asc');
   }
 
   headerGeral('P', $w_tipo, $w_chave, f($RS_Menu,'nome'), $w_embed, null, null, $w_linha_pag,$w_filtro);
@@ -222,55 +222,93 @@ function Inicial() {
       
     } 
 
-    if (!count($RSQuery)) {
-      $l_html.=chr(13).'      <tr><td><br><hr NOSHADE color=#000000 size=2></td></tr>';
-      if (nvl($p_projeto,'')!='') {
-        $l_html.=chr(13).'      <tr><td align="center"><b>CONTAS DO PROJETO SEM MOVIMENTAÇÃO NO PERÍODO</b></td></tr>';
-      } else {
+    $one_month = new DateInterval('P1M');
+    $l_html.=chr(13).'      <tr><td colspan="2" align="center"><table class="tudo" width=100%  border="1" bordercolor="#00000">';
 
-        $sql = new db_getContaBancoData; $RS = $sql->getInstanceOf($dbms,$p_conta);
-        $l_html.=chr(13).'      <tr><td bgcolor="#f0f0f0" align="center"><p><font size="3">CONTA <b>'.f($RS,'nm_banco').' AG. '.f($RS,'agencia').' C/C '.f($RS,'numero').((nvl(f($RS,'sg_moeda'),'')!='') ? ' ('.f($RS,'sg_moeda').')' : '').'</b></font></p></td></tr>';
-
-        $l_html.=chr(13).'      <tr><td align="center"><b>CONTA SEM MOVIMENTAÇÃO NO PERÍODO</b></td></tr>';
-      }
-      $l_html.=chr(13).'      <tr><td><hr NOSHADE color=#000000 size=1></td></tr>'; 
-      
-    } else {
+    $w_conta_atual = 0;
     
-      $one_month = new DateInterval('P1M');
-      $l_html.=chr(13).'      <tr><td colspan="2" align="center"><table class="tudo" width=100%  border="1" bordercolor="#00000">';
-
-      $w_conta_atual = 0;
-      
-      // Processa cada conta
-      foreach ($RSQuery as $conta) {
-        if ($w_conta_atual != f($conta, 'sq_conta_debito')) {
-          
-          $w_mes_inicio = new DateTime(formataDataEdicao(toDate($p_inicio),11)); //(int)(date('ym',toDate($p_inicio)));
-          $w_mes_fim = new DateTime(formataDataEdicao(toDate($p_fim),11)); //(int)(date('ym',toDate($p_fim)));
-          $w_mes_atual = $w_mes_inicio;
-          $w_atual = floatVal(str_replace(',','.',str_replace('.','',$p_abertura)));
-
-          $l_html.=chr(13).'      <tr><td align="center" colspan="20"><p><font size="3"><br><b>BANCO '.f($conta,'nm_banco_debito').' AGÊNCIA '.f($conta,'cd_agencia_debito').' CONTA '.f($conta,'conta_debito').((nvl(f($conta,'sg_moeda'),'')!='') ? ' ('.f($conta,'sg_moeda').')' : '').'</b></font><br>&nbsp;</p></td></tr>';
+    // Processa cada conta
+    foreach ($RSContas as $conta) {
+      if ($w_conta_atual != f($conta, 'sq_pessoa_conta')) {
         
-          while (1) {
+        $w_mes_inicio = new DateTime(formataDataEdicao(toDate($p_inicio),11)); //(int)(date('ym',toDate($p_inicio)));
+        $w_mes_fim = new DateTime(formataDataEdicao(toDate($p_fim),11)); //(int)(date('ym',toDate($p_fim)));
+        $w_mes_atual = $w_mes_inicio;
+        $w_atual = floatVal(str_replace(',','.',str_replace('.','',$p_abertura)));
 
-            $w_credito = 0;
-            $w_debito  = 0;
-            $i         = 0;
-            $w_mes = $w_mes_atual->format('d/m/Y');
+        $l_html.=chr(13).'      <tr><td align="center" colspan="20"><p><font size="3"><br><b>BANCO '.f($conta,'banco').' AGÊNCIA '.f($conta,'cd_agencia').' CONTA '.f($conta,'numero').((nvl(f($conta,'sg_moeda'),'')!='') ? ' ('.f($conta,'sg_moeda').')' : '').'</b></font><br>&nbsp;</p></td></tr>';
+      
+        while (1) {
 
-            // Recupera os lançamentos financeiros do mês atual
-            $sql = new db_getSolicFN; $RSMovimento = $sql->getInstanceOf($dbms,null, $w_usuario, 'EXTRATO', 7, $p_ini_i, $p_ini_f, 
-                $w_mes_atual->format('d/m/Y') , formataDataEdicao(last_day($w_mes_atual->format('d/m/Y'))), 
-                $p_atraso, $p_solicitante, $p_unidade, $p_prioridade, $p_ativo, $p_proponente, 
-                $p_chave, $p_assunto, f($conta, 'sq_conta_debito'), $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
-                $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
-                $p_acao_ppa, $p_orprior, $p_empenho, $p_processo);
-            $RSMovimento = SortArray($RSMovimento,'nm_banco_debito','asc','cd_agencia_debito','asc','conta_debito','asc','dt_pagamento','asc','ord_codigo_interno','asc','cb_valor','asc','nm_pessoa','asc');
+          $w_credito = 0;
+          $w_debito  = 0;
+          $i         = 0;
+          $w_mes = $w_mes_atual->format('d/m/Y');
+
+          // Recupera os lançamentos financeiros do mês atual
+          $sql = new db_getSolicFN; $RSMovimento = $sql->getInstanceOf($dbms,null, $w_usuario, 'EXTRATO', 7, $p_ini_i, $p_ini_f, 
+              $w_mes_atual->format('d/m/Y') , formataDataEdicao(last_day($w_mes_atual->format('d/m/Y'))), 
+              $p_atraso, $p_solicitante, $p_unidade, $p_prioridade, $p_ativo, $p_proponente, 
+              $p_chave, $p_assunto, f($conta, 'sq_pessoa_conta'), $p_regiao, $p_uf, $p_cidade, $p_usu_resp, 
+              $p_uorg_resp, $p_palavra, $p_prazo, $p_fase, $p_sqcc, $p_projeto, $p_atividade, 
+              $p_acao_ppa, $p_orprior, $p_empenho, $p_processo);
+          $RSMovimento = SortArray($RSMovimento,'nm_banco_debito','asc','cd_agencia_debito','asc','conta_debito','asc','dt_pagamento','asc','ord_codigo_interno','asc','cb_valor','asc','nm_pessoa','asc');
+          
+          if (!count($RSMovimento)) {
             
-            if (!count($RSMovimento)) {
+              $l_html.=chr(13).'      <tr><td colspan=20><br><font size="2"><b>LANÇAMENTOS DE '.$w_mes_atual->format('d/m/Y').' a '.formataDataEdicao(last_day($w_mes_atual->format('d/m/Y'))).'</b></font></td></tr>';
+              $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+              $cs = 0;
+              $cs++; $l_html.=chr(13).'            <td rowspan="2"><b>Código</td>';
+              if (nvl($p_projeto,'')=='') { $cs++; $l_html.=chr(13).'            <td rowspan="2"><b>Projeto</td>';}
+              $l_html.=chr(13).'            <td colspan="2"><b>Documento</td>';
+              $cs++; $l_html.=chr(13).'            <td rowspan="2" width="25%"><b>Pessoa</td>';
+              $cs++; $l_html.=chr(13).'            <td rowspan="2" width="40%"><b>Finalidade</td>';
+              $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Crédito'.$w_sg_moeda.'</td>';
+              $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Débito'.$w_sg_moeda.'</td>';
+              $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Saldo'.$w_sg_moeda.'</td>';
+              $l_html.=chr(13).'            <td colspan="2" width="6%"><b>Conta Contábil</td>';
+              $l_html.=chr(13).'          </tr>';
+              $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
+              $cs++; $l_html.=chr(13).'            <td><b>Data</td>';
+              $cs++; $l_html.=chr(13).'            <td><b>Tipo e Número</td>';
+              $l_html.=chr(13).'            <td><b>Débito</td>';
+              $l_html.=chr(13).'            <td><b>Crédito</td>';
+              $l_html.=chr(13).'          </tr>';
+              $l_html.=chr(13).'      <tr valign="top">';
+              $l_html.=chr(13).'        <td align="right" colspan="'.($cs+3).'"><b>Saldo de abertura em '.$w_mes_atual->format('d/m/Y').': &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</b></td>';
+              $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
+              $l_html.=chr(13).'      <tr valign="top">';
+              $l_html.=chr(13).'        <td align="center" colspan="'.$cs.'"><b>CONTA SEM MOVIMENTAÇÃO NO PERÍODO</b></td>';
+              $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber(0).'</b></td>';
+              $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber(0).'</b></td>';
+              $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber(0).'</b></td>';
+              $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
+              $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
+              $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.formataDataEdicao(last_day($w_mes_atual->format('d/m/Y'))).$w_sg_moeda.'&nbsp;</b></td>';
+              $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
+              $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
+              $l_html.=chr(13).'        <td align="right" nowrap><b>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</b></td>';
+              $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
+              $l_html.=chr(13).'      </tr>';
               
+              $w_conta = f($conta, 'sq_pessoa_conta');
+              
+          } else {
+
+            foreach ($RSMovimento as $row) {
+              if ($w_conta!==f($conta, 'sq_pessoa_conta') || $w_mes!==formataDataEdicao(f($row,'dt_pagamento'),9)) {
+                $w_sg_moeda = ((f($row,'sg_moeda_cc')!='') ? ' ('.f($row,'sg_moeda_cc').')' : '');
+                if ($w_conta!==0 && $i>0) {
+                  $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
+                  $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.formataDataEdicao(last_day($w_inicio)).$w_sg_moeda.'&nbsp;</b></td>';
+                  $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
+                  $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
+                  $l_html.=chr(13).'        <td align="right" nowrap><b>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</b></td>';
+                  $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
+                  $l_html.=chr(13).'      </tr>';
+                }
+                
                 $l_html.=chr(13).'      <tr><td colspan=20><br><font size="2"><b>LANÇAMENTOS DE '.$w_mes_atual->format('d/m/Y').' a '.formataDataEdicao(last_day($w_mes_atual->format('d/m/Y'))).'</b></font></td></tr>';
                 $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
                 $cs = 0;
@@ -290,152 +328,98 @@ function Inicial() {
                 $l_html.=chr(13).'            <td><b>Débito</td>';
                 $l_html.=chr(13).'            <td><b>Crédito</td>';
                 $l_html.=chr(13).'          </tr>';
+                
+                if ($w_conta!==f($conta, 'sq_pessoa_conta')) {
+                  // Mudou a conta, usa o saldo de abertura informado pelo usuário.
+                  // Se mudou o mês, mas a conta é a mesma, não altera o valor da variável.
+                  $w_atual   = floatVal(str_replace(',','.',str_replace('.','',$p_abertura)));
+                  // Se mudou a conta, a data de abertura é a informada pelo usuário na tela de filtragem.
+                  $w_inicio = $p_inicio;
+                } else {
+                  // Se mudou apenas o mês, atualiza a data de abertura para o primeiro dia do mês seguinte.
+                  $w_inicio  = '01'.substr(formataDataEdicao(f($row,'dt_pagamento')),2);
+                }
+                
+                $w_conta   = f($conta, 'sq_pessoa_conta');
+                $w_mes     = formataDataEdicao(f($row,'dt_pagamento'),9);
+                $w_credito = 0;
+                $w_debito  = 0;
+                $i         = 0;
+              }
+
+              if ($i==0) {
                 $l_html.=chr(13).'      <tr valign="top">';
                 $l_html.=chr(13).'        <td align="right" colspan="'.($cs+3).'"><b>Saldo de abertura em '.$w_mes_atual->format('d/m/Y').': &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</b></td>';
                 $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
-                $l_html.=chr(13).'      <tr valign="top">';
-                $l_html.=chr(13).'        <td align="center" colspan="'.$cs.'"><b>CONTA SEM MOVIMENTAÇÃO NO PERÍODO</b></td>';
-                $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber(0).'</b></td>';
-                $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber(0).'</b></td>';
-                $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber(0).'</b></td>';
-                $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
-                $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-                $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.formataDataEdicao(last_day($w_mes_atual->format('d/m/Y'))).$w_sg_moeda.'&nbsp;</b></td>';
-                $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
-                $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
-                $l_html.=chr(13).'        <td align="right" nowrap><b>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</b></td>';
-                $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
-                $l_html.=chr(13).'      </tr>';
-                
-                $w_conta = f($conta, 'sq_conta_debito');
-                
-            } else {
-
-              foreach ($RSMovimento as $row) {
-                if ($w_conta!==f($conta, 'sq_conta_debito') || $w_mes!==formataDataEdicao(f($row,'dt_pagamento'),9)) {
-                  $w_sg_moeda = ((f($row,'sg_moeda_cc')!='') ? ' ('.f($row,'sg_moeda_cc').')' : '');
-                  if ($w_conta!==0 && $i>0) {
-                    $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-                    $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.formataDataEdicao(last_day($w_inicio)).$w_sg_moeda.'&nbsp;</b></td>';
-                    $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
-                    $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
-                    $l_html.=chr(13).'        <td align="right" nowrap><b>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</b></td>';
-                    $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
-                    $l_html.=chr(13).'      </tr>';
-                  }
-                  
-                  $l_html.=chr(13).'      <tr><td colspan=20><br><font size="2"><b>LANÇAMENTOS DE '.$w_mes_atual->format('d/m/Y').' a '.formataDataEdicao(last_day($w_mes_atual->format('d/m/Y'))).'</b></font></td></tr>';
-                  $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-                  $cs = 0;
-                  $cs++; $l_html.=chr(13).'            <td rowspan="2"><b>Código</td>';
-                  if (nvl($p_projeto,'')=='') { $cs++; $l_html.=chr(13).'            <td rowspan="2"><b>Projeto</td>';}
-                  $l_html.=chr(13).'            <td colspan="2"><b>Documento</td>';
-                  $cs++; $l_html.=chr(13).'            <td rowspan="2" width="25%"><b>Pessoa</td>';
-                  $cs++; $l_html.=chr(13).'            <td rowspan="2" width="40%"><b>Finalidade</td>';
-                  $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Crédito'.$w_sg_moeda.'</td>';
-                  $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Débito'.$w_sg_moeda.'</td>';
-                  $l_html.=chr(13).'            <td rowspan="2" width="6%"><b>Saldo'.$w_sg_moeda.'</td>';
-                  $l_html.=chr(13).'            <td colspan="2" width="6%"><b>Conta Contábil</td>';
-                  $l_html.=chr(13).'          </tr>';
-                  $l_html.=chr(13).'          <tr bgcolor="'.$conTrBgColor.'" align="center">';
-                  $cs++; $l_html.=chr(13).'            <td><b>Data</td>';
-                  $cs++; $l_html.=chr(13).'            <td><b>Tipo e Número</td>';
-                  $l_html.=chr(13).'            <td><b>Débito</td>';
-                  $l_html.=chr(13).'            <td><b>Crédito</td>';
-                  $l_html.=chr(13).'          </tr>';
-                  
-                  if ($w_conta!==f($conta, 'sq_conta_debito')) {
-                    // Mudou a conta, usa o saldo de abertura informado pelo usuário.
-                    // Se mudou o mês, mas a conta é a mesma, não altera o valor da variável.
-                    $w_atual   = floatVal(str_replace(',','.',str_replace('.','',$p_abertura)));
-                    // Se mudou a conta, a data de abertura é a informada pelo usuário na tela de filtragem.
-                    $w_inicio = $p_inicio;
+              }
+              $i++;
+              $l_html.=chr(13).'      <tr valign="top">';
+              $l_html.=chr(13).'        <td width="1%" nowrap>'.(($w_tipo=='EXCEL') ? '' : ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
+              $l_html.=chr(13).'          '.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno'),'N',$w_tipo).'</td>';
+              if (nvl($p_projeto,'')=='') {
+                $w_pai_projeto = false;
+                if (Nvl(f($row,'dados_pai'),'')!='') {
+                  $w_pai = explode('|@|',f($row,'dados_pai'));
+                  if ($w_pai[0]=='???') {
+                    $l_html.=chr(13).('        <td>&nbsp;</td>');
                   } else {
-                    // Se mudou apenas o mês, atualiza a data de abertura para o primeiro dia do mês seguinte.
-                    $w_inicio  = '01'.substr(formataDataEdicao(f($row,'dt_pagamento')),2);
-                  }
-                  
-                  $w_conta   = f($conta, 'sq_conta_debito');
-                  $w_mes     = formataDataEdicao(f($row,'dt_pagamento'),9);
-                  $w_credito = 0;
-                  $w_debito  = 0;
-                  $i         = 0;
-                }
-
-                if ($i==0) {
-                  $l_html.=chr(13).'      <tr valign="top">';
-                  $l_html.=chr(13).'        <td align="right" colspan="'.($cs+3).'"><b>Saldo de abertura em '.$w_mes_atual->format('d/m/Y').': &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</b></td>';
-                  $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
-                }
-                $i++;
-                $l_html.=chr(13).'      <tr valign="top">';
-                $l_html.=chr(13).'        <td width="1%" nowrap>'.(($w_tipo=='EXCEL') ? '' : ExibeImagemSolic(f($row,'sigla'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
-                $l_html.=chr(13).'          '.exibeSolic($w_dir,f($row,'sq_siw_solicitacao'),f($row,'codigo_interno'),'N',$w_tipo).'</td>';
-                if (nvl($p_projeto,'')=='') {
-                  $w_pai_projeto = false;
-                  if (Nvl(f($row,'dados_pai'),'')!='') {
-                    $w_pai = explode('|@|',f($row,'dados_pai'));
-                    if ($w_pai[0]=='???') {
-                      $l_html.=chr(13).('        <td>&nbsp;</td>');
+                    if ($w_pai[11]=='PR') {
+                      $w_pai_projeto = true;
+                      $l_html.=chr(13).('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N',$w_tipo).'</td>');
                     } else {
-                      if ($w_pai[11]=='PR') {
-                        $w_pai_projeto = true;
-                        $l_html.=chr(13).('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_pai'),f($row,'dados_pai'),'N',$w_tipo).'</td>');
-                      } else {
-                        if (Nvl(f($row,'dados_avo'),'')!='') {
-                          $w_avo = explode('|@|',f($row,'dados_avo'));
-                          if ($w_avo[11]=='PR') {
-                            $l_html.=chr(13).('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_avo'),f($row,'dados_avo'),'N',$w_tipo).'</td>');
-                          } else {
-                            $l_html.=chr(13).('        <td>&nbsp;</td>');
-                          }
+                      if (Nvl(f($row,'dados_avo'),'')!='') {
+                        $w_avo = explode('|@|',f($row,'dados_avo'));
+                        if ($w_avo[11]=='PR') {
+                          $l_html.=chr(13).('        <td nowrap>'.exibeSolic($w_dir,f($row,'sq_solic_avo'),f($row,'dados_avo'),'N',$w_tipo).'</td>');
+                        } else {
+                          $l_html.=chr(13).('        <td>&nbsp;</td>');
                         }
                       }
                     }
-                  } else {
-                    $l_html.=chr(13).('        <td>&nbsp;</td>');
                   }
-                }
-                $l_html.=chr(13).'        <td>&nbsp;'.Nvl(FormataDataEdicao(f($row,'dt_pagamento'),5),'-').'&nbsp;</td>';
-                $l_html.=chr(13).'        <td nowrap title="'.f($row,'nm_doc').'">'.f($row,'sg_doc').' '.f($row,'nr_doc').'</td>';
-                if (Nvl(f($row,'pessoa'),'nulo')!='nulo') {
-                  if ($w_tipo!='WORD') $l_html.=chr(13).'        <td width="25%">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'pessoa'),$TP,f($row,'nm_pessoa')).'</td>';
-                  else                 $l_html.=chr(13).'        <td width="25%">'.f($row,'nm_pessoa_resumido').'</td>';
                 } else {
-                  $l_html.=chr(13).'        <td align="center" width="25%">---</td>';
+                  $l_html.=chr(13).('        <td>&nbsp;</td>');
                 }
-                $l_html.=chr(13).'        <td width="40%">'.f($row,'descricao').'</td>';
-                if (f($row,'tipo')=='C') {
-                  $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row,'cb_valor')).'</td>';
-                  $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
-                  $w_credito += Nvl(f($row,'cb_valor'),0);
-                  $w_atual   += Nvl(f($row,'cb_valor'),0);
-                } else {
-                  $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
-                  $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row,'cb_valor')).'</td>';
-                  $w_debito += Nvl(f($row,'cb_valor'),0);
-                  $w_atual  -= Nvl(f($row,'cb_valor'),0);
-                }
-                $l_html.=chr(13).'        <td align="right" nowrap>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</td>';
-                $l_html.=chr(13).'        <td>'.nvl(f($row,'cc_debito'),'&nbsp;').'</td>';
-                $l_html.=chr(13).'        <td>'.nvl(f($row,'cc_credito'),'&nbsp;').'</td>';
-              } 
-          
-              $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
-              $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.formataDataEdicao(last_day($w_mes_atual->format('d/m/Y'))).$w_sg_moeda.'&nbsp;</b></td>';
-              $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
-              $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
-              $l_html.=chr(13).'        <td align="right" nowrap><b>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</b></td>';
-              $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
-              $l_html.=chr(13).'      </tr>';
-            }
-
-            $w_mes_atual = $w_mes_atual->add($one_month);
-            if ($w_mes_atual > $w_mes_fim) break;
+              }
+              $l_html.=chr(13).'        <td>&nbsp;'.Nvl(FormataDataEdicao(f($row,'dt_pagamento'),5),'-').'&nbsp;</td>';
+              $l_html.=chr(13).'        <td nowrap title="'.f($row,'nm_doc').'">'.f($row,'sg_doc').' '.f($row,'nr_doc').'</td>';
+              if (Nvl(f($row,'pessoa'),'nulo')!='nulo') {
+                if ($w_tipo!='WORD') $l_html.=chr(13).'        <td width="25%">'.ExibePessoa($w_dir_volta,$w_cliente,f($row,'pessoa'),$TP,f($row,'nm_pessoa')).'</td>';
+                else                 $l_html.=chr(13).'        <td width="25%">'.f($row,'nm_pessoa_resumido').'</td>';
+              } else {
+                $l_html.=chr(13).'        <td align="center" width="25%">---</td>';
+              }
+              $l_html.=chr(13).'        <td width="40%">'.f($row,'descricao').'</td>';
+              if (f($row,'tipo')=='C') {
+                $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row,'cb_valor')).'</td>';
+                $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
+                $w_credito += Nvl(f($row,'cb_valor'),0);
+                $w_atual   += Nvl(f($row,'cb_valor'),0);
+              } else {
+                $l_html.=chr(13).'        <td align="right">&nbsp;</td>';
+                $l_html.=chr(13).'        <td align="right" nowrap>'.formatNumber(f($row,'cb_valor')).'</td>';
+                $w_debito += Nvl(f($row,'cb_valor'),0);
+                $w_atual  -= Nvl(f($row,'cb_valor'),0);
+              }
+              $l_html.=chr(13).'        <td align="right" nowrap>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</td>';
+              $l_html.=chr(13).'        <td>'.nvl(f($row,'cc_debito'),'&nbsp;').'</td>';
+              $l_html.=chr(13).'        <td>'.nvl(f($row,'cc_credito'),'&nbsp;').'</td>';
+            } 
+        
+            $l_html.=chr(13).'      <tr valign="top" bgcolor="'.$conTrBgColor.'">';
+            $l_html.=chr(13).'        <td align="right" colspan="'.$cs.'"><b>Totais em '.formataDataEdicao(last_day($w_mes_atual->format('d/m/Y'))).$w_sg_moeda.'&nbsp;</b></td>';
+            $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_credito).'</b></td>';
+            $l_html.=chr(13).'        <td align="right" nowrap><b>'.formatNumber($w_debito).'</b></td>';
+            $l_html.=chr(13).'        <td align="right" nowrap><b>'.str_replace('-0,00','0,00',formatNumber($w_atual)).'</b></td>';
+            $l_html.=chr(13).'        <td colspan="2">&nbsp;</td>';
+            $l_html.=chr(13).'      </tr>';
           }
 
-          $w_conta_atual = f($conta, 'sq_conta_debito');
+          $w_mes_atual = $w_mes_atual->add($one_month);
+          if ($w_mes_atual > $w_mes_fim) break;
         }
+
+        $w_conta_atual = f($conta, 'sq_pessoa_conta');
       }
     }
     $l_html.=chr(13).'      </table></td></tr>';
