@@ -409,11 +409,13 @@ function Detalhe() {
   if ($w_tipo!='WORD') {
     ShowHTML('          <td><b>'.LinkOrdena('Rubrica','or_rubrica').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Lançamento','or_financeiro').'</td>');
+    ShowHTML('          <td><b>'.LinkOrdena('Beneficiário','or_financeiro').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Descrição','descricao').'</td>');
     ShowHTML('          <td><b>'.LinkOrdena('Valor','valor').'</td>');
   } else {
     ShowHTML('          <td><b>Rubrica</b></td>');
     ShowHTML('          <td><b>Lançamento</b></td>');
+    ShowHTML('          <td><b>Beneficiário</b></td>');
     ShowHTML('          <td><b>Descrição</b></td>');
     ShowHTML('          <td><b>valor</b></td>');
   }
@@ -436,6 +438,7 @@ function Detalhe() {
       ShowHTML('        <td nowrap>');
       ShowHTML(ExibeImagemSolic(f($row,'sg_menu'),f($row,'inicio'),f($row,'vencimento'),f($row,'inicio'),f($row,'quitacao'),f($row,'aviso_prox_conc'),f($row,'aviso'),f($row,'sg_tramite'), null));
       ShowHTML('        '.exibeSolic($w_dir,f($row,'sq_financeiro'),f($row,'cd_financeiro'),'N',$w_tipo).'</td>');
+      ShowHTML('        <td>'.exibePessoa(null,$w_cliente,f($row,'sq_pessoa'),'Visual',f($row,'nm_resumido_pessoa')).'</td>');
       ShowHTML('        <td>'.f($row,'descricao').'</td>');
       ShowHTML('        <td align="right" nowrap>'.f($row,'sb_moeda').' '.formatNumber(f($row,'valor')).'</td>');
       ShowHTML('      </tr>');

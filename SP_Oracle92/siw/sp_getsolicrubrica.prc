@@ -210,7 +210,7 @@ begin
                 nvl(g5.nome, f111.nome) nm_pais,
                 cast(d.fim as date)-cast(g.dias_aviso as integer) as aviso,
                 g1.nome nm_forma_pagamento,
-                g2.sq_pessoa, g2.nome nm_pessoa, coalesce(g3.cpf, g6.cnpj) cd_pessoa,
+                g2.sq_pessoa, g2.nome nm_pessoa, g2.nome_resumido nm_resumido_pessoa, coalesce(g3.cpf, g6.cnpj) cd_pessoa,
                 h.data dt_emissao, h.numero, h.valor valor_doc,
                 i.sigla sg_tipo_documento, i.nome nm_tipo_documento
            from vw_projeto_financeiro              a
