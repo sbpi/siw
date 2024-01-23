@@ -344,7 +344,9 @@ function Inicial() {
         $valor_coluna[3] = nvl($Valor[f($row,'sq_projeto_rubrica')][f($RS_Projeto,'sg_moeda')],0); 
         
         // E - Unliquidated obligations for current QUARTER	
-        $valor_coluna[4] = nvl($ValorAndamento[f($row,'sq_projeto_rubrica')][f($RS_Projeto,'sg_moeda')],0); 
+        // A linha abaixo foi desativada em 23/01/24 a pedido do Márcio. A coluna D deve estar sempre vazia.
+        // $valor_coluna[4] = nvl($ValorAndamento[f($row,'sq_projeto_rubrica')][f($RS_Projeto,'sg_moeda')],0);
+        $valor_coluna[4] = 0;
         
         // F=D+E - Total expenditures for current QUARTER	
         $valor_coluna[5] = $valor_coluna[3]+$valor_coluna[4]; 
@@ -434,6 +436,8 @@ function Inicial() {
     $RSQuery = SortArray($RSQuery,'or_rubrica','asc','quitacao','asc','or_financeiro','asc','or_item','asc');
     $w_total = 0;
     foreach ($RSQuery as $row) {
+      // O teste abaixo foi incluído em 23/01/24 a pedido do Márcio. Lançamentos não concluídos devem ser omitidos.
+      if (f($row,'sg_tramite')!='AT') continue;
       $l_html.=chr(13).'      <tr'.((f($row,'sg_fn_moeda')<>f($RS_Projeto,'sg_moeda')) ? ' bgcolor="yellow"' : '').'>';
       $l_html.=chr(13).'          <td align="center">'.f($row,'cd_rubrica').'</td>';
       $l_html.=chr(13).'          <td>'.f($row,'nm_rubrica').'</td>';
