@@ -119,6 +119,7 @@ function Inicial() {
     $sql = new db_getCustomerData; $RS = $sql->getInstanceOf($dbms, $w_cliente);
     if (f($RS, 'logo') > '')
       $w_logo = '/img/logo' . substr(f($RS, 'logo'), (strpos(f($RS, 'logo'), '.') ? strpos(f($RS, 'logo'), '.') + 1 : 0) - 1, 30);
+    
     // Recupera todos os registros para a listagem
     $sql = new db_getLancamento; $RS = $sql->getInstanceOf($dbms, $w_cliente, substr($SG, 0, 3), $p_dt_ini, $p_dt_fim, $p_pg_ini, $p_pg_fim, $p_co_ini, $p_co_fim, $w_sq_pessoa, $p_projeto, $p_cadastramento, $p_pago);
     if (nvl($p_ordena, '') != '') {

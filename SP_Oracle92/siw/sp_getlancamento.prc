@@ -30,31 +30,33 @@ begin
              case when b.conclusao is null 
                   then (a.vencimento - trunc(sysdate))
                   else (a.vencimento - trunc(a.quitacao))
-             end prazo
-        from fn_lancamento                      a 
-             inner      join siw_solicitacao    b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
-               inner    join siw_menu           b1 on (b.sq_menu            = b1.sq_menu and
-                                                      (Instr(p_restricao,'FLUXO') > 0 or (Instr(p_restricao,'FLUXO') = 0 and (0 < Instr(b1.sigla, p_restricao)))) and
-                                                       b1.sq_pessoa         = p_cliente
-                                                      )
-               inner    join siw_tramite        b2 on (b.sq_siw_tramite     = b2.sq_siw_tramite and
-                                                       'CA'                 <> Nvl(b2.sigla,'-') and
-                                                       ('T'                 = nvl(p_cadastramento,'T') or
-                                                        ('S'                = nvl(p_cadastramento,'T') and Nvl(b2.sigla,'-') = 'CI') or
-                                                        ('N'                = nvl(p_cadastramento,'T') and Nvl(b2.sigla,'-') <> 'CI')
-                                                       ) and
-                                                       ('T'                 = nvl(p_pago,'T') or
-                                                        ('S'                = nvl(p_pago,'T') and Nvl(b2.sigla,'-') = 'AT') or
-                                                        ('N'                = nvl(p_pago,'T') and Nvl(b2.sigla,'-') <> 'AT')
-                                                       )
-                                                      )
-             inner      join fn_tipo_lancamento c  on (a.sq_tipo_lancamento = c.sq_tipo_lancamento)
-             left       join ac_acordo          d  on (b.sq_solic_pai       = d.sq_siw_solicitacao)
-               left     join siw_solicitacao    d1 on (d.sq_siw_solicitacao = d1.sq_siw_solicitacao)
-             left       join pj_projeto         e  on (a.sq_solic_vinculo   = e.sq_siw_solicitacao)
-               left     join siw_solicitacao    e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
-             left       join ct_cc              f  on (b.sq_cc              = f.sq_cc)
-             inner      join co_pessoa          g  on (a.pessoa             = g.sq_pessoa)
+             end prazo,
+             a1.fn_sg_moeda
+        from fn_lancamento                         a
+             inner      join vw_projeto_financeiro a1 on (a.sq_siw_solicitacao = a1.sq_financeiro)
+             inner      join siw_solicitacao       b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
+               inner    join siw_menu              b1 on (b.sq_menu            = b1.sq_menu and
+                                                          (Instr(p_restricao,'FLUXO') > 0 or (Instr(p_restricao,'FLUXO') = 0 and (0 < Instr(b1.sigla, p_restricao)))) and
+                                                          b1.sq_pessoa         = p_cliente
+                                                         )
+               inner    join siw_tramite           b2 on (b.sq_siw_tramite     = b2.sq_siw_tramite and
+                                                          'CA'                 <> Nvl(b2.sigla,'-') and
+                                                          ('T'                 = nvl(p_cadastramento,'T') or
+                                                           ('S'                = nvl(p_cadastramento,'T') and Nvl(b2.sigla,'-') = 'CI') or
+                                                           ('N'                = nvl(p_cadastramento,'T') and Nvl(b2.sigla,'-') <> 'CI')
+                                                          ) and
+                                                          ('T'                 = nvl(p_pago,'T') or
+                                                           ('S'                = nvl(p_pago,'T') and Nvl(b2.sigla,'-') = 'AT') or
+                                                           ('N'                = nvl(p_pago,'T') and Nvl(b2.sigla,'-') <> 'AT')
+                                                          )
+                                                         )
+             inner      join fn_tipo_lancamento    c  on (a.sq_tipo_lancamento = c.sq_tipo_lancamento)
+             left       join ac_acordo             d  on (b.sq_solic_pai       = d.sq_siw_solicitacao)
+               left     join siw_solicitacao       d1 on (d.sq_siw_solicitacao = d1.sq_siw_solicitacao)
+             left       join pj_projeto            e  on (a.sq_solic_vinculo   = e.sq_siw_solicitacao)
+               left     join siw_solicitacao       e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
+             left       join ct_cc                 f  on (b.sq_cc              = f.sq_cc)
+             inner      join co_pessoa             g  on (a.pessoa             = g.sq_pessoa)
        where ((Instr(p_restricao,'FLUXO') > 0 and (a.vencimento between Add_Months(p_dt_ini,-2) and p_dt_fim)) or
               (Instr(p_restricao,'FLUXO') = 0 and ((p_dt_ini is not null and a.vencimento       between p_dt_ini and p_dt_fim) or
                                                    (p_pg_ini is not null and a.quitacao         between p_pg_ini and p_pg_fim) or
@@ -83,7 +85,8 @@ begin
              case when b.conclusao is null 
                   then (d.vencimento - trunc(sysdate))
                   else (d.vencimento - trunc(h.quitacao))
-             end prazo
+             end prazo,
+             b3.sigla fn_sg_moeda
         from ac_acordo                            a 
              inner        join siw_solicitacao    b  on (a.sq_siw_solicitacao = b.sq_siw_solicitacao)
                inner      join siw_menu           b1 on (b.sq_menu            = b1.sq_menu and
@@ -94,6 +97,7 @@ begin
                                                          'CA'                 <> Nvl(b2.sigla,'-') and
                                                          b2.sigla             in ('EE','ER')
                                                         )
+               inner      join co_moeda           b3 on (b.sq_moeda            = b3.sq_moeda)
                left       join pj_projeto         e  on (a.sq_solic_vinculo   = e.sq_siw_solicitacao)
                  left     join siw_solicitacao    e1 on (e.sq_siw_solicitacao = e1.sq_siw_solicitacao)
                left       join ct_cc              f  on (b.sq_cc              = f.sq_cc)
