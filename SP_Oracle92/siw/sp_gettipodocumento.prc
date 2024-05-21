@@ -17,6 +17,7 @@ begin
                              from fn_tipo_doc_vinc             w
                                   inner join fn_tipo_documento x on (w.sq_tipo_documento = x.sq_tipo_documento)
                             where x.cliente = p_cliente
+                              and w.sq_menu = nvl(p_menu, w.sq_menu)
                            group by cliente
                           )                    b on (a.cliente              = b.cliente)
              left    join pa_especie_documento c on (a.sq_especie_documento = c.sq_especie_documento)
