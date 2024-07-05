@@ -116,13 +116,10 @@ begin
                 acentos(a.nome) as ordena,
                 coalesce(c.qtd,0) as qt_filhos
            from fn_tipo_lancamento   a
-                left  join (select x.cliente, count(*) vinculo
+                left  join (select w.sq_tipo_lancamento, count(*) vinculo
                               from fn_tipo_lanc_vinc             w
-                                   inner join fn_tipo_lancamento x on (w.sq_tipo_lancamento = x.sq_tipo_lancamento)
-                             where w.sq_menu = coalesce(p_chave_aux, 0)
-                               and x.cliente = p_cliente
-                            group by x.cliente
-                           )         b on (a.cliente            = b.cliente)
+                            group by w.sq_tipo_lancamento
+                           )         b on (a.sq_tipo_lancamento = b.sq_tipo_lancamento)
                 left  join (select x.sq_tipo_lancamento_pai, count(x.sq_tipo_lancamento) qtd 
                               from fn_tipo_lancamento x
                              where x.sq_tipo_lancamento_pai is not null
