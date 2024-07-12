@@ -129,7 +129,13 @@ begin
             and ((p_chave     is null) or (p_chave     is not null and a.sq_tipo_lancamento = p_chave))
             and (p_restricao is null or 
                  (p_restricao is not null and 
-                  (coalesce(b.vinculo,0)     = 0 or 0 < (select count(*) from fn_tipo_lanc_vinc where sq_tipo_lancamento = a.sq_tipo_lancamento and sq_menu = p_chave_aux)) and
+                  (w_menu in ('CLPC','CLLC','PDSV') or 
+                   (w_menu not in ('CLPC','CLLC','PDSV') and 
+                    (coalesce(b.vinculo,0) = 0 or 
+                     0 < (select count(*) from fn_tipo_lanc_vinc z where z.sq_tipo_lancamento = a.sq_tipo_lancamento and z.sq_menu = p_chave_aux)
+                    )
+                   )
+                  ) and
                   ((substr(p_restricao,3,1) = 'R' and a.receita   = 'S') or 
                    (substr(p_restricao,3,1) = 'D' and a.despesa   = 'S') or
                    (substr(p_restricao,3,1) = 'E' and a.reembolso = 'S') or
