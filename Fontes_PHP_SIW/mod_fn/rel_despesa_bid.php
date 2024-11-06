@@ -526,7 +526,7 @@ function detalhamentoRubrica() {
       } else {
         $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'brl_valor_compra')).' </td>';
         if (f($row,'exige_brl')=='N') {
-          $l_html.=chr(13).'          <td align="right">'.formatNumber(f($row,'fator_conversao'),4).' </td>';
+          $l_html.=chr(13).'          <td align="right">'.formatNumber((f($row,'brl_valor_compra')/f($row,'valor')),4).' </td>';
         } else {
           $l_html.=chr(13).'          <td align="right"'.$w_cor_cell.'>'.nvl(formatNumber(f($row,'brl_taxa_compra'),4),'???').' </td>';
         }
