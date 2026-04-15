@@ -597,7 +597,7 @@ function Inicial() {
             // Aplicações, transferências e tarifas não têm rotinas de registro de anotação
             ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Anotacao&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Registra anotações para o lançamento, sem enviá-lo.">AN</A>&nbsp');
           }
-          if (f($row,'sg_tramite')=='EE' || $P2==2) {
+          if (f($row,'sg_tramite')=='EE' || $P2==2 || (f($row,'sigla')=='FNDVIA' && f($row,'sg_tramite')=='PP')) {
             if (f($row,'sigla')!='FNDFUNDO') {
               if (f($row,'sigla')=='FNDTARIFA' || substr(f($row,'sigla'),0,3)=='FNA' || (f($row,'usuario_logado')=='S' && f($row,'sigla')!='FNDREEMB')) {
                 ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Registro do pagamento.">AL</A>&nbsp');
@@ -640,7 +640,7 @@ function Inicial() {
               ShowHTML('          <A class="hl" HREF="'.montaURL_JS(null,$conRootSIW.$w_dir.$w_destino.'.php?par=envio&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&w_menu='.f($row,'sq_menu').'&SG='.f($row,'sigla').MontaFiltro('GET')).'" title="Envia o lançamento para outro responsável ou fase.">EN</A>&nbsp');
               if (f($row,'sigla')=='FNDFUNDO') {
                 ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Geral&R='.$w_pagina.$par.'&O=A&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Ajustes nos dados do pagamento.">AL</A>&nbsp');
-              } elseif (f($row,'sg_tramite')=='AT') {
+              } elseif (f($row,'sg_tramite')=='AT' || (f($row,'sigla')=='FNDVIA' && f($row,'sg_tramite')=='PP')) {
                 ShowHTML('          <A class="hl" HREF="'.$w_dir.$w_destino.'.php?par=Concluir&R='.$w_pagina.$par.'&O=V&w_chave='.f($row,'sq_siw_solicitacao').'&w_tipo=Volta&P1='.$P1.'&P2='.$P2.'&P3='.$P3.'&P4='.$P4.'&TP='.$TP.'&SG='.f($row,'sigla').MontaFiltro('GET').'" title="Ajuste nos dados do pagamento.">AP</A>&nbsp');
               }
             }

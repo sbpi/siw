@@ -325,7 +325,7 @@ begin
                       left           join co_pessoa            p  on (b.executor                 = p.sq_pessoa)
                      left            join fn_lancamento_log    k  on (j.chave                    = k.sq_siw_solic_log)
                        left          join sg_autenticacao      l  on (k.destinatario             = l.sq_pessoa)
-          where ((p_tipo = 1 and b1.sigla = 'EE' and b2.acesso > 0 and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
+          where ((p_tipo = 1 and (b1.sigla = 'EE' or (a.sigla = 'FNDVIA' and b1.sigla = 'PP')) and b2.acesso > 0 and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
                  (p_tipo = 2 and b1.sigla = 'AT' and d.quitacao>=trunc(sysdate) and (w_cliente <> 10135 or (w_cliente = 10135 and a.sigla <> 'FNDCONT'))) or
                  (p_tipo = 3 and b1.sigla <> 'CA' and b2.acesso > 0) or
                  (p_tipo = 3 and b1.sigla <> 'CA' and InStr(l_resp_unid,''''||b.sq_unidade||'''') > 0) or
