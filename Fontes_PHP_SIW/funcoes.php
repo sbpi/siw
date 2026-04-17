@@ -2751,14 +2751,18 @@ function EnviaMail($w_subject,$w_mensagem,$w_recipients,$w_attachments=null) {
   if (strpos($email_message->smtp_host,':')!==false) {
     list($email_message->smtp_host, $email_message->smtp_port) = explode(':',$email_message->smtp_host);
   }
-  $email_message->smtp_ssl=((strpos(f($RS_Cliente,'smtp_server'),'gmail')===false) ? 0 : 1); /* Use SSL to connect to the SMTP server. Gmail requires SSL */
+  $email_message->smtp_ssl = (
+                               strpos(strtolower(f($RS_Cliente,'smtp_server')), 'gmail') !== false ||
+                               strpos(strtolower(f($RS_Cliente,'smtp_server')), 'office365') !== false ||
+                               strpos(strtolower(f($RS_Cliente,'smtp_server')), 'outlook') !== false
+                             ) ? 1 : 0; /* Use SSL to connect to the SMTP server. Gmail, Office365, Outlook requires SSL */
   $email_message->smtp_direct_delivery=0; /* Deliver directly to the recipients destination SMTP server */
   $email_message->smtp_user=((nvl(f($RS_Cliente,'siw_email_senha'),'nulo')=='nulo') ? '' : f($RS_Cliente,'siw_email_conta')); /* authentication user name */
   $email_message->smtp_password=((nvl(f($RS_Cliente,'siw_email_senha'),'nulo')=='nulo') ? '' : f($RS_Cliente,'siw_email_senha')); /* authentication password */
   $email_message->smtp_realm='';  /* authentication realm or Windows domain when using NTLM authentication */
   $email_message->smtp_workstation=''; /* authentication workstation name when using NTLM authentication */
-  $email_message->smtp_debug=0; /* Output dialog with SMTP server */
-  $email_message->smtp_html_debug=0; /* set this to 1 to make the debug output appear in HTML */
+  $email_message->smtp_debug=1; /* Output dialog with SMTP server */
+  $email_message->smtp_html_debug=1; /* set this to 1 to make the debug output appear in HTML */
 
   /* if you need POP3 authetntication before SMTP delivery,
   * specify the host name here. The smtp_user and smtp_password above

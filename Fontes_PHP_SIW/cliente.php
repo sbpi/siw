@@ -1143,7 +1143,7 @@ function ContasBancarias() {
       Validate('w_banco','Banco','SELECT','1','1','10','','1');
       Validate('w_agencia','Agência','1','1','4','4','','0123456789');
       if ($w_exige_operacao=='S') Validate('w_operacao','Operacao','1','1','1','3','1','1');
-      Validate('w_numero_conta','Conta corrente','1','1','3','12','','0123456789-XP');
+      Validate('w_numero_conta','Conta corrente','1','1','3','15','','0123456789-XP');
     } 
     if (strpos('IA',$O)!==false) {
       if ($P1==2) {
@@ -1252,7 +1252,7 @@ function ContasBancarias() {
     selecaoBanco('<u>B</u>anco:','B','Selecione o banco.',$w_banco,null,'w_banco',null,(($O=='A') ? ' DISABLED ' : '').'onChange="document.Form.action=\''.$w_pagina.$par.'\'; document.Form.w_troca.value=\'w_agencia\'; document.Form.submit();"',(($w_exige_operacao=='S') ? 1 : 2));
     ShowHTML('        <td><b><u>A</u>gência:</b><br><input '.$w_Disabled.(($O=='A') ? ' DISABLED ' : '').' accesskey="B" type="text" name="w_agencia" class="sti" SIZE="4" MAXLENGTH="4" VALUE="'.$w_agencia.'" title="Informe o número da agência, com quatro posições, sem dígito verificador. Preencha com zeros à esquerda, se necessário. Exempo: para agência 3592-0, informe 3592; para agência 206, informe 0206."></td>');
     if ($w_exige_operacao=='S') ShowHTML('              <td><b><u>O</u>peração:</b><br><input '.$w_Disabled.(($O=='A') ? ' DISABLED ' : '').' accesskey="O" type="text" name="w_operacao" class="sti" SIZE="3" MAXLENGTH="3" VALUE="'.$w_operacao.'" title="Informe um valor apenas se o seu banco trabalhar com o campo Operação."></td>');
-    ShowHTML('              <td><b><u>C</u>onta corrente:</b><br><input '.$w_Disabled.(($O=='A') ? ' DISABLED ' : '').' accesskey="C" type="text" name="w_numero_conta" class="sti" SIZE="12" MAXLENGTH="12" VALUE="'.$w_numero_conta.'" title="Informe o número da conta corrente. Se a conta tiver dígito verificador (DV), informe-o separado por hífen (-). Exemplo sem DV: 0391039. Exemplos com DV: 9301-3, 91093-X, 01934-P."></td>');
+    ShowHTML('              <td><b><u>C</u>onta corrente:</b><br><input '.$w_Disabled.(($O=='A') ? ' DISABLED ' : '').' accesskey="C" type="text" name="w_numero_conta" class="sti" SIZE="15" MAXLENGTH="15" VALUE="'.$w_numero_conta.'" title="Informe o número da conta corrente. Se a conta tiver dígito verificador (DV), informe-o separado por hífen (-). Exemplo sem DV: 0391039. Exemplos com DV: 9301-3, 91093-X, 01934-P."></td>');
     ShowHTML('      <tr valign="top">');
     ShowHTML('        <td title="Informe se a conta é corrente ou de poupança."><b>Tipo conta</b><br>');
     if ($w_tipo_conta=='' || $w_tipo_conta=='1') {
@@ -1586,8 +1586,8 @@ function Configuracao() {
   Validate('w_smtp_server','Servidor SMTP','1',1,3,60,'1','1');
   Validate('w_siw_email_nome','Nome','1',1,3,60,'1','1');
   Validate('w_siw_email_conta','Conta','1',1,3,60,'1','1');
-  Validate('w_siw_email_senha','Senha','1','',3,60,'1','1');
-  Validate('w_siw_email_senha1','Senha','1','',3,60,'1','1');
+  Validate('w_siw_email_senha','Senha','1','',3,60,'','');
+  Validate('w_siw_email_senha1','Senha','1','',3,60,'','');
   
   ShowHTML('  if (theForm.w_siw_email_senha.value != theForm.w_siw_email_senha1.value) { ');
   ShowHTML('     alert(\'Favor informar dois valores iguais para a senha!\');');
