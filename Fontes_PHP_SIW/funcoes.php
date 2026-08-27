@@ -2676,7 +2676,7 @@ function FormatDateTime($date) {
       $l_date = implode('/',array_reverse(explode('-',$temp)));
     } else {
       $l_date = substr($date,0,2).'/'.substr($date,3,2).'/';
-      if (substr($date,6,2) < 30) $l_date = $l_date.'20'.substr($date,6,2);
+      if (substr($date,6,2) < 45) $l_date = $l_date.'20'.substr($date,6,2);
       else                        $l_date = $l_date.'19'.substr($date,6,2);
     }
     return $l_date;
