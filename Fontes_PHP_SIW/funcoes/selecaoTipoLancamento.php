@@ -14,7 +14,11 @@ function selecaoTipoLancamento($label,$accesskey,$hint,$chave,$chaveAux,$cliente
   foreach ($l_RS as $row) {
     if (substr($restricao,0,4)=='PDSV' || substr($restricao,0,4)=='CLPC' || substr($restricao,0,3)=='FND' || substr($restricao,0,3)=='FNA' || substr($restricao,0,3)=='FNR' || nvl($restricao,'')=='') {
       // se tela de cadastramento de viagens ou pedidos de compra, mostra apenas o nome do nível folha
-      ShowHTML('          <option value="'.f($row,'chave').'" '.(((nvl(f($row,'chave'),0)==nvl($chave,0) || COUNT($l_RS)==1)) ? 'SELECTED' : '').'>'.f($row,'nome'));
+      ShowHTML('          <option value="'.f($row,'chave').'"'.
+				(((nvl(f($row,'chave'),0)==nvl($chave,0) || COUNT($l_RS)==1)) ? ' SELECTED' : '').
+				((f($row,'qt_filhos') > 0) ? ' DISABLED' : '').
+				'>'.
+				f($row,'nome'));
     } else {
       ShowHTML('          <option value="'.f($row,'chave').'" '.(((nvl(f($row,'chave'),0)==nvl($chave,0))) ? 'SELECTED' : '').'>'.f($row,'nm_tipo'));
     }
